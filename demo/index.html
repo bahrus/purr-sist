@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div data-pd>
+        <pass-down></pass-down>
+        <purr-sist store-id="bipks"
+            data-on="value-changed: pass-to-next:{input:target.value}"
+        ></purr-sist>
+        <xtal-json-editor options="{}"  height="300px"></xtal-json-editor>
+        <script type="module" src="../purr-sist.js"></script>
+        <script type="module" src="https://unpkg.com/pass-down@0.0.10/pass-down.iife.js"></script>
+        <script type="module" src="https://unpkg.com/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
+    </div>
+</body>
+</html>
