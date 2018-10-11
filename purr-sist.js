@@ -2,6 +2,7 @@ import { XtallatX } from 'xtal-latx/xtal-latx.js';
 import { define } from 'xtal-latx/define.js';
 const store_id = 'store-id';
 const save_service_url = 'save-service-url';
+const new_val = 'new_val';
 export class PurrSist extends XtallatX(HTMLElement) {
     constructor() {
         super(...arguments);
@@ -17,6 +18,9 @@ export class PurrSist extends XtallatX(HTMLElement) {
             case store_id:
                 this._storeId = nv;
                 break;
+            case save_service_url:
+                this._saveServiceUrl = nv;
+                break;
         }
         this.onPropsChange();
     }
@@ -31,6 +35,24 @@ export class PurrSist extends XtallatX(HTMLElement) {
     }
     set saveServiceUrl(val) {
         this.attr(save_service_url, val);
+    }
+    get newVal() {
+        return this._newVal;
+    }
+    set newVal(val) {
+        this._newVal = val;
+        fetch(this._saveServiceUrl + '/' + this._storeId, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'PUT',
+            body: JSON.stringify(val),
+        }).then(resp => {
+            this.de('newVal', {
+                value: val,
+            });
+        });
     }
     connectedCallback() {
         this._upgradeProperties(['disabled', store_id, save_service_url]);
