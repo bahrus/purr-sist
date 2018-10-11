@@ -1,0 +1,19 @@
+{
+  "name": "purr-sist",
+  "version": "0.0.0",
+  "description": "Pesist JSON",
+  "main": "purr-sist.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bahrus/purr-sist.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bahrus/purr-sist/issues"
+  },
+  "homepage": "https://github.com/bahrus/purr-sist#readme"
+}
