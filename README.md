@@ -24,9 +24,9 @@ Once you have the id, you could set it / harcode it in your markup.  This would 
 
 This could perhaps be useful in some cases.  Namely, if you want to centrally manage the stored settings used by all users of your web component.
 
-## Modifying a property in the remote store
+## Send a new object to the remote store
 
-To insert / update a property in the remote store, use the newVal property:
+To send a new object to the remote store, use the newVal property:
 
 ```JavaScript
 const myValue = {chairman: 'meow'};
