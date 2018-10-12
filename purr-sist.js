@@ -31,6 +31,9 @@ export class PurrSist extends XtallatX(HTMLElement) {
     set storeId(val) {
         this.attr(store_id, val);
     }
+    set refresh(val) {
+        this.storeId = this._storeId;
+    }
     get saveServiceUrl() {
         return this._saveServiceUrl;
     }

@@ -32,6 +32,9 @@ export class PurrSist extends XtallatX(HTMLElement) {
     set storeId(val) {
         this.attr(store_id, val);
     }
+    set refresh(val: any){
+        this.storeId = this._storeId;
+    }
     _saveServiceUrl: string = 'https://api.myjson.com/bins';
     get saveServiceUrl() {
         return this._saveServiceUrl;
