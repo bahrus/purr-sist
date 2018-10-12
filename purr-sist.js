@@ -79,7 +79,7 @@ export class PurrSist extends XtallatX(HTMLElement) {
                     'Content-Type': 'application/json'
                 },
                 method: 'POST',
-                body: JSON.stringify({ origin: window.location }),
+                body: JSON.stringify({}),
             }).then(resp => {
                 resp.json().then(json => {
                     this._initInProgress = false;
