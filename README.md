@@ -9,7 +9,7 @@ NB:  This web service assumes humans have no dark side, and only act on the up a
 If you place the web component on the page:
 
 ```html
-<purr-sist></purr-sist>
+<purr-sist persist></purr-sist>
 ```
 
 since no "store-id" is specified, a new record will be created on initial load.

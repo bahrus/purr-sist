@@ -1,17 +1,18 @@
 import { XtallatX } from 'xtal-latx/xtal-latx.js';
 import { define } from 'xtal-latx/define.js';
-interface KVP {
-    key: string;
-    value: any;
-}
+// interface KVP {
+//     key: string;
+//     value: any;
+// }
 const store_id = 'store-id';
 const save_service_url = 'save-service-url';
+const persist = 'persist';
 //const new_val = 'new_val';
 export class PurrSist extends XtallatX(HTMLElement) {
     static get is() { return 'purr-sist'; }
 
     static get observedAttributes() {
-        return super.observedAttributes.concat([store_id]);
+        return super.observedAttributes.concat([store_id, save_service_url, persist]);
     }
     attributeChangedCallback(n: string, ov: string, nv: string) {
         super.attributeChangedCallback(n, ov, nv);
@@ -21,6 +22,9 @@ export class PurrSist extends XtallatX(HTMLElement) {
                 break;
             case save_service_url:
                 this._saveServiceUrl = nv;
+                break;
+            case persist:
+                this._persist = (nv !== null);
                 break;
         }
         this.onPropsChange()
@@ -42,12 +46,19 @@ export class PurrSist extends XtallatX(HTMLElement) {
     set saveServiceUrl(val) {
         this.attr(save_service_url, val);
     }
-    _pendingNewVals!: KVP[];
+    _persist!: boolean;
+    get persist(){
+        return this._persist;
+    }
+    set persist(nv){
+        this.attr(persist, nv, '');
+    }
+    _pendingNewVals!: any[];
     _newVal: any;
     get newVal() {
         return this._newVal;
     }
-    set newVal(val: KVP) {
+    set newVal(val: any) {
         if(!this._storeId){
             if(!this._pendingNewVals) this._pendingNewVals = [];
             this._pendingNewVals.push(val);
@@ -72,14 +83,15 @@ export class PurrSist extends XtallatX(HTMLElement) {
     _conn!: boolean;
 
     connectedCallback() {
-        this._upgradeProperties([store_id, save_service_url, 'disabled']);
+        this._upgradeProperties(['storeId', 'saveServiceUrl', persist, 'disabled']);
+        this.style.display = 'none';
         this._conn = true;
         this.onPropsChange();
     }
     value: any;
     _initInProgress = false;
     onPropsChange() {
-        if (!this._conn || !this._saveServiceUrl || this._disabled) return;
+        if (!this._conn || !this._saveServiceUrl || this._disabled || !this._persist) return;
         if (!this._storeId) {
             //create new object
             if (this._initInProgress) return;
