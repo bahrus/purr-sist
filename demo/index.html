@@ -12,24 +12,27 @@
     <div data-pd style="display:flex;flex-direction: column">
         <pass-down></pass-down>
         <input type="text" placeholder="key" data-on="input: pass-to:aggregator-fn{key:target.value}{1}">
-
-        <textarea placeholder="value" data-on="input: pass-to:aggregator-fn{val:target.value}{1}"></textarea>
+        <textarea placeholder="value (JSON optional)" data-on="input: pass-to:aggregator-fn{val:target.value}{1}"></textarea>
         <aggregator-fn data-on="value-changed: pass-to-next:{obj:target.value}">
             <script nomodule>
                 ({ key, val }) => {
                     if (key === undefined || val === undefined) return null;
                     if (val.startsWith('{') || val.startsWith('[')) {
-                        return { [key]: JSON.parse(val) };
+                        try{
+                            return { [key]: JSON.parse(val) };
+                        }catch(e){
+                            return null;
+                        }
+                        
                     }
                     return { [key]: val };
                 }
             </script>
         </aggregator-fn>
-        <button data-on="click: pass-to:purr-sist{newVal:target.obj} skip-init">Update</button>
-        <button data-on="click: pass-to:purr-sist{refresh:.} skip-init">Refresh</button>
+        <button data-on="click: pass-to:purr-sist{newVal:target.obj} skip-init">Insert Key/Value pair</button>
         <purr-sist data-on="value-changed: pass-to-next:{input:target.value}"></purr-sist>
         <xtal-json-editor options="{}" height="300px"></xtal-json-editor>
-
+        <button onclick="window.location.reload()">Reload Window</button>
         <script>
             const ps = document.querySelector('purr-sist');
             ps.addEventListener('value-changed', e => {
@@ -42,10 +45,10 @@
             }
             ps.persist = true;
         </script>
-        <script type="module" src="https://unpkg.com/purr-sist@0.0.4/purr-sist.iife.js"></script>
-        <script type="module" src="https://unpkg.com/pass-down@0.0.10/pass-down.iife.js"></script>
-        <script type="module" src="https://unpkg.com/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
-        <script type="module" src="https://unpkg.com/aggregator-fn@0.0.10/aggregator-fn.iife.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.6/purr-sist.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/pass-down@0.0.10/pass-down.iife.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.10/aggregator-fn.iife.js"></script>
     </div>
 </body>
 

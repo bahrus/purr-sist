@@ -7,7 +7,14 @@ import { define } from 'xtal-latx/define.js';
 const store_id = 'store-id';
 const save_service_url = 'save-service-url';
 const persist = 'persist';
-//const new_val = 'new_val';
+/**
+ * `purr-sist`
+ *  Custom element wrapper around http://myson.com api.
+ *
+ * @customElement
+ * @polymer
+ * @demo demo/index.html
+ */
 export class PurrSist extends XtallatX(HTMLElement) {
     constructor() {
         super(...arguments);
@@ -58,6 +65,8 @@ export class PurrSist extends XtallatX(HTMLElement) {
         return this._newVal;
     }
     set newVal(val) {
+        if (val === null)
+            return;
         if (!this._storeId) {
             if (!this._pendingNewVals)
                 this._pendingNewVals = [];
@@ -65,17 +74,19 @@ export class PurrSist extends XtallatX(HTMLElement) {
             return;
         }
         this._newVal = val;
+        const value = this.value === undefined ? val : Object.assign(this.value, val);
         fetch(this._saveServiceUrl + '/' + this._storeId, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             method: 'PUT',
-            body: JSON.stringify(val),
+            body: JSON.stringify(value),
         }).then(resp => {
-            this.de('newVal', {
-                value: val,
-            });
+            // this.de('newVal', {
+            //     value: val,
+            // })
+            this.setValue(value);
         });
     }
     connectedCallback() {
@@ -83,6 +94,12 @@ export class PurrSist extends XtallatX(HTMLElement) {
         this.style.display = 'none';
         this._conn = true;
         this.onPropsChange();
+    }
+    setValue(val) {
+        this.value = val;
+        this.de('value', {
+            value: val
+        });
     }
     onPropsChange() {
         if (!this._conn || !this._saveServiceUrl || this._disabled || !this._persist)
@@ -114,10 +131,7 @@ export class PurrSist extends XtallatX(HTMLElement) {
         else {
             fetch(this._saveServiceUrl + '/' + this._storeId).then(resp => {
                 resp.json().then(json => {
-                    this.value = json;
-                    this.de('value', {
-                        value: json
-                    });
+                    this.setValue(json);
                 });
             });
         }
