@@ -3,6 +3,8 @@
 <a href="https://nodei.co/npm/purr-sist/"><img src="https://nodei.co/npm/purr-sist.png"></a>
 # purr-sist
 
+[Demo](https://unpkg.com/purr-sist@0.0.8/demo/index.html?id=11wwg0)
+
 purr-sist is a web component wrapper around the [myjson.com](http://myjson.com/) api service.  The service allows anyone to save and update a JSON document. 
 
 NB:  This web service assumes humans have no dark side, and only act on the up and up.  Use of this web component should only be used for storing and retrieving harmless data, e.g. academic purposes.  The service URL is configurable.  One *could* create a server-side wrapper around this service, which adds validation logic, or your own service from scratch, that uses the same basic API.  The attribute / property where the alternative service can be specified is "service-url."  

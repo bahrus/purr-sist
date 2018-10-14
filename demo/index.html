@@ -42,6 +42,11 @@
             const storeId = sp.get('id');
             if (storeId) {
                 ps.storeId = storeId;
+            }else if(document.referrer){
+                const iPos = document.referrer.indexOf('id=');
+                if(iPos > -1){
+                    ps.storeId = document.referrer.substr(iPos + 3);
+                }
             }
             ps.persist = true;
         </script>
