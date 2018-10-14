@@ -19,10 +19,10 @@ since no "store-id" is specified, a new record will be created on initial load.
 
 ## Hardcoding a record
 
-Once you have the id, you could set it / harcode it in your markup.  This would allow page refreshes not to lose the last values:
+Once you have the id, you could set it / hardcode it in your markup.
 
 ```html
-<purr-sist store-id="catnip"></purr-sist>
+<purr-sist persist store-id="catnip"></purr-sist>
 ```
 
 This could perhaps be useful in some cases.  Namely, if you want to centrally manage the stored settings used by all users of your web component.
@@ -85,3 +85,28 @@ document.querySelector('purr-sist').newVal = {'kitty': myValue}
 </custom-element-demo>
 ```
 -->
+
+## Master Index
+
+purr-sist adds some support for scaling large saves, so they can be broken down somewhat.  First, there is a property, guid, which stands for "globally unique identifier."  There are [many](https://duckduckgo.com/?q=online+guid+generator&t=h_&ia=web) [tools](https://marketplace.visualstudio.com/search?term=guid&target=VSCode&category=All%20categories&sortBy=Relevance) that can generate these for you. 
+
+Second, there's a property "master-list-id" which specifies the id of a DOM element outside any Shadow DOM.  That DOM element should also be a purr-sist element, which serves as the master list indexer.  It conatains a lookup between the guid, hardcoded in the markup, and the id defined by the remote datastore (myjson.com in this case).
+
+So the markup can look like:
+
+```html
+    <body>
+        <purr-sist persist id="myMasterList" store-id="asd9wg">
+        ...
+        <my-component>
+            #ShadowDOM
+                <purr-sist persist guid="7482dbc4-04c8-40e6-8481-07d8ee4656b7" master-list-id="myMasterList"></purr-sist>
+            #EndShadowDOM
+        </my-component>
+    </body>
+```
+
+
+
+
+

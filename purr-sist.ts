@@ -7,6 +7,8 @@ import { define } from 'xtal-latx/define.js';
 const store_id = 'store-id';
 const save_service_url = 'save-service-url';
 const persist = 'persist';
+const guid = 'guid';
+const master_list_id = 'master-list-id';
 
 /**
  * `purr-sist`
@@ -20,7 +22,7 @@ export class PurrSist extends XtallatX(HTMLElement) {
     static get is() { return 'purr-sist'; }
 
     static get observedAttributes() {
-        return super.observedAttributes.concat([store_id, save_service_url, persist]);
+        return super.observedAttributes.concat([store_id, save_service_url, persist, guid, master_list_id]);
     }
     attributeChangedCallback(n: string, ov: string, nv: string) {
         super.attributeChangedCallback(n, ov, nv);
@@ -31,6 +33,12 @@ export class PurrSist extends XtallatX(HTMLElement) {
             case save_service_url:
                 this._saveServiceUrl = nv;
                 break;
+            case master_list_id:
+
+            case guid:
+                this._guid = nv;
+                break;
+            
             case persist:
                 this._persist = (nv !== null);
                 break;
@@ -43,6 +51,22 @@ export class PurrSist extends XtallatX(HTMLElement) {
     }
     set storeId(val) {
         this.attr(store_id, val);
+        this.syncMasterList();
+    }
+    syncMasterList(){
+        if(!this._masterListId || !this._guid) return;
+        const master = (<any>self)[this._masterListId] as PurrSist;
+        if(!master || !master.value){
+            setTimeout(() => {
+                this.syncMasterList();
+            }, 50);
+            return;
+        }
+        if(master.value[this._guid] === undefined){
+            master.newVal = {
+                [this._guid]: this._storeId,
+            }
+        }
     }
     set refresh(val: any){
         this.storeId = this._storeId;
@@ -60,6 +84,20 @@ export class PurrSist extends XtallatX(HTMLElement) {
     }
     set persist(nv){
         this.attr(persist, nv, '');
+    }
+    _guid!: string;
+    get guid(){
+        return this._guid;
+    }
+    set guid(nv: string){
+        this.attr(guid, nv);
+    }
+    _masterListId!: string;
+    get masterListId(){
+        return this._masterListId;
+    }
+    set masterListId(nv: string){
+        this.attr(master_list_id, nv);
     }
     _pendingNewVals!: any[];
     _newVal: any;
@@ -94,7 +132,7 @@ export class PurrSist extends XtallatX(HTMLElement) {
     _conn!: boolean;
 
     connectedCallback() {
-        this._upgradeProperties(['storeId', 'saveServiceUrl', persist, 'disabled']);
+        this._upgradeProperties(['storeId', 'saveServiceUrl', persist, 'disabled', guid, 'masterListId']);
         this.style.display = 'none';
         this._conn = true;
         this.onPropsChange();
