@@ -112,6 +112,8 @@ function define(custEl) {
 const store_id = 'store-id';
 const save_service_url = 'save-service-url';
 const persist = 'persist';
+const guid = 'guid';
+const master_list_id = 'master-list-id';
 /**
  * `purr-sist`
  *  Custom element wrapper around http://myson.com api.
@@ -128,7 +130,7 @@ class PurrSist extends XtallatX(HTMLElement) {
     }
     static get is() { return 'purr-sist'; }
     static get observedAttributes() {
-        return super.observedAttributes.concat([store_id, save_service_url, persist]);
+        return super.observedAttributes.concat([store_id, save_service_url, persist, guid, master_list_id]);
     }
     attributeChangedCallback(n, ov, nv) {
         super.attributeChangedCallback(n, ov, nv);
@@ -138,6 +140,12 @@ class PurrSist extends XtallatX(HTMLElement) {
                 break;
             case save_service_url:
                 this._saveServiceUrl = nv;
+                break;
+            case master_list_id:
+                this._masterListId = nv;
+                break;
+            case guid:
+                this._guid = nv;
                 break;
             case persist:
                 this._persist = (nv !== null);
@@ -150,6 +158,23 @@ class PurrSist extends XtallatX(HTMLElement) {
     }
     set storeId(val) {
         this.attr(store_id, val);
+        this.syncMasterList();
+    }
+    syncMasterList() {
+        if (!this._masterListId || !this._guid)
+            return;
+        const master = self[this._masterListId];
+        if (!master || !master.value) {
+            setTimeout(() => {
+                this.syncMasterList();
+            }, 50);
+            return;
+        }
+        if (master.value[this._guid] === undefined) {
+            master.newVal = {
+                [this._guid]: this._storeId,
+            };
+        }
     }
     set refresh(val) {
         this.storeId = this._storeId;
@@ -165,6 +190,18 @@ class PurrSist extends XtallatX(HTMLElement) {
     }
     set persist(nv) {
         this.attr(persist, nv, '');
+    }
+    get guid() {
+        return this._guid;
+    }
+    set guid(nv) {
+        this.attr(guid, nv);
+    }
+    get masterListId() {
+        return this._masterListId;
+    }
+    set masterListId(nv) {
+        this.attr(master_list_id, nv);
     }
     get newVal() {
         return this._newVal;
@@ -195,7 +232,7 @@ class PurrSist extends XtallatX(HTMLElement) {
         });
     }
     connectedCallback() {
-        this._upgradeProperties(['storeId', 'saveServiceUrl', persist, 'disabled']);
+        this._upgradeProperties(['storeId', 'saveServiceUrl', persist, 'disabled', guid, 'masterListId']);
         this.style.display = 'none';
         this._conn = true;
         this.onPropsChange();
