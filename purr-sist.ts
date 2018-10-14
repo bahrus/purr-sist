@@ -34,7 +34,8 @@ export class PurrSist extends XtallatX(HTMLElement) {
                 this._saveServiceUrl = nv;
                 break;
             case master_list_id:
-
+                this._masterListId = nv;
+                break;
             case guid:
                 this._guid = nv;
                 break;

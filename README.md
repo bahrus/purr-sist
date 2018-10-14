@@ -98,7 +98,7 @@ So the markup can look like:
     <body>
         <purr-sist persist id="myMasterList" store-id="asd9wg">
         ...
-        <my-component>
+        <my-component> <!-- just an example -->
             #ShadowDOM
                 <purr-sist persist guid="7482dbc4-04c8-40e6-8481-07d8ee4656b7" master-list-id="myMasterList"></purr-sist>
             #EndShadowDOM
