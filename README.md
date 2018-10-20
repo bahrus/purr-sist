@@ -5,9 +5,7 @@
 
 [Demo](https://unpkg.com/purr-sist@0.0.8/demo/index.html?id=11wwg0)
 
-NB:  This is a highly experimental web component, subject to dramatic changes.  
-
-purr-sist is a web component wrapper to a generic RESTful API, which defaults, for now, to the [myjson.com](http://myjson.com/) api service.  The service allows anyone to save and update a JSON document. 
+purr-sist is a web component wrapper to a generic RESTful API, which defaults, for now, to the [myjson.com](http://myjson.com/) api service.  The service allows anyone to save and update a JSON document, with zero setup steps. 
 
 ## Basic Syntax
 
@@ -17,7 +15,7 @@ If you place the web component on the page:
 <purr-sist persist></purr-sist>
 ```
 
-since no "store-id" is specified, a new record will be created on initial load.  If you inspect the element, you will see that id reflected with attribute store-id.
+since no "store-id" is specified, a new "{}" record will be created on initial load.  If you inspect the element, you will see the id of that new record reflected to the element with attribute "store-id".
 
 Once you have the id, you *could* set it / hardcode it in your markup. 
 
@@ -25,44 +23,33 @@ Once you have the id, you *could* set it / hardcode it in your markup.
 <purr-sist persist store-id="catnip"></purr-sist>
 ```
 
-As we will see, this can be useful in some cases. 
+As we will see, this can be useful in some cases, particularly for "master lists". 
 
-## Why myjson?
+## Why myjson.com?
 
-myjson.com is similar, but not nearly as powerful, as other, far more robust solutions like [Firebase](https://firebase.google.com/docs/database/rest/save-data).  In particular, Firebases's ability to save to a path, and not overwrite the entire record, is certainly quite appealing. 
+myjson.com is easy as pie to use.  It is so simple, in fact, that it kind of mirrors the (overly?) simple api we get with the browser's history api.  One of the objectives of this component is to provide persistence of the history.state object, so myjson.com would appear to have no "impedence mismatch" with the window.history.[push|replace]State calls.
 
-In contrast, myjson.com is quite rudimentary.  It is so simple, in fact, that it kind of mirrors the (overly?) simple api we get with the browser's history api.  One of the objectives of this component is to provide persistence of the history.state object, so myjson.com would appear to have no "impedence mismatch" with the window.history.[push|replace]State calls.
+In addition, myjson.com requires no account set up, so it just works, with zero fuss.  
 
-As this web component matures, it may very well "outgrow" the capabilities of myjson, but in the spirit of KISS, we'll wait and see.
+## What's the problem with myjson.com?
 
-In addition, myjson requires no account set up, so it just works, with zero fuss.  Using it in a production setting, though, is quite dangerous for this very reason, so use of this web component should be restricted to storing and retrieving harmless data, such as URL paths or public data, or for academic purposes.  
+Due to the extremely trusting nature of myjson.com, it would be quite dangerous to use in a production setting, so use of this default service should be restricted to storing and retrieving harmless data, such as URL paths or public data, or for academic / prototyping purposes.
 
-One could provide a more secure proxy wrapper around myjson.com, which adds user id / entitlement logic / hash checks.
+myjson.com is similar, but not nearly as powerful, as other, far more robust solutions like [Firebase](https://firebase.google.com/docs/database/rest/save-data) (or mongoDB, or countless other solutions).   Firebases's ability to save to a path, and not overwrite the entire record, is certainly quite appealing. 
 
-To specify your own service, add a link preconnect tag to the page, and give it some id
+I'm 99% certain that using Firebase instead of myjson.com would reduce the packet size in a fairly significant way. But I would argue that the approach of creating a master list, detailed below, helps whether you are using Firebase or myjson.com.
 
-```html
-<head>
-    ...
-    <link rel="preconnect" id="yourSecurePersistanceService" href="https://yourjson.com/">
-    ...
-</head>
-```
+So we will endeavor to define the "api" for this web component in such a way that it can work well with simple services like myjson.com, and also "scale up" to more sophisticed REST API's like Firebase.
 
-Then specify that for those tags where you want better security than the one myson.com provides:
+Since the api's for production ready services differ somewhat from myjson's, we'll give a different tag name depending on the service, e.g. purr-sist-firebase for firebase's api, and possibly others as they come to my attention.
 
-```html
-<purr-sist base-link-id="yourSecurePersistanceService"></purr-sist>
-```
+## Completely replace object in remote store
 
-
-## Send a new object to the remote store
-
-To send a new object to the remote store, use the newVal property:
+To send a new object to the remote store, replacing the old one, use the replaceRootWith property:
 
 ```JavaScript
 const myValue = {chairman: 'meow'};
-document.querySelector('purr-sist').newVal = {'kitty': myValue}
+document.querySelector('purr-sist').replaceRootWith = {'kitty': myValue}
 ```
 
 <!--
@@ -117,9 +104,9 @@ document.querySelector('purr-sist').newVal = {'kitty': myValue}
 
 ## Master Index
 
-purr-sist adds some support for scaling large saves, so they can be broken down somewhat.  First, there is a property, guid, which stands for "globally unique identifier."  There are [many](https://duckduckgo.com/?q=online+guid+generator&t=h_&ia=web) [tools](https://marketplace.visualstudio.com/search?term=guid&target=VSCode&category=All%20categories&sortBy=Relevance) that can generate these for you. 
+purr-sist adds some fundamental support for scaling large saves, so they can be broken down somewhat.  First, there is a property, guid, which stands for "globally unique identifier."  There are [many](https://duckduckgo.com/?q=online+guid+generator&t=h_&ia=web) [tools](https://marketplace.visualstudio.com/search?term=guid&target=VSCode&category=All%20categories&sortBy=Relevance) that can generate these for you. 
 
-Second, there's a property "master-list-id" which specifies the id of a DOM element outside any Shadow DOM.  That DOM element should also be a purr-sist element, which serves as the master list indexer.  It conatains a lookup between the guid, hardcoded in the markup, and the id defined by the remote datastore (myjson.com in this case).
+Second, there's a property "master-list-id" which specifies the id of a DOM element outside any Shadow DOM.  That DOM element should also be a purr-sist element, which serves as the master list indexer.  It contains a lookup between the guid, hardcoded in the markup (or initialization code), and the id defined by the remote datastore (myjson.com in this case).
 
 So the markup can look like:
 
