@@ -13,7 +13,7 @@ const master_list_id = 'master-list-id';
 
 /**
  * `purr-sist`
- *  Custom element wrapper around http://myson.com api.
+ *  Custom element wrapper around http://myjson.com api.
  *
  * @customElement
  * @polymer
