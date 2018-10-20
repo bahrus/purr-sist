@@ -1,10 +1,7 @@
 import { XtallatX, disabled } from 'xtal-latx/xtal-latx.js';
 import { define } from 'xtal-latx/define.js';
 import {BaseLinkId, baseLinkId} from 'xtal-latx/base-link-id.js';
-// interface KVP {
-//     key: string;
-//     value: any;
-// }
+
 const store_id = 'store-id';
 const save_service_url = 'save-service-url';
 const persist = 'persist';
@@ -19,7 +16,7 @@ const master_list_id = 'master-list-id';
  * @polymer
  * @demo demo/index.html
  */
-export class PurrSist extends XtallatX(HTMLElement) {
+export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     static get is() { return 'purr-sist'; }
 
     static get observedAttributes() {
@@ -55,10 +52,10 @@ export class PurrSist extends XtallatX(HTMLElement) {
         this.attr(store_id, val);
         this.syncMasterList();
     }
+
     syncMasterList(){
         if(!this._masterListId || !this._guid) return;
-        if(!this._masterListId.startsWith('/')) throw 'Must start with "/"';
-        const master = (<any>self)[this._masterListId.substr(1)] as PurrSist;
+        const master = this.getMaster();
         if(!master || !master.value){
             setTimeout(() => {
                 this.syncMasterList();
@@ -71,21 +68,14 @@ export class PurrSist extends XtallatX(HTMLElement) {
             }
         }
     }
-    pullRecFromMaster(){
-        const master = (<any>self)[this._masterListId] as PurrSist;
-        if(!master || !master.value){
-            setTimeout(() => {
-                this.syncMasterList();
-            }, 50);
-            return;
-        } 
+    pullRecFromMaster(master: PurrSist){
         if(master.value[this._guid] === undefined){
-           this.createNew();
+           this.createNew(master);
         }else{
             this.storeId = master.value[this._guid];
         }              
     }
-    createNew(){
+    createNew(master: PurrSist | null){
         if (this._initInProgress) return;
         fetch(this._saveServiceUrl, {
             headers: {
@@ -105,6 +95,9 @@ export class PurrSist extends XtallatX(HTMLElement) {
                     })
                     delete this._pendingNewVals;
                 }
+                if(master !== null) master.newVal = {
+                    [this._guid]: this._storeId,
+                }
             })
 
         })
@@ -112,7 +105,7 @@ export class PurrSist extends XtallatX(HTMLElement) {
     set refresh(val: any){
         this.storeId = this._storeId;
     }
-    _saveServiceUrl: string = 'https://api.myjson.com/bins';
+    _saveServiceUrl!: string;// string = 'https://api.myjson.com/bins';
     get saveServiceUrl() {
         return this._saveServiceUrl;
     }
@@ -176,6 +169,13 @@ export class PurrSist extends XtallatX(HTMLElement) {
         this._upgradeProperties(['storeId', 'saveServiceUrl', persist, 'disabled', guid, 'masterListId']);
         this.style.display = 'none';
         this._conn = true;
+        if(!this._saveServiceUrl){
+            if(this._baseLinkId){
+                this._saveServiceUrl = this.getFullURL('');
+            }else{
+                this._saveServiceUrl = 'https://api.myjson.com/bins';
+            }
+        }
         this.onPropsChange();
     }
     value: any;
@@ -186,13 +186,24 @@ export class PurrSist extends XtallatX(HTMLElement) {
         })
     }
     _initInProgress = false;
+    getMaster(){
+        if(!this._masterListId.startsWith('/')) throw 'Must start with "/"';
+        return (<any>self)[this._masterListId.substr(1)] as PurrSist;
+    }
     onPropsChange() {
         if (!this._conn || !this._saveServiceUrl || this._disabled || !this._persist) return;
         if (!this._storeId) {
             if(this._masterListId){
-
+                const mst = this.getMaster();
+                if(!mst || !mst.value){
+                    setTimeout(() =>{
+                        this.onPropsChange()
+                    }, 50);
+                    return;
+                }
+                this.pullRecFromMaster(mst);
             }else{
-                this.createNew();
+                this.createNew(null);
             }
             //create new object
 

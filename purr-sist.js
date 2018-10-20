@@ -1,9 +1,6 @@
 import { XtallatX } from 'xtal-latx/xtal-latx.js';
 import { define } from 'xtal-latx/define.js';
-// interface KVP {
-//     key: string;
-//     value: any;
-// }
+import { BaseLinkId } from 'xtal-latx/base-link-id.js';
 const store_id = 'store-id';
 const save_service_url = 'save-service-url';
 const persist = 'persist';
@@ -11,16 +8,15 @@ const guid = 'guid';
 const master_list_id = 'master-list-id';
 /**
  * `purr-sist`
- *  Custom element wrapper around http://myson.com api.
+ *  Custom element wrapper around http://myjson.com api.
  *
  * @customElement
  * @polymer
  * @demo demo/index.html
  */
-export class PurrSist extends XtallatX(HTMLElement) {
+export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     constructor() {
         super(...arguments);
-        this._saveServiceUrl = 'https://api.myjson.com/bins';
         this._initInProgress = false;
     }
     static get is() { return 'purr-sist'; }
@@ -58,9 +54,7 @@ export class PurrSist extends XtallatX(HTMLElement) {
     syncMasterList() {
         if (!this._masterListId || !this._guid)
             return;
-        if (!this._masterListId.startsWith('/'))
-            throw 'Must start with "/"';
-        const master = self[this._masterListId.substr(1)];
+        const master = this.getMaster();
         if (!master || !master.value) {
             setTimeout(() => {
                 this.syncMasterList();
@@ -73,22 +67,15 @@ export class PurrSist extends XtallatX(HTMLElement) {
             };
         }
     }
-    pullRecFromMaster() {
-        const master = self[this._masterListId];
-        if (!master || !master.value) {
-            setTimeout(() => {
-                this.syncMasterList();
-            }, 50);
-            return;
-        }
+    pullRecFromMaster(master) {
         if (master.value[this._guid] === undefined) {
-            this.createNew();
+            this.createNew(master);
         }
         else {
             this.storeId = master.value[this._guid];
         }
     }
-    createNew() {
+    createNew(master) {
         if (this._initInProgress)
             return;
         fetch(this._saveServiceUrl, {
@@ -108,6 +95,10 @@ export class PurrSist extends XtallatX(HTMLElement) {
                     });
                     delete this._pendingNewVals;
                 }
+                if (master !== null)
+                    master.newVal = {
+                        [this._guid]: this._storeId,
+                    };
             });
         });
     }
@@ -170,6 +161,14 @@ export class PurrSist extends XtallatX(HTMLElement) {
         this._upgradeProperties(['storeId', 'saveServiceUrl', persist, 'disabled', guid, 'masterListId']);
         this.style.display = 'none';
         this._conn = true;
+        if (!this._saveServiceUrl) {
+            if (this._baseLinkId) {
+                this._saveServiceUrl = this.getFullURL('');
+            }
+            else {
+                this._saveServiceUrl = 'https://api.myjson.com/bins';
+            }
+        }
         this.onPropsChange();
     }
     setValue(val) {
@@ -178,14 +177,27 @@ export class PurrSist extends XtallatX(HTMLElement) {
             value: val
         });
     }
+    getMaster() {
+        if (!this._masterListId.startsWith('/'))
+            throw 'Must start with "/"';
+        return self[this._masterListId.substr(1)];
+    }
     onPropsChange() {
         if (!this._conn || !this._saveServiceUrl || this._disabled || !this._persist)
             return;
         if (!this._storeId) {
             if (this._masterListId) {
+                const mst = this.getMaster();
+                if (!mst || !mst.value) {
+                    setTimeout(() => {
+                        this.onPropsChange();
+                    }, 50);
+                    return;
+                }
+                this.pullRecFromMaster(mst);
             }
             else {
-                this.createNew();
+                this.createNew(null);
             }
             //create new object
         }
