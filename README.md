@@ -45,7 +45,7 @@ Since the api's for production ready services differ somewhat from myjson's, we'
 
 ## Update pieces of the remote store
 
-To send a new object to the remote store, replacing the old one, use the replaceRootWith property:
+To send a new object to the remote store, replacing the old one, use the newVal property:
 
 ```JavaScript
 const myValue = {chairman: 'meow'};
