@@ -5,9 +5,35 @@
 
 [Demo](https://unpkg.com/purr-sist@0.0.8/demo/index.html?id=11wwg0)
 
-purr-sist is a web component wrapper around the [myjson.com](http://myjson.com/) api service.  The service allows anyone to save and update a JSON document. 
+NB:  This is a highly experimental web component, subject to dramatic changes.  
 
-NB:  This web service assumes humans have no dark side, and only act on the up and up.  Use of this web component should only be used for storing and retrieving harmless data, e.g. academic purposes.  The service URL is configurable.  One *could* create a server-side wrapper around this service, which adds validation logic, or your own service from scratch, that uses the same basic API.  The attribute / property where the alternative service can be specified is "service-url."  
+purr-sist is a web component wrapper to a generic RESTful API, which defaults, for now, to the [myjson.com](http://myjson.com/) api service.  The service allows anyone to save and update a JSON document. 
+
+## Why myjson?
+
+myjson.com is similar, but not nearly as powerful, as other, far more robust solutions like [Firebase](https://firebase.google.com/docs/database/rest/save-data).  In particular, Firebases's ability to save to a path, and not overwrite the entire record is certainly quite appealing. 
+
+In contrast, myjson.com is quite rudimentary.  It is so simple, in fact, that it kind of mirrors the (overly?) simple api we get with the browser's history.api.  One of the objectives of this component is to provide persistence of the history.state object, so myjson.com would appear to have no "impedence mismatch" with the window.history.[push|replace]State calls.
+
+As this web component matures, it may very well "outgrow" the capabilities of myjson, but in the spirit of KISS, we'll wait and see.
+
+In addition, myjson requires no account set up, so it just works, with zero fuss.  Using it in a production setting, though, is quite dangerous for this very reason, so use of this web component should only be restricted for storing and retrieving harmless data, such as URL paths, or for academic purposes.  One could provide a more secure proxy wrapper around myson.com
+
+To specify your own service, add a link preconnect tag to the page, and give it some id
+
+```html
+<head>
+    ...
+    <link rel="preconnect" id="yourSecurePersistanceService" href="https://yourjson.com/">
+    ...
+</head>
+```
+
+Then specify that for those tags where you want better security than the one myson.com provides:
+
+```html
+<purr-sist base-link-id="yourPersistanceService"></purr-sist>
+```
 
 ## Step 1.  Initialization
 
@@ -17,17 +43,21 @@ If you place the web component on the page:
 <purr-sist persist></purr-sist>
 ```
 
-since no "store-id" is specified, a new record will be created on initial load.
+since no "store-id" is specified, a new record will be created on initial load.  If you inspect the element, you will see that id reflected with attribute store-id.
 
 ## Hardcoding a record
 
-Once you have the id, you could set it / hardcode it in your markup.
+Once you have the id, you *could* set it / hardcode it in your markup. 
 
 ```html
 <purr-sist persist store-id="catnip"></purr-sist>
 ```
 
-This could perhaps be useful in some cases.  Namely, if you want to centrally manage the stored settings used by all users of your web component.
+As we will see, this can be useful in some cases.  
+
+NB:  The myjson.com web service assumes humans have no dark side, and only act on the up and up.  .  The service URL is configurable.  One could create a server-side wrapper around this service, which adds validation logic, or your own service from scratch, that uses the same, almost bare-bones API.  
+
+
 
 ## Send a new object to the remote store
 
@@ -102,11 +132,13 @@ So the markup can look like:
         ...
         <my-component> <!-- just an example -->
             #ShadowDOM
-                <purr-sist persist guid="7482dbc4-04c8-40e6-8481-07d8ee4656b7" master-list-id="myMasterList"></purr-sist>
+                <purr-sist persist guid="7482dbc4-04c8-40e6-8481-07d8ee4656b7" master-list-id="/myMasterList"></purr-sist>
             #EndShadowDOM
         </my-component>
     </body>
 ```
+
+Note that the value of the master-list-id attribute starts with a /.  This is to explicitly state that the id is expected to be found outside any Shadow DOM.  The ability to reference a master list sitting inside some Shadow DOM realm is not currently supported.
 
 
 

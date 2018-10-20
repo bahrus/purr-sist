@@ -1,5 +1,6 @@
-import { XtallatX } from 'xtal-latx/xtal-latx.js';
+import { XtallatX, disabled } from 'xtal-latx/xtal-latx.js';
 import { define } from 'xtal-latx/define.js';
+import {BaseLinkId, baseLinkId} from 'xtal-latx/base-link-id.js';
 // interface KVP {
 //     key: string;
 //     value: any;
@@ -56,7 +57,8 @@ export class PurrSist extends XtallatX(HTMLElement) {
     }
     syncMasterList(){
         if(!this._masterListId || !this._guid) return;
-        const master = (<any>self)[this._masterListId] as PurrSist;
+        if(!this._masterListId.startsWith('/')) throw 'Must start with "/"';
+        const master = (<any>self)[this._masterListId.substr(1)] as PurrSist;
         if(!master || !master.value){
             setTimeout(() => {
                 this.syncMasterList();
@@ -68,6 +70,44 @@ export class PurrSist extends XtallatX(HTMLElement) {
                 [this._guid]: this._storeId,
             }
         }
+    }
+    pullRecFromMaster(){
+        const master = (<any>self)[this._masterListId] as PurrSist;
+        if(!master || !master.value){
+            setTimeout(() => {
+                this.syncMasterList();
+            }, 50);
+            return;
+        } 
+        if(master.value[this._guid] === undefined){
+           this.createNew();
+        }else{
+            this.storeId = master.value[this._guid];
+        }              
+    }
+    createNew(){
+        if (this._initInProgress) return;
+        fetch(this._saveServiceUrl, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({}),
+
+        }).then(resp => {
+            resp.json().then(json => {
+                this._initInProgress = false;
+                this.storeId = json.uri.split('/').pop();
+                if(this._pendingNewVals){
+                    this._pendingNewVals.forEach(kvp =>{
+                        this.newVal = kvp;
+                    })
+                    delete this._pendingNewVals;
+                }
+            })
+
+        })
     }
     set refresh(val: any){
         this.storeId = this._storeId;
@@ -149,29 +189,13 @@ export class PurrSist extends XtallatX(HTMLElement) {
     onPropsChange() {
         if (!this._conn || !this._saveServiceUrl || this._disabled || !this._persist) return;
         if (!this._storeId) {
+            if(this._masterListId){
+
+            }else{
+                this.createNew();
+            }
             //create new object
-            if (this._initInProgress) return;
-            fetch(this._saveServiceUrl, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: 'POST',
-                body: JSON.stringify({}),
 
-            }).then(resp => {
-                resp.json().then(json => {
-                    this._initInProgress = false;
-                    this.storeId = json.uri.split('/').pop();
-                    if(this._pendingNewVals){
-                        this._pendingNewVals.forEach(kvp =>{
-                            this.newVal = kvp;
-                        })
-                        delete this._pendingNewVals;
-                    }
-                })
-
-            })
         } else {
             fetch(this._saveServiceUrl + '/' + this._storeId).then(resp => {
                 resp.json().then(json => {
