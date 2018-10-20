@@ -27,7 +27,7 @@ As we will see, this can be useful in some cases, particularly for "master lists
 
 ## Why myjson.com?
 
-myjson.com is easy as pie to use.  It is so simple, in fact, that it kind of mirrors the (overly?) simple api we get with the browser's history api.  One of the objectives of this component is to provide persistence of the history.state object, so myjson.com would appear to have no "impedence mismatch" with the window.history.[push|replace]State calls.
+myjson.com is easy as pie to use.  It is so simple, in fact, that it kind of mirrors the (overly?) simple api we get with the browser's history api.  One of the objectives of this component is to provide persistence of the history.state object, so myjson.com would appear to have no "impedence mismatch" with the window.history.[push|replace]State calls, which probably is not a very flattering thing to say about the window.history api.
 
 In addition, myjson.com requires no account set up, so it just works, with zero fuss.  
 
@@ -39,17 +39,17 @@ myjson.com is similar, but not nearly as powerful, as other, far more robust sol
 
 I'm 99% certain that using Firebase instead of myjson.com would reduce the packet size in a fairly significant way. But I would argue that the approach of creating a master list, detailed below, helps whether you are using Firebase or myjson.com.
 
-So we will endeavor to define the "api" for this web component in such a way that it can work well with simple services like myjson.com, and also "scale up" to more sophisticed REST API's like Firebase.
+So we will endeavor to define the "api" for this web component in such a way that it can work well with simple services like myjson.com, and also "scale up" to more sophisticed REST API's like Firebase, and achieve better performance (even while complicating the setup).
 
-Since the api's for production ready services differ somewhat from myjson's, we'll give a different tag name depending on the service, e.g. purr-sist-firebase for firebase's api, and possibly others as they come to my attention.
+Since the api's for production ready services differ somewhat from myjson's, we'll give a different tag name depending on the service, e.g. purr-sist-firebase for firebase's api, and possibly others as time permits. [TODO]
 
-## Completely replace object in remote store
+## Update pieces of the remote store
 
 To send a new object to the remote store, replacing the old one, use the replaceRootWith property:
 
 ```JavaScript
 const myValue = {chairman: 'meow'};
-document.querySelector('purr-sist').replaceRootWith = {'kitty': myValue}
+document.querySelector('purr-sist').newVal = {'kitty': myValue}
 ```
 
 <!--
