@@ -118,7 +118,9 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         return this._persist;
     }
     set persist(nv) {
-        this.attr(persist, nv, '');
+        setTimeout(() => {
+            this.attr(persist, nv, '');
+        }, 50);
     }
     get guid() {
         return this._guid;
