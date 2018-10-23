@@ -122,7 +122,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     set persist(nv){
         setTimeout(() =>{
             this.attr(persist, nv, '');
-        }, 50);
+        }, 5000);
         
     }
     _guid!: string;
@@ -196,6 +196,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         if(!this._masterListId.startsWith('/')) throw 'Must start with "/"';
         return (<any>self)[this._masterListId.substr(1)] as PurrSist;
     }
+    _fip!: boolean; //fetch in progress
     onPropsChange() {
         if (!this._conn || !this._saveServiceUrl || this._disabled || !this._persist) return;
         if (!this._storeId) {
@@ -214,9 +215,12 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             //create new object
 
         } else {
+            if(this._fip) return;
+            this._fip = true;
             fetch(this._saveServiceUrl + '/' + this._storeId).then(resp => {
                 resp.json().then(json => {
                     this.setValue(json);
+                    this._fip = false;
                 })
             })
         }

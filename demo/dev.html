@@ -10,7 +10,6 @@
     <div data-pd style="display:flex;flex-direction: column">
         <pass-down></pass-down>
         <xtal-state-parse level="global" parse="location.href" with-url-pattern="id=(?<storeId>[a-z0-9-]*)"></xtal-state-parse>
-        
         <input type="text" placeholder="key" data-on="input: pass-to:aggregator-fn{key:target.value}{1}">
         <textarea placeholder="value (JSON optional)" data-on="input: pass-to:aggregator-fn{val:target.value}{1}"></textarea>
         <aggregator-fn data-on="value-changed: pass-to-next:{obj:target.value}">

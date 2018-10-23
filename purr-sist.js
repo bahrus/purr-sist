@@ -120,7 +120,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     set persist(nv) {
         setTimeout(() => {
             this.attr(persist, nv, '');
-        }, 50);
+        }, 5000);
     }
     get guid() {
         return this._guid;
@@ -207,9 +207,13 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             //create new object
         }
         else {
+            if (this._fip)
+                return;
+            this._fip = true;
             fetch(this._saveServiceUrl + '/' + this._storeId).then(resp => {
                 resp.json().then(json => {
                     this.setValue(json);
+                    this._fip = false;
                 });
             });
         }
