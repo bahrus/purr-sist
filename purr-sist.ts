@@ -27,6 +27,9 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         switch (n) {
             case store_id:
                 this._storeId = nv;
+                this.de('store-id',{
+                    value: nv
+                })
                 break;
             case save_service_url:
                 this._saveServiceUrl = nv;

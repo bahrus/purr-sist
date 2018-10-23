@@ -105,10 +105,26 @@ function define(custEl) {
     }
     customElements.define(tagName, custEl);
 }
-// interface KVP {
-//     key: string;
-//     value: any;
-// }
+const baseLinkId = 'base-link-id';
+function BaseLinkId(superClass) {
+    return class extends superClass {
+        get baseLinkId() {
+            return this._baseLinkId;
+        }
+        set baseLinkId(val) {
+            this.setAttribute(baseLinkId, val);
+        }
+        getFullURL(tail) {
+            let r = tail;
+            if (this._baseLinkId) {
+                const link = self[this._baseLinkId];
+                if (link)
+                    r = link.href + r;
+            }
+            return r;
+        }
+    };
+}
 const store_id = 'store-id';
 const save_service_url = 'save-service-url';
 const persist = 'persist';
@@ -116,16 +132,15 @@ const guid = 'guid';
 const master_list_id = 'master-list-id';
 /**
  * `purr-sist`
- *  Custom element wrapper around http://myson.com api.
+ *  Custom element wrapper around http://myjson.com api.
  *
  * @customElement
  * @polymer
  * @demo demo/index.html
  */
-class PurrSist extends XtallatX(HTMLElement) {
+class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     constructor() {
         super(...arguments);
-        this._saveServiceUrl = 'https://api.myjson.com/bins';
         this._initInProgress = false;
     }
     static get is() { return 'purr-sist'; }
@@ -163,7 +178,7 @@ class PurrSist extends XtallatX(HTMLElement) {
     syncMasterList() {
         if (!this._masterListId || !this._guid)
             return;
-        const master = self[this._masterListId];
+        const master = this.getMaster();
         if (!master || !master.value) {
             setTimeout(() => {
                 this.syncMasterList();
@@ -175,6 +190,41 @@ class PurrSist extends XtallatX(HTMLElement) {
                 [this._guid]: this._storeId,
             };
         }
+    }
+    pullRecFromMaster(master) {
+        if (master.value[this._guid] === undefined) {
+            this.createNew(master);
+        }
+        else {
+            this.storeId = master.value[this._guid];
+        }
+    }
+    createNew(master) {
+        if (this._initInProgress)
+            return;
+        fetch(this._saveServiceUrl, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({}),
+        }).then(resp => {
+            resp.json().then(json => {
+                this._initInProgress = false;
+                this.storeId = json.uri.split('/').pop();
+                if (this._pendingNewVals) {
+                    this._pendingNewVals.forEach(kvp => {
+                        this.newVal = kvp;
+                    });
+                    delete this._pendingNewVals;
+                }
+                if (master !== null)
+                    master.newVal = {
+                        [this._guid]: this._storeId,
+                    };
+            });
+        });
     }
     set refresh(val) {
         this.storeId = this._storeId;
@@ -235,6 +285,14 @@ class PurrSist extends XtallatX(HTMLElement) {
         this._upgradeProperties(['storeId', 'saveServiceUrl', persist, 'disabled', guid, 'masterListId']);
         this.style.display = 'none';
         this._conn = true;
+        if (!this._saveServiceUrl) {
+            if (this._baseLinkId) {
+                this._saveServiceUrl = this.getFullURL('');
+            }
+            else {
+                this._saveServiceUrl = 'https://api.myjson.com/bins';
+            }
+        }
         this.onPropsChange();
     }
     setValue(val) {
@@ -243,32 +301,29 @@ class PurrSist extends XtallatX(HTMLElement) {
             value: val
         });
     }
+    getMaster() {
+        if (!this._masterListId.startsWith('/'))
+            throw 'Must start with "/"';
+        return self[this._masterListId.substr(1)];
+    }
     onPropsChange() {
         if (!this._conn || !this._saveServiceUrl || this._disabled || !this._persist)
             return;
         if (!this._storeId) {
+            if (this._masterListId) {
+                const mst = this.getMaster();
+                if (!mst || !mst.value) {
+                    setTimeout(() => {
+                        this.onPropsChange();
+                    }, 50);
+                    return;
+                }
+                this.pullRecFromMaster(mst);
+            }
+            else {
+                this.createNew(null);
+            }
             //create new object
-            if (this._initInProgress)
-                return;
-            fetch(this._saveServiceUrl, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: 'POST',
-                body: JSON.stringify({}),
-            }).then(resp => {
-                resp.json().then(json => {
-                    this._initInProgress = false;
-                    this.storeId = json.uri.split('/').pop();
-                    if (this._pendingNewVals) {
-                        this._pendingNewVals.forEach(kvp => {
-                            this.newVal = kvp;
-                        });
-                        delete this._pendingNewVals;
-                    }
-                });
-            });
         }
         else {
             fetch(this._saveServiceUrl + '/' + this._storeId).then(resp => {

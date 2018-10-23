@@ -28,10 +28,13 @@
             </script>
         </aggregator-fn>
         <button data-on="click: pass-to:purr-sist{newVal:target.obj} skip-init">Insert Key/Value pair</button>
-        <purr-sist data-on="value-changed: pass-to-next:{input:target.value}"></purr-sist>
+        <purr-sist persist data-on="value-changed: pass-to-next:{input:target.value}
+            store-id-changed: pass-to:xtal-state-commit{url:target.storeId;history:target.storeId}
+        "></purr-sist>
         <xtal-json-editor options="{}" height="300px"></xtal-json-editor>
+        <xtal-state-commit rewrite level="global" url-search="(?<store>(.*?))" replace-url-value="?id=$<store>" with-path="store-id"></xtal-state-commit>
         <button onclick="window.location.reload()">Reload Window</button>
-        <script>
+        <!-- <script>
             const ps = document.querySelector('purr-sist');
             ps.addEventListener('value-changed', e => {
                 window.history.replaceState(e.target.value, '', '?id=' + e.target.storeId);
@@ -42,11 +45,12 @@
                 ps.storeId = storeId;
             }
             ps.persist = true;
-        </script>
+        </script> -->
         <script type="module" src="../purr-sist.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/pass-down@0.0.10/pass-down.iife.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.10/aggregator-fn.iife.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.11/aggregator-fn.iife.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-state@0.0.26/xtal-state.js"></script>
     </div>
 </body>
 </html>
