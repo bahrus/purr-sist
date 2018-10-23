@@ -24,6 +24,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         return super.observedAttributes.concat([store_id, save_service_url, persist, guid, master_list_id]);
     }
     attributeChangedCallback(n, ov, nv) {
+        console.log(n);
         super.attributeChangedCallback(n, ov, nv);
         switch (n) {
             case store_id:
@@ -51,6 +52,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         return this._storeId;
     }
     set storeId(val) {
+        this._storeId = val;
         this.attr(store_id, val);
         this.syncMasterList();
     }
@@ -120,7 +122,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     set persist(nv) {
         setTimeout(() => {
             this.attr(persist, nv, '');
-        }, 5000);
+        }, 50);
     }
     get guid() {
         return this._guid;
