@@ -3,7 +3,7 @@
 <a href="https://nodei.co/npm/purr-sist/"><img src="https://nodei.co/npm/purr-sist.png"></a>
 # purr-sist
 
-[Demo](https://unpkg.com/purr-sist@0.0.11/demo/index.html?id=11wwg0)
+[Demo](https://unpkg.com/purr-sist@0.0.12/demo/index.html?id=11wwg0)
 
 purr-sist is a web component wrapper to a generic RESTful API, which defaults, for now, to the [myjson.com](http://myjson.com/) api service.  The service allows anyone to save and update a JSON document, with zero setup steps. 
 
@@ -82,7 +82,7 @@ document.querySelector('purr-sist').newVal = {'kitty': myValue}
         <xtal-state-commit rewrite level="global" url-search="(?<store>(.*?))" replace-url-value="?id=$<store>"
             with-path="storeId"></xtal-state-commit>
         <button onclick="window.location.reload()">Reload Window</button>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.11/purr-sist.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.11/purr-sist.iife.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/pass-down@0.0.10/pass-down.iife.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.11/aggregator-fn.iife.js"></script>
