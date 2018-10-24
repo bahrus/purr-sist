@@ -5,6 +5,7 @@ import {BaseLinkId, baseLinkId} from 'xtal-latx/base-link-id.js';
 const store_id = 'store-id';
 const save_service_url = 'save-service-url';
 const persist = 'persist';
+const create = 'create';
 const guid = 'guid';
 const master_list_id = 'master-list-id';
 
@@ -20,7 +21,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     static get is() { return 'purr-sist'; }
 
     static get observedAttributes() {
-        return super.observedAttributes.concat([store_id, save_service_url, persist, guid, master_list_id]);
+        return super.observedAttributes.concat([store_id, save_service_url, persist, create, guid, master_list_id]);
     }
     attributeChangedCallback(n: string, ov: string, nv: string) {
         console.log(n);
@@ -41,9 +42,9 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             case guid:
                 this._guid = nv;
                 break;
-            
+            case create:
             case persist:
-                this._persist = (nv !== null);
+                (<any>this)['_' + n] = (nv !== null);
                 break;
         }
         this.onPropsChange()
@@ -122,10 +123,14 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         return this._persist;
     }
     set persist(nv){
-        setTimeout(() =>{
-            this.attr(persist, nv, '');
-        }, 50);
-        
+        this.attr(persist, nv, '');
+    }
+    _create!: boolean;
+    get create(){
+        return this._create;
+    }
+    set create(nv: boolean){
+        this.attr(create, nv, '');
     }
     _guid!: string;
     get guid(){
@@ -174,7 +179,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     _conn!: boolean;
 
     connectedCallback() {
-        this._upgradeProperties(['storeId', 'saveServiceUrl', persist, 'disabled', guid, 'masterListId']);
+        this._upgradeProperties(['storeId', 'saveServiceUrl', persist, create, disabled, guid, 'masterListId']);
         this.style.display = 'none';
         this._conn = true;
         if(!this._saveServiceUrl){
@@ -211,7 +216,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
                     return;
                 }
                 this.pullRecFromMaster(mst);
-            }else{
+            }else if(this._create){
                 this.createNew(null);
             }
             //create new object

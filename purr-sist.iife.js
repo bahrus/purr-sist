@@ -128,6 +128,7 @@ function BaseLinkId(superClass) {
 const store_id = 'store-id';
 const save_service_url = 'save-service-url';
 const persist = 'persist';
+const create = 'create';
 const guid = 'guid';
 const master_list_id = 'master-list-id';
 /**
@@ -145,13 +146,17 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     }
     static get is() { return 'purr-sist'; }
     static get observedAttributes() {
-        return super.observedAttributes.concat([store_id, save_service_url, persist, guid, master_list_id]);
+        return super.observedAttributes.concat([store_id, save_service_url, persist, create, guid, master_list_id]);
     }
     attributeChangedCallback(n, ov, nv) {
+        console.log(n);
         super.attributeChangedCallback(n, ov, nv);
         switch (n) {
             case store_id:
                 this._storeId = nv;
+                this.de('store-id', {
+                    value: nv
+                });
                 break;
             case save_service_url:
                 this._saveServiceUrl = nv;
@@ -162,8 +167,9 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             case guid:
                 this._guid = nv;
                 break;
+            case create:
             case persist:
-                this._persist = (nv !== null);
+                this['_' + n] = (nv !== null);
                 break;
         }
         this.onPropsChange();
@@ -172,6 +178,7 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         return this._storeId;
     }
     set storeId(val) {
+        this._storeId = val;
         this.attr(store_id, val);
         this.syncMasterList();
     }
@@ -241,6 +248,12 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     set persist(nv) {
         this.attr(persist, nv, '');
     }
+    get create() {
+        return this._create;
+    }
+    set create(nv) {
+        this.attr(create, nv, '');
+    }
     get guid() {
         return this._guid;
     }
@@ -282,7 +295,7 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         });
     }
     connectedCallback() {
-        this._upgradeProperties(['storeId', 'saveServiceUrl', persist, 'disabled', guid, 'masterListId']);
+        this._upgradeProperties(['storeId', 'saveServiceUrl', persist, create, disabled, guid, 'masterListId']);
         this.style.display = 'none';
         this._conn = true;
         if (!this._saveServiceUrl) {
@@ -320,15 +333,19 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
                 }
                 this.pullRecFromMaster(mst);
             }
-            else {
+            else if (this._create) {
                 this.createNew(null);
             }
             //create new object
         }
         else {
+            if (this._fip)
+                return;
+            this._fip = true;
             fetch(this._saveServiceUrl + '/' + this._storeId).then(resp => {
                 resp.json().then(json => {
                     this.setValue(json);
+                    this._fip = false;
                 });
             });
         }

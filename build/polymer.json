@@ -30,5 +30,7 @@
       "polymer-3"
     ]
   },
+  "npm": true,
+  "componentDir": "node_modules/",
   "moduleResolution": "node"
 }
