@@ -3,7 +3,7 @@
 <a href="https://nodei.co/npm/purr-sist/"><img src="https://nodei.co/npm/purr-sist.png"></a>
 # purr-sist
 
-[Demo](https://unpkg.com/purr-sist@0.0.12/demo/index.html?id=11wwg0)
+[Demo](https://bahrus.github.io/purr-sist-demo.html)
 
 purr-sist is a web component wrapper to a generic RESTful API, which defaults, for now, to the [myjson.com](http://myjson.com/) api service.  The service allows anyone to save and update a JSON document, with zero setup steps. 
 
@@ -12,12 +12,12 @@ purr-sist is a web component wrapper to a generic RESTful API, which defaults, f
 If you place the web component on the page:
 
 ```html
-<purr-sist persist></purr-sist>
+<purr-sist persist create></purr-sist>
 ```
 
-since no "store-id" is specified, a new "{}" record will be created on initial load.  If you inspect the element, you will see the id of that new record reflected to the element with attribute "store-id".
+since no "create" is specified, a new "{}" record will be created on initial load.  If you inspect the element, you will see the id of that new record reflected to the element with attribute "store-id".
 
-Once you have the id, you *could* set it / hardcode it in your markup. 
+Once you have the id, you *could* set it / hardcode it in your markup (after removing the create attribugte). 
 
 ```html
 <purr-sist persist store-id="catnip"></purr-sist>
@@ -52,46 +52,7 @@ const myValue = {chairman: 'meow'};
 document.querySelector('purr-sist').newVal = {'kitty': myValue}
 ```
 
-<!--
-```
-<custom-element-demo>
-  <template>
-    <div data-pd style="display:flex;flex-direction: column">
-        <pass-down></pass-down>
-        <xtal-state-parse level="global" parse="location.href" with-url-pattern="id=(?<storeId>[a-z0-9-]*)" data-on="no-match: pass-to:purr-sist{create:target.dataset.noMatch}"></xtal-state-parse>
-        <input type="text" placeholder="key" data-on="input: pass-to:aggregator-fn{key:target.value}{1}">
-        <textarea placeholder="value (JSON optional)" data-on="input: pass-to:aggregator-fn{val:target.value}{1}"></textarea>
-        <aggregator-fn data-on="value-changed: pass-to-next:{obj:target.value}">
-            <script nomodule>
-                ({ key, val }) => {
-                    if (key === undefined || val === undefined) return null;
-                    try {
-                        return { [key]: JSON.parse(val) };
-                    } catch (e) {
-                        return { [key]: val };
-                    }
-                }
-            </script>
-        </aggregator-fn>
-        <button data-on="click: pass-to:purr-sist{newVal:target.obj} skip-init">Insert Key/Value pair</button>
-        <xtal-state-watch level="global" watch data-on="history-changed: pass-to:purr-sist{storeId:target.history.storeId}"></xtal-state-watch>
-        <purr-sist persist data-on="value-changed: pass-to-next:{input:target.value}
-                store-id-changed: pass-to:xtal-state-commit{url:target.storeId;history:target.storeId}
-            "></purr-sist>
-        <xtal-json-editor options="{}" height="300px"></xtal-json-editor>
-        <xtal-state-commit rewrite level="global" url-search="(?<store>(.*?))" replace-url-value="?id=$<store>"
-            with-path="storeId"></xtal-state-commit>
-        <button onclick="window.location.reload()">Reload Window</button>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.11/purr-sist.iife.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/pass-down@0.0.10/pass-down.iife.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.11/aggregator-fn.iife.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-state@0.0.29/xtal-state.js"></script>
-    </div>
-  </template>
-</custom-element-demo>
-```
--->
+
 
 ## Master Index
 
