@@ -87,7 +87,72 @@ So the markup can look like:
 
 Note that the value of the master-list-id attribute starts with a /.  This is to explicitly state that the id is expected to be found outside any Shadow DOM.  The ability to reference a master list sitting inside some Shadow DOM realm is not currently supported. 
 
+## Example 1
 
+At the top of this document is a link to a demo.  The markup for the demo is shown below (of course you can also view source if you don't believe me).  As you can see, it is couling this component together with the xtal-state, which manages history.state.
+
+The markup is admittedly verbose.  Every step is broken down into a separate custom element.  Note that the data-flow is entirely unidirectional, an important goal.
+
+In the future we may create composite components that allow us to collapse common groupings of tag under one tag umbrella.
+
+```html
+    <div style="display:flex;flex-direction: column">
+        <!-- Parse the address bar -->
+        <xtal-state-parse disabled parse="location.href" level="global" 
+            with-url-pattern="id=(?<storeId>[a-z0-9-]*)">
+        </xtal-state-parse>
+        <!-- If no id found in address bar, create a new record ("session") -->
+        <p-d on="no-match-changed" to="purr-sist[write]{new:target.noMatch}"  m="1"></p-d>
+        <!-- If id found in address bar, pass it to the persistence reader -->
+        <p-d on="value-changed" to="purr-sist{storeId:target.value.storeId}" m="2"></p-d>
+        <!-- Read stored history.state from remote database if saved -->
+        <purr-sist read></purr-sist>
+        <!-- If persisted history.state found, repopulate history.state -->
+        <p-d on="value-changed" to="xtal-state-update{history:target.value}"></p-d>
+        <!-- Add a new key (or replace existing one) -->
+        <input type="text" placeholder="key">
+        <!-- Pass key to aggregator that creates key / value object -->
+        <p-d on="input" to="aggregator-fn{key:target.value}" m="1"></p-d>
+        <!-- Edit (JSON) value -->
+        <textarea placeholder="value (JSON optional)"></textarea>
+        <!-- Pass (JSON) value to key / value aggregator -->
+        <p-d on="input" to="{val:target.value}"></p-d>
+        <!-- Combine key / value fields into one object -->
+        <aggregator-fn><script nomodule>
+            ({ key, val }) => {
+                if (key === undefined || val === undefined) return null;
+                try {
+                    return { [key]: JSON.parse(val) };
+                } catch (e) {
+                    return { [key]: val };
+                }
+            }
+        </script></aggregator-fn>
+        <!-- Pass Aggregated Object to Button's "obj" property -->
+        <p-d on="value-changed" to="{obj:target.value}"></p-d>
+        <button>Insert Key/Value pair</button>
+        <!-- Pass button's "obj" property to history via history-state-update-->
+        <p-d on="click" to="{history:target.obj}" skip-init></p-d>
+        <!-- Update global history.state object -->
+        <xtal-state-update rewrite level="global" url-search="(?<store>(.*?))" replace-url-value="?id=$<store>"></xtal-state-update>
+        <!-- Send new history.state object to object persister -->
+        <p-d on="history-changed" to="{historyEvent:target}" skip-init></p-d>
+        <!-- Persist history.state to remote store-->   
+        <purr-sist write></purr-sist>
+        <!-- Pass persisted object to JSON viewer -->
+        <p-d on="value-changed" to="{input}"></p-d>
+        <xtal-json-editor options="{}" height="300px"></xtal-json-editor>
+        <!-- Reload window to see if changes persist -->
+        <button onclick="window.location.reload()">Reload Window</button>
+
+
+        <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.14/purr-sist.iife.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.70/p-d.p-d-x.p-u.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.11/aggregator-fn.iife.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-state@0.0.35/xtal-state.js"></script>
+    </div>
+```
 
 
 
