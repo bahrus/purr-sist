@@ -21,24 +21,22 @@
         <p-d on="input" to="aggregator-fn{key:target.value}" m="1"></p-d>
         <textarea placeholder="value (JSON optional)"></textarea>
         <p-d on="input" to="{val:target.value}"></p-d>
-        <aggregator-fn data-on="value-changed: pass-to-next:{obj:target.value}">
-            <script nomodule>
-                ({ key, val }) => {
-                    if (key === undefined || val === undefined) return null;
-                    try {
-                        return { [key]: JSON.parse(val) };
-                    } catch (e) {
-                        return { [key]: val };
-                    }
+        <aggregator-fn><script nomodule>
+            ({ key, val }) => {
+                if (key === undefined || val === undefined) return null;
+                try {
+                    return { [key]: JSON.parse(val) };
+                } catch (e) {
+                    return { [key]: val };
                 }
-            </script>
-        </aggregator-fn>
+            }
+        </script></aggregator-fn>
         <p-d on="value-changed" to="{obj:target.value}"></p-d>
         <button>Insert Key/Value pair</button>
         <p-d on="click" to="xtal-state-update{history:target.obj}" skip-init></p-d>
 
         <xtal-state-update rewrite level="global" url-search="(?<store>(.*?))" replace-url-value="?id=$<store>"></xtal-state-update>
-        <p-d on="history-changed" to="{historyEvent:target}"></p-d>   
+        <p-d on="history-changed" to="{historyEvent:target}" skip-init></p-d>   
         <purr-sist write></purr-sist>
         <p-d on="value-changed" to="{input}"></p-d>
         <xtal-json-editor options="{}" height="300px"></xtal-json-editor>

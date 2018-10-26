@@ -88,13 +88,14 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     createNew(master) {
         if (this._initInProgress)
             return;
+        const val = {};
         fetch(this._saveServiceUrl, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             method: 'POST',
-            body: JSON.stringify({}),
+            body: JSON.stringify(val),
         }).then(resp => {
             resp.json().then(json => {
                 this._initInProgress = false;
@@ -111,6 +112,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
                     };
             });
         });
+        this.value = val;
     }
     set refresh(val) {
         this.storeId = this._storeId;
@@ -242,6 +244,8 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             //create new object
         }
         else {
+            if (this._write)
+                return;
             if (this._fip)
                 return;
             this._fip = true;
