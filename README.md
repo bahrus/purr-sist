@@ -9,18 +9,29 @@ purr-sist is a web component wrapper to a generic RESTful API, which defaults, f
 
 ## Basic Syntax
 
-If you place the web component on the page:
+purr-sist has two modes:
 
 ```html
-<purr-sist persist create></purr-sist>
+<purr-sist read></purr-sist>
+<purr-sist write></purr-sist>
 ```
 
-since no "create" is specified, a new "{}" record will be created on initial load.  If you inspect the element, you will see the id of that new record reflected to the element with attribute "store-id".
+The first tag ("read") above will only read from the remote store.  The second will only write.  One tag cannot serve both roles.
 
-Once you have the id, you *could* set it / hardcode it in your markup (after removing the create attribugte). 
+The write mode tag cannot retrieve existing data on its own.  It must be passed a record (if one exists) from the read mode tag.
+
+If you place write mode tag on the page with the new attribute:
 
 ```html
-<purr-sist persist store-id="catnip"></purr-sist>
+<purr-sist write new></purr-sist>
+```
+
+since no "store-id" is specified, a new "{}" record will be created on initial load.  If you inspect the element, you will see the id of that new record reflected to the element with attribute "store-id".
+
+Once you have the id, you *could* set it / hardcode it in your markup (after removing the create attribute). 
+
+```html
+<purr-sist read store-id="catnip"></purr-sist>
 ```
 
 As we will see, this can be useful in some cases, particularly for "master lists". 

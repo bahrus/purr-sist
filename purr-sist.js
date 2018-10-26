@@ -3,8 +3,9 @@ import { define } from 'xtal-latx/define.js';
 import { BaseLinkId } from 'xtal-latx/base-link-id.js';
 const store_id = 'store-id';
 const save_service_url = 'save-service-url';
-const persist = 'persist';
-const create = 'create';
+const write = 'write';
+const read = 'read';
+const new$ = 'new';
 const guid = 'guid';
 const master_list_id = 'master-list-id';
 /**
@@ -22,10 +23,9 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     }
     static get is() { return 'purr-sist'; }
     static get observedAttributes() {
-        return super.observedAttributes.concat([store_id, save_service_url, persist, create, guid, master_list_id]);
+        return super.observedAttributes.concat([store_id, save_service_url, write, read, new$, guid, master_list_id]);
     }
     attributeChangedCallback(n, ov, nv) {
-        console.log(n);
         super.attributeChangedCallback(n, ov, nv);
         switch (n) {
             case store_id:
@@ -43,12 +43,13 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             case guid:
                 this._guid = nv;
                 break;
-            case create:
-            case persist:
+            case new$:
+            case write:
+            case read:
                 this['_' + n] = (nv !== null);
                 break;
         }
-        this.onPropsChange();
+        this.onPropsChange(n);
     }
     get storeId() {
         return this._storeId;
@@ -76,7 +77,9 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     }
     pullRecFromMaster(master) {
         if (master.value[this._guid] === undefined) {
-            this.createNew(master);
+            if (this._write) {
+                this.createNew(master);
+            }
         }
         else {
             this.storeId = master.value[this._guid];
@@ -118,17 +121,23 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     set saveServiceUrl(val) {
         this.attr(save_service_url, val);
     }
-    get persist() {
-        return this._persist;
+    get write() {
+        return this._write;
     }
-    set persist(nv) {
-        this.attr(persist, nv, '');
+    set write(nv) {
+        this.attr(write, nv, '');
     }
-    get create() {
-        return this._create;
+    get read() {
+        return this._read;
     }
-    set create(nv) {
-        this.attr(create, nv, '');
+    set read(nv) {
+        this.attr(read, nv, '');
+    }
+    get new() {
+        return this._new;
+    }
+    set new(nv) {
+        this.attr(new$, nv, '');
     }
     get guid() {
         return this._guid;
@@ -141,6 +150,20 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     }
     set masterListId(nv) {
         this.attr(master_list_id, nv);
+    }
+    //_historyEvent!: any;
+    set historyEvent(val) {
+        val.url = this._storeId;
+        const v = val.value;
+        if (!v)
+            return;
+        if (v.__purrSistInit) {
+            delete v.__purrSistInit;
+            this.value = v;
+        }
+        else {
+            this.newVal = val.value;
+        }
     }
     get newVal() {
         return this._newVal;
@@ -155,7 +178,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             return;
         }
         this._newVal = val;
-        const value = this.value === undefined ? val : Object.assign(this.value, val);
+        const value = this._value === undefined ? val : Object.assign(this._value, val);
         fetch(this._saveServiceUrl + '/' + this._storeId, {
             headers: {
                 'Accept': 'application/json',
@@ -167,11 +190,11 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             // this.de('newVal', {
             //     value: val,
             // })
-            this.setValue(value);
+            this.value = value;
         });
     }
     connectedCallback() {
-        this._upgradeProperties(['storeId', 'saveServiceUrl', persist, create, disabled, guid, 'masterListId']);
+        this._upgradeProperties(['storeId', 'saveServiceUrl', write, read, new$, disabled, guid, 'masterListId']);
         this.style.display = 'none';
         this._conn = true;
         if (!this._saveServiceUrl) {
@@ -184,8 +207,11 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         }
         this.onPropsChange();
     }
-    setValue(val) {
-        this.value = val;
+    get value() {
+        return this._value;
+    }
+    set value(val) {
+        this._value = val;
         this.de('value', {
             value: val
         });
@@ -195,9 +221,10 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             throw 'Must start with "/"';
         return self[this._masterListId.substr(1)];
     }
-    onPropsChange() {
-        if (!this._conn || !this._saveServiceUrl || this._disabled || !this._persist)
+    onPropsChange(n) {
+        if (!this._conn || !this._saveServiceUrl || this._disabled)
             return;
+        //if(this._retrieve && !this._storeId) return;
         if (!this._storeId) {
             if (this._masterListId) {
                 const mst = this.getMaster();
@@ -209,7 +236,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
                 }
                 this.pullRecFromMaster(mst);
             }
-            else if (this._create) {
+            else if (this._new && this._write) {
                 this.createNew(null);
             }
             //create new object
@@ -220,7 +247,8 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             this._fip = true;
             fetch(this._saveServiceUrl + '/' + this._storeId).then(resp => {
                 resp.json().then(json => {
-                    this.setValue(json);
+                    json.__purrSistInit = true;
+                    this.value = json;
                     this._fip = false;
                 });
             });
