@@ -10,14 +10,21 @@
 
 <body>
     <div style="display:flex;flex-direction: column">
+        <!-- Parse the address bar -->
         <xtal-state-parse disabled parse="location.href" level="global" 
             with-url-pattern="id=(?<storeId>[a-z0-9-]*)">
         </xtal-state-parse>
+        <!-- If no id found in address bar, create a new record ("session") -->
         <p-d on="no-match" to="purr-sist[write]{new:target.noMatch}"  m="1"></p-d>
+        <!-- If id found in address bar, pass it to the persistence reader -->
         <p-d on="value-changed" to="purr-sist{storeId:target.value.storeId}" m="2"></p-d>
+        <!-- Read stored history.state from remote database if saved -->
         <purr-sist read></purr-sist>
+        <!-- If persisted history.state found, repopulate history.state -->
         <p-d on="value-changed" to="xtal-state-update{history:target.value}"></p-d>
+        <!-- Add a new key (or replace existing one) -->
         <input type="text" placeholder="key">
+        <!-- Pass key to aggregator that creates key / value object -->
         <p-d on="input" to="aggregator-fn{key:target.value}" m="1"></p-d>
         <textarea placeholder="value (JSON optional)"></textarea>
         <p-d on="input" to="{val:target.value}"></p-d>
