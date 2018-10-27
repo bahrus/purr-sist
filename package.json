@@ -1,6 +1,6 @@
 {
   "name": "purr-sist",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Pesist JSON",
   "main": "purr-sist.js",
   "dependencies": {
