@@ -89,11 +89,11 @@ Note that the value of the master-list-id attribute starts with a /.  This is to
 
 ## Example 1
 
-At the top of this document is a link to a demo.  The markup for the demo is shown below (of course you can also view source if you don't believe me).  As you can see, it is couling this component together with the xtal-state, which manages history.state.
+At the top of this document is a link to a demo.  The markup for the demo is shown below (of course you can also view source if you don't believe me).  As you can see, it is coupling this component together with [xtal-state](https://www.webcomponents.org/element/xtal-state), which manages history.state.
 
 The markup is admittedly verbose.  Every step is broken down into a separate custom element.  Note that the data-flow is entirely unidirectional, an important goal.
 
-In the future we may create composite components that allow us to collapse common groupings of tag under one tag umbrella.
+In the future we may create composite components that allow us to collapse common groupings of tags under one tag umbrella.
 
 ```html
     <div style="display:flex;flex-direction: column">
@@ -102,12 +102,12 @@ In the future we may create composite components that allow us to collapse commo
             with-url-pattern="id=(?<storeId>[a-z0-9-]*)">
         </xtal-state-parse>
         <!-- If no id found in address bar, create a new record ("session") -->
-        <p-d on="no-match-changed" to="purr-sist[write]{new:target.noMatch}"  m="1"></p-d>
-        <!-- If id found in address bar, pass it to the persistence reader -->
+        <p-d on="no-match-found" to="purr-sist[write]{new:target.noMatch}"  m="1"></p-d>
+        <!-- If id found in address bar, pass it to the persistence reader and writer -->
         <p-d on="value-changed" to="purr-sist{storeId:target.value.storeId}" m="2"></p-d>
         <!-- Read stored history.state from remote database if saved -->
         <purr-sist read></purr-sist>
-        <!-- If persisted history.state found, repopulate history.state -->
+        <!-- If persisted history.state found, populate history.state -->
         <p-d on="value-changed" to="xtal-state-update{history:target.value}"></p-d>
         <!-- Add a new key (or replace existing one) -->
         <input type="text" placeholder="key">
@@ -147,10 +147,10 @@ In the future we may create composite components that allow us to collapse commo
 
 
         <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.14/purr-sist.iife.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.70/p-d.p-d-x.p-u.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.71/p-d.p-d-x.p-u.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.11/aggregator-fn.iife.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-state@0.0.35/xtal-state.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-state@0.0.36/xtal-state.js"></script>
     </div>
 ```
 
