@@ -45,9 +45,8 @@
         <!-- Put draft object into history -->
         <!-- Pass Aggregated Object to Button's "obj" property -->
         <p-d on="value-changed" to="button{obj:target.value}" m="1"></p-d>
-        <!-- <p-d on="value-changed" to="xtal-state-commit{obj:target.value}" m="1"></p-d> -->
+        <p-d-x on="value-changed" to="xtal-state-update{history.draft:target.value}" m="1"></p-d-x> 
         <button>Insert Key/Value pair</button>
-        <!-- <xtal-state-commit rewrite level="global" url-search="(?<store>(.*?))" replace-url-value="?id=$<store>" with-path="draft"></xtal-state-commit> -->
         <!-- Pass button's "obj" property to history via history-state-update-->
         <p-d-x on="click" to="xtal-state-update{history.submitted:target.obj}" skip-init m="1"></p-d-x>
         <!-- Update global history.state object -->
