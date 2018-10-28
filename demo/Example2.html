@@ -21,9 +21,11 @@
         <p-d on="match-found" to="purr-sist{storeId:target.value.storeId}" m="2" skip-init></p-d>
         <!-- Read stored history.state from remote database if saved -->
         <purr-sist read></purr-sist>
-        <!-- If persisted history.state found, repopulate history.state -->
+        <!-- If persisted history.state found, repopulate history.state, and ... -->
         <p-d on="value-changed" to="xtal-state-update{history:target.value}" m="1"></p-d>
+        <!-- ====== the draft key, and ...-->
         <p-d-x on="value-changed" to="input{value:target.value.draft.key}" m="1" skip-init></p-d-x>
+        <!-- ====== the draft value ====== -->
         <p-d-x on="value-changed" to="textarea{value:target.value.draft.value}" m="1" skip-init></p-d-x>
         <!-- Add a new key (or replace existing one) -->
         <input type="text" placeholder="key">

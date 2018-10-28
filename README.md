@@ -3,7 +3,7 @@
 <a href="https://nodei.co/npm/purr-sist/"><img src="https://nodei.co/npm/purr-sist.png"></a>
 # purr-sist
 
-[Demo](https://bahrus.github.io/purr-sist-demo.html)
+[Demo](https://bahrus.github.io/purr-sist-demos/Example1.html)
 
 purr-sist is a web component wrapper to a generic RESTful API, which defaults, for now, to the [myjson.com](http://myjson.com/) api service.  The service allows anyone to save and update a JSON document, with zero setup steps. 
 
@@ -79,7 +79,7 @@ So the markup can look like:
         ...
         <my-component> <!-- just an example -->
             #ShadowDOM
-                <purr-sist persist guid="7482dbc4-04c8-40e6-8481-07d8ee4656b7" master-list-id="/myMasterList"></purr-sist>
+                <purr-sist read guid="7482dbc4-04c8-40e6-8481-07d8ee4656b7" master-list-id="/myMasterList"></purr-sist>
             #EndShadowDOM
         </my-component>
     </body>
@@ -93,7 +93,11 @@ At the top of this document is a link to a demo.  The markup for the demo is sho
 
 The markup is admittedly verbose.  Every step is broken down into a separate custom element.  Note that the data-flow is entirely unidirectional, an important goal.
 
-In the future we may create composite components that allow us to collapse common groupings of tags under one tag umbrella.  Also, once all browsers support ES2018, the parseFn, stringifyFn can be removed.
+In the future we may create composite components that allow us to collapse common groupings of tags under one tag umbrella.  
+
+Also, once all browsers support ES2018, the parseFn, stringifyFn can be removed, which is adding to the size.
+
+[See it in action](https://bahrus.github.io/purr-sist-demos/Example1.html)
 
 ```html
     <div style="display:flex;flex-direction: column">
@@ -188,5 +192,9 @@ In the future we may create composite components that allow us to collapse commo
     </div>
 ```
 
+## Example 2
 
+Here we drop support for non ES2018 -- grouped name regexp browsers so the markup is cleaner, more declarative.  So only Chrome works currently.  Example 2 extends Example 1, but editing "draft" fields are prepopulated.  Data flow still unidirectional. 
+
+[See it in action](https://bahrus.github.io/purr-sist-demos/Example2.html) [Source](view-source:https://bahrus.github.io/purr-sist-demos/Example2.html)
 
