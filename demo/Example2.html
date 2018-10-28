@@ -12,24 +12,6 @@
     <div style="display:flex;flex-direction: column">
 
         <!-- Parse the address bar -->
-        <!-- Temporary workaround for browsers that don't yet support grouped name capture regex (all but chrome currently -->
-        <xtal-deco>
-            <script nomodule>
-                ({
-                    setters:{
-                        parseFn: function(href){
-                            const split = href.split('id=');
-                            if(split.length === 1) return null;
-                            return {
-                                storeId: split[1]
-                            }
-                        }
-                    }
-
-                })
-            </script>
-        </xtal-deco>
-        <!-- End temporary workaround -->
         <xtal-state-parse disabled="2" parse="location.href" level="global" 
             with-url-pattern="id=(?<storeId>[a-z0-9-]*)">
         </xtal-state-parse>
@@ -60,26 +42,15 @@
                 }
             }
         </script></aggregator-fn>
+        <!-- Put draft object into history -->
         <!-- Pass Aggregated Object to Button's "obj" property -->
-        <p-d on="value-changed" to="{obj:target.value}"></p-d>
+        <p-d on="value-changed" to="button{obj:target.value}" m="1"></p-d>
+        <!-- <p-d on="value-changed" to="xtal-state-commit{obj:target.value}" m="1"></p-d> -->
         <button>Insert Key/Value pair</button>
+        <!-- <xtal-state-commit rewrite level="global" url-search="(?<store>(.*?))" replace-url-value="?id=$<store>" with-path="draft"></xtal-state-commit> -->
         <!-- Pass button's "obj" property to history via history-state-update-->
-        <p-d on="click" to="xtal-state-update{history:target.obj}" skip-init m="1"></p-d>
+        <p-d-x on="click" to="xtal-state-update{history.submitted:target.obj}" skip-init m="1"></p-d-x>
         <!-- Update global history.state object -->
-        <!-- Temporary workaround for browsers that don't yet support grouped name capture regex (all but chrome currently -->
-        <xtal-deco>
-            <script nomodule>
-                ({
-                    setters:{
-                        stringifyFn: stateUpdater => {
-                            return '?id=' + stateUpdater.url;
-                        }
-                    }
-                    
-                })
-            </script>
-        </xtal-deco>
-        <!-- End temporary workaround -->
         <xtal-state-update rewrite level="global" url-search="(?<store>(.*?))" replace-url-value="?id=$<store>"></xtal-state-update>
         <!-- Send new history.state object to object persister -->
         <p-d on="history-changed" to="{historyEvent:target}" skip-init></p-d>
