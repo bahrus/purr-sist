@@ -23,12 +23,15 @@
         <purr-sist read></purr-sist>
         <!-- If persisted history.state found, repopulate history.state -->
         <p-d on="value-changed" to="xtal-state-update{history:target.value}" m="1"></p-d>
+        <!-- <p-d on="value-changed" to="[placeholder='key']{value:target.value.} -->
         <!-- Add a new key (or replace existing one) -->
         <input type="text" placeholder="key">
+        <p-d-x on="input" to="xtal-state-update{history.draft.key:target.value}" m="1"></p-d-x>
         <!-- Pass key to aggregator that creates key / value object -->
         <p-d on="input" to="aggregator-fn{key:target.value}" m="1"></p-d>
         <!-- Edit (JSON) value -->
         <textarea placeholder="value (JSON optional)"></textarea>
+        <p-d-x on="input" to="xtal-state-update{history.draft.value:target.value}" m="1"></p-d-x>
         <!-- Pass (JSON) value to key / value aggregator -->
         <p-d on="input" to="{val:target.value}"></p-d>
         <!-- Combine key / value fields into one object -->
@@ -45,7 +48,7 @@
         <!-- Put draft object into history -->
         <!-- Pass Aggregated Object to Button's "obj" property -->
         <p-d on="value-changed" to="button{obj:target.value}" m="1"></p-d>
-        <p-d-x on="value-changed" to="xtal-state-update{history.draft:target.value}" m="1"></p-d-x> 
+         
         <button>Insert Key/Value pair</button>
         <!-- Pass button's "obj" property to history via history-state-update-->
         <p-d-x on="click" to="xtal-state-update{history.submitted:target.obj}" skip-init m="1"></p-d-x>
