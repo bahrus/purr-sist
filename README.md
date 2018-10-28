@@ -93,22 +93,41 @@ At the top of this document is a link to a demo.  The markup for the demo is sho
 
 The markup is admittedly verbose.  Every step is broken down into a separate custom element.  Note that the data-flow is entirely unidirectional, an important goal.
 
-In the future we may create composite components that allow us to collapse common groupings of tags under one tag umbrella.
+In the future we may create composite components that allow us to collapse common groupings of tags under one tag umbrella.  Also, once all browsers support ES2018, the parseFn, stringifyFn can be removed.
 
 ```html
     <div style="display:flex;flex-direction: column">
+
         <!-- Parse the address bar -->
+        <!-- Temporary workaround for browsers that don't yet support grouped name capture regex (all but chrome currently -->
+        <xtal-deco>
+            <script nomodule>
+                ({
+                    setters:{
+                        parseFn: function(href){
+                            const split = href.split('id=');
+                            if(split.length === 1) return null;
+                            return {
+                                storeId: split[1]
+                            }
+                        }
+                    }
+
+                })
+            </script>
+        </xtal-deco>
+        <!-- End temporary workaround -->
         <xtal-state-parse disabled parse="location.href" level="global" 
             with-url-pattern="id=(?<storeId>[a-z0-9-]*)">
         </xtal-state-parse>
         <!-- If no id found in address bar, create a new record ("session") -->
         <p-d on="no-match-found" to="purr-sist[write]{new:target.noMatch}"  m="1"></p-d>
-        <!-- If id found in address bar, pass it to the persistence reader -->
+        <!-- If id found in address bar, pass it to the persistence reader and writer -->
         <p-d on="match-found" to="purr-sist{storeId:target.value.storeId}" m="2"></p-d>
         <!-- Read stored history.state from remote database if saved -->
         <purr-sist read></purr-sist>
         <!-- If persisted history.state found, repopulate history.state -->
-        <p-d on="value-changed" to="xtal-state-update{history:target.value}"></p-d>
+        <p-d on="value-changed" to="xtal-state-update{history:target.value}" m="1"></p-d>
         <!-- Add a new key (or replace existing one) -->
         <input type="text" placeholder="key">
         <!-- Pass key to aggregator that creates key / value object -->
@@ -132,8 +151,22 @@ In the future we may create composite components that allow us to collapse commo
         <p-d on="value-changed" to="{obj:target.value}"></p-d>
         <button>Insert Key/Value pair</button>
         <!-- Pass button's "obj" property to history via history-state-update-->
-        <p-d on="click" to="{history:target.obj}" skip-init></p-d>
+        <p-d on="click" to="xtal-state-update{history:target.obj}" skip-init m="1"></p-d>
         <!-- Update global history.state object -->
+        <!-- Temporary workaround for browsers that don't yet support grouped name capture regex (all but chrome currently -->
+        <xtal-deco>
+            <script nomodule>
+                ({
+                    setters:{
+                        stringifyFn: stateUpdater => {
+                            return '?id=' + stateUpdater.url;
+                        }
+                    }
+                    
+                })
+            </script>
+        </xtal-deco>
+        <!-- End temporary workaround -->
         <xtal-state-update rewrite level="global" url-search="(?<store>(.*?))" replace-url-value="?id=$<store>"></xtal-state-update>
         <!-- Send new history.state object to object persister -->
         <p-d on="history-changed" to="{historyEvent:target}" skip-init></p-d>
@@ -150,7 +183,8 @@ In the future we may create composite components that allow us to collapse commo
         <script type="module" src="https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.71/p-d.p-d-x.p-u.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.11/aggregator-fn.iife.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-state@0.0.37/xtal-state.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-state@0.0.42/xtal-state.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-decorator@0.0.29/xtal-decorator.iife.js"></script>
     </div>
 ```
 
