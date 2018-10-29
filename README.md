@@ -107,7 +107,7 @@ Here we drop support for non ES2018 -- grouped name regexp browsers so the marku
 
 [See it in action](https://bahrus.github.io/purr-sist-demos/Example3.html)
 
-Data flow stii unidirectional.  Markup shown below:
+Data flow still unidirectional.  Markup shown below:
 
 ```html
 <!DOCTYPE html>

@@ -16,8 +16,9 @@
             with-url-pattern="id=(?<storeId>[a-z0-9-]*)">
         </xtal-state-parse>
 
-        <!-- If no id found in address bar, "pass-down (p-d)" message to purr-sist writer and xtal-state-update history initializer
-             to  create a new record ("session") in both history and remote store -->
+        <!-- If no id found in address bar, "pass-down (p-d)" message to purr-sist writer 
+            and xtal-state-update history initializer  to  create a new record ("session") 
+            in both history and remote store -->
         <p-d on="no-match-found" to="purr-sist[write],xtal-state-update[init]{new:target.noMatch}"  m="2" skip-init></p-d>
 
         <!-- If id found in address bar, pass it to the persistence reader and writer -->
@@ -30,8 +31,8 @@
         <p-d on="value-changed" to="{history:target.value}"></p-d>
         <xtal-state-update rewrite></xtal-state-update>
 
-        <!-- Watch for initial history state or popstate events, populate UI components that need to initialize
-            when these events occur.
+        <!-- Watch for initial history state or popstate events, populate UI components
+             that need to initialize when these events occur.
          -->
         <xtal-state-watch init watch="popstate" level="global"></xtal-state-watch>
 
