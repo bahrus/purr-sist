@@ -195,3 +195,5 @@ Here we drop support for non ES2018 -- grouped name regexp browsers so the marku
 [See it in action](https://bahrus.github.io/purr-sist-demos/Example2.html)
 
 ## Example 3 -- Time travel support (aka back button)
+
+[See it in action](https://bahrus.github.io/purr-sist-demos/Example3.html)
