@@ -279,7 +279,9 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     }
     //_historyEvent!: any;
     set historyEvent(val) {
-        val.url = this._storeId;
+        if (val.url !== this._storeId) {
+            val.url = this._storeId;
+        }
         const v = val.value;
         if (!v)
             return;
@@ -304,7 +306,7 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             return;
         }
         this._newVal = val;
-        const value = this._value === undefined ? val : Object.assign(this._value, val);
+        const value = val; //this._value === undefined ? val : Object.assign(this._value, val);
         fetch(this._saveServiceUrl + '/' + this._storeId, {
             headers: {
                 'Accept': 'application/json',
