@@ -104,22 +104,20 @@ Also, once all browsers support ES2018, the parseFn, stringifyFn can be removed,
 
         <!-- Parse the address bar -->
         <!-- Temporary workaround for browsers that don't yet support grouped name capture regex (all but chrome currently -->
-        <xtal-deco>
-            <script nomodule>
-                ({
-                    setters:{
-                        parseFn: function(href){
-                            const split = href.split('id=');
-                            if(split.length === 1) return null;
-                            return {
-                                storeId: split[1]
-                            }
-                        }
+        <xtal-deco><script nomodule>
+        ({
+            setters:{
+                parseFn: function(href){
+                    const split = href.split('id=');
+                    if(split.length === 1) return null;
+                    return {
+                        storeId: split[1]
                     }
+                }
+            }
 
-                })
-            </script>
-        </xtal-deco>
+        })
+        </script></xtal-deco>
         <!-- End temporary workaround -->
         <xtal-state-parse disabled="2" parse="location.href" level="global" 
             with-url-pattern="id=(?<storeId>[a-z0-9-]*)">
@@ -127,7 +125,7 @@ Also, once all browsers support ES2018, the parseFn, stringifyFn can be removed,
         <!-- If no id found in address bar, create a new record ("session") -->
         <p-d on="no-match-found" to="purr-sist[write]{new:target.noMatch}"  m="1" skip-init></p-d>
         <!-- If id found in address bar, pass it to the persistence reader and writer -->
-        <p-d on="match-found" to="purr-sist{storeId:target.value.storeId}" m="2" debug skip-init></p-d>
+        <p-d on="match-found" to="purr-sist{storeId:target.value.storeId}" m="2" skip-init></p-d>
         <!-- Read stored history.state from remote database if saved -->
         <purr-sist read></purr-sist>
         <!-- If persisted history.state found, repopulate history.state -->
@@ -157,19 +155,17 @@ Also, once all browsers support ES2018, the parseFn, stringifyFn can be removed,
         <!-- Pass button's "obj" property to history via history-state-update-->
         <p-d on="click" to="xtal-state-update{history:target.obj}" skip-init m="1"></p-d>
         <!-- Update global history.state object -->
-        <!-- Temporary workaround for browsers that don't yet support grouped name capture regex (all but chrome currently -->
-        <xtal-deco>
-            <script nomodule>
-                ({
-                    setters:{
-                        stringifyFn: stateUpdater => {
-                            return '?id=' + stateUpdater.url;
-                        }
-                    }
-                    
-                })
-            </script>
-        </xtal-deco>
+        <!-- Temporary workaround for browsers that don't yet support grouped name capture regex (all but chrome currently) -->
+        <xtal-deco><script nomodule>
+        ({
+            setters:{
+                stringifyFn: stateUpdater => {
+                    return '?id=' + stateUpdater.url;
+                }
+            }
+            
+        })
+        </script></xtal-deco>
         <!-- End temporary workaround -->
         <xtal-state-update rewrite level="global" url-search="(?<store>(.*?))" replace-url-value="?id=$<store>"></xtal-state-update>
         <!-- Send new history.state object to object persister -->
@@ -192,9 +188,10 @@ Also, once all browsers support ES2018, the parseFn, stringifyFn can be removed,
     </div>
 ```
 
-## Example 2
+## Example 2 - Repopulate fields
 
 Here we drop support for non ES2018 -- grouped name regexp browsers so the markup is cleaner, more declarative.  So only Chrome works currently.  Example 2 extends Example 1, but editing "draft" fields are prepopulated.  Data flow still unidirectional. 
 
-[See it in action](https://bahrus.github.io/purr-sist-demos/Example2.html) [Source](view-source:https://bahrus.github.io/purr-sist-demos/Example2.html)
+[See it in action](https://bahrus.github.io/purr-sist-demos/Example2.html)
 
+## Example 3 -- Time travel support (aka back button)
