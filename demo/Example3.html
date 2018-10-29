@@ -16,20 +16,22 @@
             with-url-pattern="id=(?<storeId>[a-z0-9-]*)">
         </xtal-state-parse>
         <!-- If no id found in address bar, create a new record ("session") in both history and remote store -->
-        <p-d on="no-match-found" to="purr-sist[write]{new:target.noMatch}"  m="1" skip-init></p-d>
-        <p-d on="no-match-found" to="xtal-state-update{init:target.noMatch}" m="1" skip-init></p-d>
+        <p-d on="no-match-found" to="purr-sist[write],xtal-state-update[init]{new:target.noMatch}"  m="2" skip-init></p-d>
         <!-- If id found in address bar, pass it to the persistence reader and writer -->
         <p-d on="match-found" to="purr-sist{storeId:target.value.storeId}" m="2" skip-init></p-d>
         <!-- Read stored history.state from remote database if saved -->
         <purr-sist read></purr-sist>
         <!-- If persisted history.state found, repopulate history.state-->
-        <p-d on="value-changed" to="{history:target.value}" m="1"></p-d>
+        <p-d on="value-changed" to="{history:target.value}"></p-d>
         <xtal-state-update rewrite></xtal-state-update>
-        <xtal-state-watch watch="popstate" level="global"></xtal-state-watch>
-        <!-- ====== the draft key, and ...-->
+        <!-- Watch for initial history state or popstate events, populate UI components that need to initialize -->
+        <xtal-state-watch init watch="popstate" level="global"></xtal-state-watch>
+        <!-- ====== initialize key input field ===== -->
         <p-d-x on="history-changed" to="input{value:target.history.draft.key}" m="1" skip-init></p-d-x>
-        <!-- ====== the draft value ====== -->
+        <!-- ====== initialize textarea (JSON) field ====== -->
         <p-d-x on="history-changed" to="textarea{value:target.history.draft.value}" m="1" skip-init></p-d-x>
+        <!--  ====== Sync up history with xtal-state-update, which feeds into persistence writer.  
+                    SyncHistory doesn't update history, but downstream elements are notified as if it is  -->
         <p-d-x on="history-changed" to="xtal-state-update{syncHistory:target.history}" m="1" skip-init></p-d-x>
         <!-- ==========================  UI Input Fields ===================================-->
         <!-- Add a new key (or replace existing one) -->
@@ -77,7 +79,7 @@
         <script type="module" src="https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.74/p-d.p-d-x.p-u.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.11/aggregator-fn.iife.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-state@0.0.52/xtal-state.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-state@0.0.53/xtal-state.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-decorator@0.0.29/xtal-decorator.iife.js"></script>
     </div>
 </body>
