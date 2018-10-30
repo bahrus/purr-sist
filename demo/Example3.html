@@ -37,13 +37,13 @@
         <xtal-state-watch watch="popstate" level="global"></xtal-state-watch>
 
         <!-- ====== initialize key input field ===== -->
-        <p-d-x on="history-changed" to="input{value:target.history.draft.key}" m="1" skip-init></p-d-x>
+        <p-d on="history-changed" to="input{value:target.history.draft.key}" m="1" skip-init></p-d>
         <!-- ====== initialize textarea (JSON) field ====== -->
-        <p-d-x on="history-changed" to="textarea{value:target.history.draft.value}" m="1" skip-init></p-d-x>
+        <p-d on="history-changed" to="textarea{value:target.history.draft.value}" m="1" skip-init></p-d>
 
         <!--  ====== Sync up history with xtal-state-update, which feeds into persistence writer.  
                     SyncHistory doesn't update history, but downstream elements are notified as if it is  -->
-        <p-d-x on="history-changed" to="xtal-state-update{syncHistory:target.history}" m="1" skip-init></p-d-x>
+        <p-d on="history-changed" to="xtal-state-update{syncHistory:target.history}" m="1" skip-init></p-d>
 
         <!-- ==========================  UI Input Fields ===================================-->
         <!-- Add a new key (or replace existing one) -->
