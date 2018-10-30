@@ -141,12 +141,12 @@ Data flow still unidirectional.  Markup shown below:
 
         <!-- If persisted history.state found, repopulate history.state-->
         <p-d on="value-changed" to="{history:target.value}"></p-d>
-        <xtal-state-update rewrite></xtal-state-update>
+        <xtal-state-update init rewrite level="global"></xtal-state-update>
 
         <!-- Watch for initial history state or popstate events, populate UI components
              that need to initialize when these events occur.
          -->
-        <xtal-state-watch init watch="popstate" level="global"></xtal-state-watch>
+        <xtal-state-watch watch="popstate" level="global"></xtal-state-watch>
 
         <!-- ====== initialize key input field ===== -->
         <p-d-x on="history-changed" to="input{value:target.history.draft.key}" m="1" skip-init></p-d-x>
