@@ -109,6 +109,7 @@ Here we drop support for non ES2018 -- grouped name regexp browsers so the marku
 
 Data flow still unidirectional.  Markup shown below:
 
+<details>
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -220,3 +221,4 @@ Data flow still unidirectional.  Markup shown below:
 
 </html>
 ```
+</details>
