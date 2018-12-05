@@ -126,7 +126,6 @@ function BaseLinkId(superClass) {
     };
 }
 const store_id = 'store-id';
-const save_service_url = 'save-service-url';
 const write = 'write';
 const read = 'read';
 const new$ = 'new';
@@ -142,12 +141,12 @@ const master_list_id = 'master-list-id';
  */
 class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     constructor() {
+        //static get is() { return 'purr-sist'; }
         super(...arguments);
         this._initInProgress = false;
     }
-    static get is() { return 'purr-sist'; }
     static get observedAttributes() {
-        return super.observedAttributes.concat([store_id, save_service_url, write, read, new$, guid, master_list_id]);
+        return super.observedAttributes.concat([store_id, write, read, new$, guid, master_list_id]);
     }
     attributeChangedCallback(n, ov, nv) {
         super.attributeChangedCallback(n, ov, nv);
@@ -157,9 +156,6 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
                 this.de('store-id', {
                     value: nv
                 });
-                break;
-            case save_service_url:
-                this._saveServiceUrl = nv;
                 break;
             case master_list_id:
                 this._masterListId = nv;
@@ -209,43 +205,8 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             this.storeId = master.value[this._guid];
         }
     }
-    createNew(master) {
-        if (this._initInProgress)
-            return;
-        const val = {};
-        fetch(this._saveServiceUrl, {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            method: 'POST',
-            body: JSON.stringify(val),
-        }).then(resp => {
-            resp.json().then(json => {
-                this._initInProgress = false;
-                this.storeId = json.uri.split('/').pop();
-                if (this._pendingNewVals) {
-                    this._pendingNewVals.forEach(kvp => {
-                        this.newVal = kvp;
-                    });
-                    delete this._pendingNewVals;
-                }
-                if (master !== null)
-                    master.newVal = {
-                        [this._guid]: this._storeId,
-                    };
-            });
-        });
-        this.value = val;
-    }
     set refresh(val) {
         this.storeId = this._storeId;
-    }
-    get saveServiceUrl() {
-        return this._saveServiceUrl;
-    }
-    set saveServiceUrl(val) {
-        this.attr(save_service_url, val);
     }
     get write() {
         return this._write;
@@ -306,33 +267,13 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             return;
         }
         this._newVal = val;
-        const value = val; //this._value === undefined ? val : Object.assign(this._value, val);
-        fetch(this._saveServiceUrl + '/' + this._storeId, {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            method: 'PUT',
-            body: JSON.stringify(value),
-        }).then(resp => {
-            // this.de('newVal', {
-            //     value: val,
-            // })
-            this.value = value;
-        });
+        //const value = val; //this._value === undefined ? val : Object.assign(this._value, val);
+        this.saveNewVal(val);
     }
     connectedCallback() {
-        this._upgradeProperties(['storeId', 'saveServiceUrl', write, read, new$, disabled, guid, 'masterListId']);
+        this._upgradeProperties(['storeId', write, read, new$, disabled, guid, 'masterListId']);
         this.style.display = 'none';
         this._conn = true;
-        if (!this._saveServiceUrl) {
-            if (this._baseLinkId) {
-                this._saveServiceUrl = this.getFullURL('');
-            }
-            else {
-                this._saveServiceUrl = 'https://api.myjson.com/bins';
-            }
-        }
         this.onPropsChange();
     }
     get value() {
@@ -350,7 +291,7 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         return self[this._masterListId.substr(1)];
     }
     onPropsChange(n) {
-        if (!this._conn || !this._saveServiceUrl || this._disabled)
+        if (!this._conn || this._disabled)
             return;
         //if(this._retrieve && !this._storeId) return;
         if (!this._storeId) {
@@ -372,19 +313,10 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         else {
             if (this._write)
                 return;
-            if (this._fip)
-                return;
-            this._fip = true;
-            fetch(this._saveServiceUrl + '/' + this._storeId).then(resp => {
-                resp.json().then(json => {
-                    json.__purrSistInit = true;
-                    this.value = json;
-                    this._fip = false;
-                });
-            });
+            this.getStore();
         }
     }
 }
-define(PurrSist);
+// define(PurrSist);
     })();  
         
