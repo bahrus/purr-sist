@@ -127,8 +127,12 @@ export abstract class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     }
     _pendingNewVals!: any[];
 
-    //_historyEvent!: any;
+    _historyEvent!: any;
+    get historyEvent(){
+        return this._historyEvent;
+    }
     set historyEvent(val : any){
+        this._historyEvent = val;
         if(val.url !== this._storeId) {
             val.url = this._storeId;
         }
@@ -168,7 +172,7 @@ export abstract class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     _conn!: boolean;
 
     connectedCallback() {
-        this._upgradeProperties(['storeId',  write, read, new$, disabled, guid, 'masterListId']);
+        this._upgradeProperties(['storeId',  write, read, new$, disabled, guid, 'masterListId', 'historyEvent']);
         this.style.display = 'none';
         this._conn = true;
 

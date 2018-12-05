@@ -16,16 +16,16 @@
             with-url-pattern="id=(?<storeId>[a-z0-9-]*)">
         </xtal-state-parse>
 
-        <!-- If no id found in address bar, "pass-down (p-d)" message to purr-sist writer 
+        <!-- If no id found in address bar, "pass-down (p-d)" message to purr-sist-myjson writer 
             and xtal-state-update history initializer  to  create a new record ("session") 
             in both history and remote store -->
-        <p-d on="no-match-found" to="purr-sist[write],xtal-state-update[init]" prop="new" val="target.noMatch"  m="2" skip-init></p-d>
+        <p-d on="no-match-found" to="purr-sist-myjson[write],xtal-state-update[init]" prop="new" val="target.noMatch"  m="2" skip-init></p-d>
 
         <!-- If id found in address bar, pass it to the persistence reader and writer -->
-        <p-d on="match-found" to="purr-sist" prop="storeId" val="target.value.storeId" m="2" skip-init></p-d>
+        <p-d on="match-found" to="purr-sist-myjson" prop="storeId" val="target.value.storeId" m="2" skip-init></p-d>
 
         <!-- Read stored history.state from remote database if id found in address bar -->
-        <purr-sist read disabled></purr-sist>
+        <purr-sist-myjson read disabled></purr-sist-myjson>
 
         <!-- If persisted history.state found, repopulate history.state-->
         <p-d on="value-changed" prop="history" val="target.value"></p-d>
@@ -86,7 +86,7 @@
         <p-d on="history-changed" prop="historyEvent" val="target" skip-init></p-d>
 
         <!-- Persist history.state to remote store-->   
-        <purr-sist write disabled></purr-sist>
+        <purr-sist-myjson write disabled></purr-sist-myjson>
 
         <!-- Pass persisted object to JSON viewer -->
         <p-d on="value-changed" prop="input"></p-d>
@@ -96,11 +96,11 @@
         <button onclick="window.location.reload()">Reload Window</button>
 
         <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.20/purr-sist.iife.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.26/dist/purr-sist-myjson.iife.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.92/dist/p-all.iife.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.11/aggregator-fn.iife.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-state@0.0.54/xtal-state.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-state@0.0.56/xtal-state.js"></script>
     </div>
 </body>
 </html>

@@ -113,8 +113,11 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     set masterListId(nv) {
         this.attr(master_list_id, nv);
     }
-    //_historyEvent!: any;
+    get historyEvent() {
+        return this._historyEvent;
+    }
     set historyEvent(val) {
+        this._historyEvent = val;
         if (val.url !== this._storeId) {
             val.url = this._storeId;
         }
@@ -146,7 +149,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         this.saveNewVal(val);
     }
     connectedCallback() {
-        this._upgradeProperties(['storeId', write, read, new$, disabled, guid, 'masterListId']);
+        this._upgradeProperties(['storeId', write, read, new$, disabled, guid, 'masterListId', 'historyEvent']);
         this.style.display = 'none';
         this._conn = true;
         this.onPropsChange();
