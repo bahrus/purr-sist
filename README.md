@@ -5,15 +5,21 @@
 
 [Demo](https://bahrus.github.io/purr-sist-demos/Example1.html)
 
-purr-sist is a web component wrapper to a generic RESTful API, which defaults, for now, to the [myjson.com](http://myjson.com/) api service.  The service allows anyone to save and update a JSON document, with zero setup steps. 
+purr-sist-* are web component wrappers around various services used to persist (history.)state.
+
+What follows purr-sist- indicates where the state is persisted.
+
+For example, purr-sist-myjson persists state to the [myjson.com](http://myjson.com/) api service.  The service allows anyone to save and update a JSON document, with zero setup steps.  See discussion below about the pro's and significant con's of this service.
+
+[TODO]:  purr-sist-idb persists state to the local indexed db for offline storage (and potentially cross window state management).
 
 ## Basic Syntax
 
 purr-sist has two modes:
 
 ```html
-<purr-sist read></purr-sist>
-<purr-sist write></purr-sist>
+<purr-sist-foo read></purr-sist-foo>
+<purr-sist-foo write></purr-sist-foo>
 ```
 
 The first tag ("read") above will only read from the remote store.  The second will only write.  One tag cannot serve both roles.
@@ -23,7 +29,7 @@ The write mode tag cannot retrieve existing data on its own.  It must be passed 
 If you place write mode tag on the page with the new attribute:
 
 ```html
-<purr-sist write new></purr-sist>
+<purr-sist-foo write new></purr-sist-foo>
 ```
 
 since no "store-id" is specified, a new "{}" record will be created on initial load.  If you inspect the element, you will see the id of that new record reflected to the element with attribute "store-id".
@@ -31,10 +37,34 @@ since no "store-id" is specified, a new "{}" record will be created on initial l
 Once you have the id, you *could* set it / hardcode it in your markup (after removing the create attribute). 
 
 ```html
-<purr-sist read store-id="catnip"></purr-sist>
+<purr-sist-foo read store-id="catnip"></purr-sist-foo>
 ```
 
 As we will see, this can be useful in some cases, particularly for "master lists". 
+
+## Master Index
+
+purr-sist adds some fundamental support for scaling large saves, so they can be broken down somewhat.  First, there is a property, guid, which stands for "globally unique identifier."  There are [many](https://duckduckgo.com/?q=online+guid+generator&t=h_&ia=web) [tools](https://marketplace.visualstudio.com/search?term=guid&target=VSCode&category=All%20categories&sortBy=Relevance) that can generate these for you. 
+
+Second, there's a property "master-list-id" which specifies the id of a DOM element outside any Shadow DOM.  That DOM element should also be a purr-sist element, which serves as the master list indexer.  It contains a lookup between the guid, hardcoded in the markup (or initialization code), and the id defined by the remote datastore (myjson.com in this case).
+
+So the markup can look like:
+
+```html
+    <body>
+        <purr-sist persist id="myMasterList" store-id="asd9wg">
+        ...
+        <my-component> <!-- just an example -->
+            #ShadowDOM
+                <purr-sist read guid="7482dbc4-04c8-40e6-8481-07d8ee4656b7" master-list-id="/myMasterList"></purr-sist>
+            #EndShadowDOM
+        </my-component>
+    </body>
+```
+
+Note that the value of the master-list-id attribute starts with a /.  This is to explicitly state that the id is expected to be found outside any Shadow DOM.  The ability to reference a master list sitting inside some Shadow DOM realm is not currently supported. 
+
+# Examples Part A -- persisting to myjson.com
 
 ## Why myjson.com?
 
@@ -65,29 +95,9 @@ document.querySelector('purr-sist').newVal = {'kitty': myValue}
 
 
 
-## Master Index
 
-purr-sist adds some fundamental support for scaling large saves, so they can be broken down somewhat.  First, there is a property, guid, which stands for "globally unique identifier."  There are [many](https://duckduckgo.com/?q=online+guid+generator&t=h_&ia=web) [tools](https://marketplace.visualstudio.com/search?term=guid&target=VSCode&category=All%20categories&sortBy=Relevance) that can generate these for you. 
 
-Second, there's a property "master-list-id" which specifies the id of a DOM element outside any Shadow DOM.  That DOM element should also be a purr-sist element, which serves as the master list indexer.  It contains a lookup between the guid, hardcoded in the markup (or initialization code), and the id defined by the remote datastore (myjson.com in this case).
-
-So the markup can look like:
-
-```html
-    <body>
-        <purr-sist persist id="myMasterList" store-id="asd9wg">
-        ...
-        <my-component> <!-- just an example -->
-            #ShadowDOM
-                <purr-sist read guid="7482dbc4-04c8-40e6-8481-07d8ee4656b7" master-list-id="/myMasterList"></purr-sist>
-            #EndShadowDOM
-        </my-component>
-    </body>
-```
-
-Note that the value of the master-list-id attribute starts with a /.  This is to explicitly state that the id is expected to be found outside any Shadow DOM.  The ability to reference a master list sitting inside some Shadow DOM realm is not currently supported. 
-
-## Example 1
+## Example A.1
 
 At the top of this document is a link to a demo.  You can view the source to see the markup. As you can see, it is coupling this component together with [xtal-state](https://www.webcomponents.org/element/xtal-state), which manages history.state.  
 
@@ -97,13 +107,13 @@ In the future we may create composite components that allow us to collapse commo
 
 
 
-## Example 2 - Repopulate fields
+## Example A.2 - Repopulate fields
 
 Here we drop support for non ES2018 -- grouped name regexp browsers so the markup is cleaner, more declarative.  So only Chrome works currently.  Example 2 extends Example 1, but editing "draft" fields are prepopulated.  Data flow still unidirectional. 
 
 [See it in action](https://bahrus.github.io/purr-sist-demos/Example2.html)
 
-## Example 3 -- Time travel support (aka back button)
+## Example A.3 -- Time travel support (aka back button)
 
 [See it in action](https://bahrus.github.io/purr-sist-demos/Example3.html)
 
