@@ -13,10 +13,6 @@
     {
       "name": "ES5",
       "js": {"minify": true, "compile": true}
-    },
-    {
-      "name": "ES6",
-      "js": {"minify": true, "compile": false}
-    }    
+    }   
   ]
 }
