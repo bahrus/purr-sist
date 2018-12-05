@@ -52,7 +52,7 @@ So the markup can look like:
 
 ```html
     <body>
-        <purr-sist persist id="myMasterList" store-id="asd9wg">
+        <purr-sist-foo persist id="myMasterList" store-id="asd9wg"></purr-sist-foo>
         ...
         <my-component> <!-- just an example -->
             #ShadowDOM
@@ -94,9 +94,6 @@ document.querySelector('purr-sist').newVal = {'kitty': myValue}
 ```
 
 
-
-
-
 ## Example A.1
 
 At the top of this document is a link to a demo.  You can view the source to see the markup. As you can see, it is coupling this component together with [xtal-state](https://www.webcomponents.org/element/xtal-state), which manages history.state.  
@@ -119,7 +116,6 @@ Here we drop support for non ES2018 -- grouped name regexp browsers so the marku
 
 Data flow still unidirectional.  Markup shown below.  Expand the details tag:
 
-<details>
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -231,4 +227,3 @@ Data flow still unidirectional.  Markup shown below.  Expand the details tag:
 
 </html>
 ```
-</details>
