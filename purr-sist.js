@@ -149,7 +149,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         this.saveNewVal(val);
     }
     connectedCallback() {
-        this._upgradeProperties(['storeId', write, read, new$, disabled, guid, 'masterListId', 'historyEvent']);
+        this._upgradeProperties(['storeId', write, read, new$, disabled, guid, 'masterListId', 'historyEvent', 'value']);
         this.style.display = 'none';
         this._conn = true;
         this.onPropsChange();
