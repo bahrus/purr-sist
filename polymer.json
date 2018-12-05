@@ -1,8 +1,7 @@
 {
   "npm": true,
   "sources":[
-    "purr-sist.js",
-    "purr-sist.iife.js"
+    "dist/purr-sist-myjson.iife.js"
   ],
   "lint": {
     "rules": [

@@ -2,8 +2,7 @@
   "entrypoint": "index.html",
   "fragments": [],
   "sources": [
-    "purr-sist.js",
-    "purr-sist.iife.js",
+    "dist/purr-sist-myjson.iife.js",
     "index.html"
   ],
   "extraDependencies": [
