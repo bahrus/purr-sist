@@ -2,7 +2,7 @@
 
 <a href="https://nodei.co/npm/purr-sist/"><img src="https://nodei.co/npm/purr-sist.png"></a>
 
-<img src="http://img.badgesize.io/https://cdn.jsdelivr.net/npm/purr-sist@0.0.31/dist/purr-sist-myjson.iife.min.js?compression=gzip">
+<img src="http://img.badgesize.io/https://cdn.jsdelivr.net/npm/purr-sist@0.0.32/dist/purr-sist-myjson.iife.min.js?compression=gzip">
 # purr-sist
 
 [Demo](https://bahrus.github.io/purr-sist-demos/Example1.html)
@@ -224,7 +224,7 @@ Data flow **almost** unidirectional (see tag p-u for bad code smell exception). 
         <button onclick="window.location.reload()">Reload Window</button>
 
         <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.31/dist/purr-sist-myjson.iife.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.32/dist/purr-sist-myjson.iife.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.92/dist/p-all.iife.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.11/aggregator-fn.iife.js"></script>
