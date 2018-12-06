@@ -139,6 +139,7 @@ export abstract class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         
         const v = val.value;
         if(!v) return;
+        console.log(v);
         if(v.__purrSistInit){
             delete v.__purrSistInit;
             this.value = v;
@@ -146,6 +147,15 @@ export abstract class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             this.newVal = val.value;
         }
         
+    }
+
+    _syncVal: any;
+    get syncVal(){
+        return this._syncVal;
+    }
+    set syncVal(val){
+        this._syncVal = val;
+        this.value = val;
     }
 
     _newVal: any;
@@ -172,7 +182,7 @@ export abstract class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     _conn!: boolean;
 
     connectedCallback() {
-        this._upgradeProperties(['storeId',  write, read, new$, disabled, guid, 'masterListId', 'historyEvent', 'value']);
+        this._upgradeProperties(['storeId',  write, read, new$, disabled, guid, 'masterListId', 'historyEvent', 'value', 'syncVal']);
         this.style.display = 'none';
         this._conn = true;
 

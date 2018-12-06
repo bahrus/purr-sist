@@ -249,6 +249,7 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         const v = val.value;
         if (!v)
             return;
+        console.log(v);
         if (v.__purrSistInit) {
             delete v.__purrSistInit;
             this.value = v;
@@ -256,6 +257,13 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         else {
             this.newVal = val.value;
         }
+    }
+    get syncVal() {
+        return this._syncVal;
+    }
+    set syncVal(val) {
+        this._syncVal = val;
+        this.value = val;
     }
     get newVal() {
         return this._newVal;
@@ -274,7 +282,7 @@ class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         this.saveNewVal(val);
     }
     connectedCallback() {
-        this._upgradeProperties(['storeId', write, read, new$, disabled, guid, 'masterListId', 'historyEvent', 'value']);
+        this._upgradeProperties(['storeId', write, read, new$, disabled, guid, 'masterListId', 'historyEvent', 'value', 'syncVal']);
         this.style.display = 'none';
         this._conn = true;
         this.onPropsChange();
@@ -409,6 +417,7 @@ class PurrSistMyJson extends PurrSist {
         fetch(this._saveServiceUrl + '/' + this._storeId).then(resp => {
             resp.json().then(json => {
                 json.__purrSistInit = true;
+                console.log(json);
                 this.value = json;
                 this._fip = false;
             });
