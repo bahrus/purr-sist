@@ -29,6 +29,10 @@ export class PurrSistMyJson extends PurrSist {
             resp.json().then(json => {
                 this._initInProgress = false;
                 this.storeId = json.uri.split('/').pop();
+                this.dataset.newStoreId = this._storeId;
+                this.de('new-store-id', {
+                    value: this.storeId
+                }, true);
                 if (this._pendingNewVals) {
                     this._pendingNewVals.forEach(kvp => {
                         this.newVal = kvp;
@@ -88,7 +92,6 @@ export class PurrSistMyJson extends PurrSist {
         fetch(this._saveServiceUrl + '/' + this._storeId).then(resp => {
             resp.json().then(json => {
                 json.__purrSistInit = true;
-                console.log(json);
                 this.value = json;
                 this._fip = false;
             });

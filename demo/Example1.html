@@ -16,25 +16,35 @@
             with-url-pattern="id=(?<storeId>[a-z0-9-]*)">
         </xtal-state-parse>
 
-        <!-- If no id found in address bar, "pass-down (p-d)" message to purr-sist-myjson writer 
-            and xtal-state-update history initializer  to  create a new record ("session") 
-            in both history and remote store -->
-        <p-d on="no-match-found" to="purr-sist-myjson[write],xtal-state-update[init]" prop="new" val="target.noMatch"  m="2" skip-init></p-d>
+        <!-- If no id found in address bar, "pass-down (p-d)" message to 
+            purr-sist-myjson writer and 
+            xtal-state-update history initializer  
+            to create a new record ("session") in 
+            both history and remote store -->
+        <p-d on="no-match-found" to="purr-sist-myjson[write],xtal-state-update[init]" 
+            prop="new" val="target.noMatch"  m="2" skip-init></p-d>
 
-        <!-- If id found in address bar, pass it to the persistence reader if history is null -->
-        <p-d on="match-found" if="[data-history-was-null]" to="purr-sist-myjson[read]" prop="storeId" val="target.value.storeId" m="1" skip-init></p-d>
+        <!-- If id found in address bar, pass it to 
+            the persistence reader if history is null -->
+        <p-d on="match-found" if="[data-history-was-null]" to="purr-sist-myjson[read]" 
+            prop="storeId" val="target.value.storeId" m="1" skip-init></p-d>
 
-        <!-- If id found in address bar, pass it to the persistence writer whether or not history is null -->
-        <p-d on="match-found" to="purr-sist-myjson[write]" prop="storeId" val="target.value.storeId" m="1" skip-init></p-d>
+        <!-- If id found in address bar, pass it to the 
+            persistence writer whether or not history is null -->
+        <p-d on="match-found" to="purr-sist-myjson[write]" prop="storeId" 
+        val="target.value.storeId" m="1" skip-init></p-d>
 
-        <!-- Read stored history.state from remote database if id found in address bar and history starts out null -->
+        <!-- Read stored history.state from remote database if 
+            id found in address bar and history starts out null -->
         <purr-sist-myjson read disabled></purr-sist-myjson>
 
-        <!-- If persisted history.state found, repopulate history.state from remote store -->
+        <!-- If persisted history.state found, 
+            repopulate history.state from remote store -->
         <p-d on="value-changed" prop="history" val="target.value"></p-d>
         <xtal-state-update init rewrite level="global"></xtal-state-update>
 
-        <!-- Watch for initial history state or popstate events, populate UI components
+        <!-- Watch for initial history state or popstate events, 
+            populate UI components
              that need to initialize when these events occur.
          -->
         <xtal-state-watch disabled="3" watch="popstate" level="global"></xtal-state-watch>
@@ -44,8 +54,10 @@
         <!-- ====== initialize textarea (JSON) field ====== -->
         <p-d on="history-changed" to="textarea" prop="value" val="target.history.draft.value" m="1" skip-init></p-d>
 
-        <!--  ====== Sync up purr-sist[write] with history. This doesn't update history or the persistence, 
-            but downstream elements to the persistence writer are notified as if it is  -->
+        <!--  ====== Sync up purr-sist[write] with history. 
+            This doesn't update history or the persistence, 
+            but downstream elements to the persistence writer 
+            are notified as if it is  -->
         <p-d on="history-changed"  to="purr-sist-myjson[write]" prop="syncVal" val="target.history" m="1" skip-init></p-d>
 
         <!-- ==========================  UI Input Fields ===================================-->
@@ -79,17 +91,25 @@
         <p-d on="value-changed" to="button" prop="obj" val="target.value" m="1"></p-d>
          
         <button disabled>Insert Key/Value pair</button>
-        <!-- Pass button's "obj" property to history via history-state-update-->
+        <!-- Pass button's "obj" property to history via 
+            history-state-update
+        -->
         <p-d-x on="click" to="xtal-state-update" prop="history.submitted" val="target.obj" skip-init m="1"></p-d-x>
 
-        <!-- Update (merge) into global history.state object the new submitted object -->
-        <xtal-state-update disabled make level="global" url-search="(?<store>(.*?))" replace-url-value="?id=$<store>"></xtal-state-update>
+        <!-- Update (merge) into global history.state 
+            object the new submitted object -->
+        <xtal-state-update id="historyUpdater" disabled make level="global" 
+            url-search="(?<store>(.*?))" replace-url-value="?id=$<store>">
+        </xtal-state-update>
 
         <!-- Send new history.state object to object persister -->
-        <p-d on="history-changed" prop="historyEvent" val="target" skip-init></p-d>
+        <p-d on="history-changed" prop="newVal"  skip-init></p-d>
 
         <!-- Persist history.state to remote store-->   
         <purr-sist-myjson write disabled></purr-sist-myjson>
+
+        <!-- Pass store ID up one element so hist-->
+        <p-u on="new-store-id" to="historyUpdater" prop="url"></p-u>
 
         <!-- Pass persisted object to JSON viewer -->
         <p-d on="value-changed" prop="input" ></p-d>
@@ -99,7 +119,7 @@
         <button onclick="window.location.reload()">Reload Window</button>
 
         <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.30/dist/purr-sist-myjson.iife.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.31/dist/purr-sist-myjson.iife.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.92/dist/p-all.iife.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.11/aggregator-fn.iife.js"></script>

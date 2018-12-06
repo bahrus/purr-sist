@@ -113,26 +113,6 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     set masterListId(nv) {
         this.attr(master_list_id, nv);
     }
-    get historyEvent() {
-        return this._historyEvent;
-    }
-    set historyEvent(val) {
-        this._historyEvent = val;
-        if (val.url !== this._storeId) {
-            val.url = this._storeId;
-        }
-        const v = val.value;
-        if (!v)
-            return;
-        console.log(v);
-        if (v.__purrSistInit) {
-            delete v.__purrSistInit;
-            this.value = v;
-        }
-        else {
-            this.newVal = val.value;
-        }
-    }
     get syncVal() {
         return this._syncVal;
     }

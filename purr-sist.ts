@@ -127,27 +127,26 @@ export abstract class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     }
     _pendingNewVals!: any[];
 
-    _historyEvent!: any;
-    get historyEvent(){
-        return this._historyEvent;
-    }
-    set historyEvent(val : any){
-        this._historyEvent = val;
-        if(val.url !== this._storeId) {
-            val.url = this._storeId;
-        }
+    // _historyEvent!: any;
+    // get historyEvent(){
+    //     return this._historyEvent;
+    // }
+    // set historyEvent(val : any){
+    //     this._historyEvent = val;
+    //     if(val.url !== this._storeId) {
+    //         val.url = this._storeId;
+    //     }
         
-        const v = val.value;
-        if(!v) return;
-        console.log(v);
-        if(v.__purrSistInit){
-            delete v.__purrSistInit;
-            this.value = v;
-        }else{
-            this.newVal = val.value;
-        }
+    //     const v = val.value;
+    //     if(!v) return;
+    //     if(v.__purrSistInit){
+    //         delete v.__purrSistInit;
+    //         this.value = v;
+    //     }else{
+    //         this.newVal = val.value;
+    //     }
         
-    }
+    // }
 
     _syncVal: any;
     get syncVal(){
