@@ -213,7 +213,7 @@ Data flow **almost** unidirectional (see tag p-u for bad code smell exception). 
         <!-- Persist history.state to remote store-->   
         <purr-sist-myjson write disabled></purr-sist-myjson>
 
-        <!-- Pass store ID up one element so hist-->
+        <!-- Pass store ID up one element so history.state knows how to update the address bar.  -->
         <p-u on="new-store-id" to="historyUpdater" prop="url"></p-u>
 
         <!-- Pass persisted object to JSON viewer -->
@@ -233,3 +233,7 @@ Data flow **almost** unidirectional (see tag p-u for bad code smell exception). 
 </body>
 </html>
 ```
+
+
+
+

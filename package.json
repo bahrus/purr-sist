@@ -4,7 +4,8 @@
   "description": "Pesist JSON",
   "main": "purr-sist.js",
   "dependencies": {
-    "xtal-latx": "0.0.82"
+    "xtal-latx": "0.0.82",
+    "idb-keyval": "3.1.0"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "^2.0.0",
