@@ -4,10 +4,6 @@
         "**/*.js": {"when": "$(basename).ts"},
         "**/*.js.map" : true
     },
-    "switcher.findSuffixOrder": [
-        ".js",
-        ".ts",
-        ".html",
-        ".scss"
-    ]
+    "workbench.settings.editor": "json",
+    "html.experimental.custom.tags": ["./web-components.json", "node_modules/p-d.p-u/web-components.json"]
 }

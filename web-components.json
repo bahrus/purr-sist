@@ -1,0 +1,8 @@
+{
+    "tags":[
+        {
+            "label":"purr-sist-myjson",
+            "description": "Persist objects to myjson.com web serice"
+        }
+    ]
+}

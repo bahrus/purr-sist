@@ -87,14 +87,14 @@
             }
         }
         </script></aggregator-fn>
-        <!-- Pass Aggregated Object to button's "obj" property -->
-        <p-d on="value-changed" to="button" prop="obj" val="target.value" m="1"></p-d>
+        <!-- Pass Aggregated Object to button's "__obj" property -->
+        <p-d on="value-changed" to="button" prop="__obj" val="target.value" m="1"></p-d>
          
         <button disabled>Insert Key/Value pair</button>
         <!-- Pass button's "obj" property to history via 
             history-state-update
         -->
-        <p-d-x on="click" to="xtal-state-update" prop="history.submitted" val="target.obj" skip-init m="1"></p-d-x>
+        <p-d-x on="click" to="xtal-state-update" prop="history.submitted" val="target.__obj" skip-init m="1"></p-d-x>
 
         <!-- Update (merge) into global history.state 
             object the new submitted object -->
@@ -108,7 +108,7 @@
         <!-- Persist history.state to remote store-->   
         <purr-sist-myjson write disabled></purr-sist-myjson>
 
-        <!-- Pass store ID up one element so hist-->
+        <!-- Pass store ID up one element so xtal-state-update knows how to update the address bar -->
         <p-u on="new-store-id" to="historyUpdater" prop="url"></p-u>
 
         <!-- Pass persisted object to JSON viewer -->

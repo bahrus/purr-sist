@@ -58,13 +58,13 @@ So the markup can look like:
         ...
         <my-component> <!-- just an example -->
             #ShadowDOM
-                <purr-sist read guid="7482dbc4-04c8-40e6-8481-07d8ee4656b7" master-list-id="/myMasterList"></purr-sist>
+                <purr-sist-foo read guid="7482dbc4-04c8-40e6-8481-07d8ee4656b7" master-list-id="/myMasterList"></purr-sist-foo>
             #EndShadowDOM
         </my-component>
     </body>
 ```
 
-Note that the value of the master-list-id attribute starts with a /.  This is to explicitly state that the id is expected to be found outside any Shadow DOM.  The ability to reference a master list sitting inside some Shadow DOM realm is not currently supported. 
+Note the value of the master-list-id attribute starts with a /.  This is to explicitly state that the id is expected to be found outside any Shadow DOM.  The ability to reference a master list sitting inside some Shadow DOM realm is not currently supported. 
 
 # Examples Part A -- persisting to myjson.com
 
@@ -76,15 +76,11 @@ In addition, myjson.com requires no account set up, so it just works, with zero 
 
 ## What's the problem with myjson.com?
 
-Due to the extremely trusting nature of myjson.com, it would be quite dangerous to use in a production setting, so use of this default service should be restricted to storing and retrieving harmless data, such as URL paths or public data, or for academic / prototyping purposes.
+Due to the extremely trusting nature of myjson.com, it would be quite dangerous to use in a production setting, so use of this service should be restricted to storing and retrieving harmless data, such as URL paths or public data, or for academic / prototyping purposes.
 
 myjson.com is similar, but not nearly as powerful, as other, far more robust solutions like [Firebase](https://firebase.google.com/docs/database/rest/save-data) (or mongoDB, or countless other solutions).   Firebase's ability to save to a path, and not overwrite the entire record, is certainly quite appealing. 
 
 I'm 99% certain that using Firebase instead of myjson.com would reduce the packet size in a fairly significant way. But I would argue that the approach of creating a master list, detailed below, helps whether you are using Firebase or myjson.com.
-
-So we will endeavor to define the "api" for this web component in such a way that it can work well with simple services like myjson.com, and also "scale up" to more sophisticed REST API's like Firebase, and achieve better performance (even while complicating the setup).
-
-Since the api's for production-ready services differ somewhat from myjson's, we'll give a different tag name depending on the service, e.g. purr-sist-firebase for Firebase's api, and possibly others as time permits. [TODO]
 
 ## Update pieces of the remote store
 
@@ -100,7 +96,7 @@ document.querySelector('purr-sist-foo').newVal = {'kitty': myValue}
 
 [See it in action](https://bahrus.github.io/purr-sist-demos/Example3.html)
 
-Data flow **almost** unidirectional (see tag p-u for bad code smell exception).  Markup shown below.  
+Data flow is **almost** unidirectional (see tag p-u for bad code smell exception).  Markup shown below.  
 
 ```html
 <!DOCTYPE html>
@@ -160,7 +156,7 @@ Data flow **almost** unidirectional (see tag p-u for bad code smell exception). 
         <p-d on="history-changed" to="textarea" prop="value" val="target.history.draft.value" m="1" skip-init></p-d>
 
         <!--  ====== Sync up purr-sist[write] with history. 
-            This doesn't update history or the persistence, 
+            This doesn't update history or the remote data store, 
             but downstream elements to the persistence writer 
             are notified as if it is  -->
         <p-d on="history-changed"  to="purr-sist-myjson[write]" prop="syncVal" val="target.history" m="1" skip-init></p-d>
