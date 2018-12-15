@@ -1,4 +1,4 @@
-import { Store, get } from 'idb-keyval/dist/idb-keyval.mjs';
+import { Store, set, get } from 'idb-keyval/dist/idb-keyval.mjs';
 import { PurrSist } from './purr-sist';
 import { define } from 'xtal-latx/define.js';
 // set('hello', 'world').then(() =>{
@@ -11,8 +11,8 @@ const db_name = 'db-name';
 export class PurrSistIDB extends PurrSist {
     constructor() {
         super(...arguments);
-        this._storeName = 'purr-sist';
-        this._dbName = 'keyval';
+        this._storeName = 'idb';
+        this._dbName = 'purr-sist';
     }
     static get is() { return 'purr-sist-idb'; }
     static get observedAttributes() {
@@ -49,21 +49,23 @@ export class PurrSistIDB extends PurrSist {
         if (!this._conn || this._disabled)
             return;
         this._store = new Store(this._dbName, this._storeName);
+        super.onPropsChange();
+    }
+    createNew(master) {
+        const newVal = {};
         if (!this._storeId) {
             const storeId = Math.random().toString().replace('.', '');
             const test = get(storeId, this._store).then((val) => {
                 console.log(val);
                 if (val === undefined) {
                     this.storeId = storeId;
+                    set(this._storeId, newVal, this._store);
                 }
                 else {
                     throw 'not implemented';
                 }
             });
         }
-    }
-    createNew(master) {
-        throw 'not implemented';
     }
     saveNewVal(value) {
         throw 'not implemented';

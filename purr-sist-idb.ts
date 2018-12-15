@@ -15,14 +15,14 @@ export class PurrSistIDB extends PurrSist{
     static get observedAttributes(){
         return super.observedAttributes.concat([store_name, db_name]);
     }
-    _storeName = 'purr-sist';
+    _storeName = 'idb';
     get storeName(){
         return this._storeName;
     }
     set storeName(nv){
         this.attr(store_name, nv);
     }
-    _dbName = 'keyval';
+    _dbName = 'purr-sist';
     get dbName(){
         return this._dbName;
     }
@@ -48,20 +48,25 @@ export class PurrSistIDB extends PurrSist{
     onPropsChange(){
         if (!this._conn || this._disabled) return;
         this._store = new Store(this._dbName, this._storeName);
+        super.onPropsChange();
+
+        
+    }
+    createNew(master: PurrSist | null) : void{
+        const newVal = {};
         if(!this._storeId){
             const storeId = Math.random().toString().replace('.','');
             const test = get(storeId, this._store).then((val:any) =>{
                 console.log(val);
                 if(val === undefined){
                     this.storeId = storeId;
+                    set(this._storeId, newVal, this._store);
                 }else{
                     throw 'not implemented';
                 }
             })
         }
-    }
-    createNew(master: PurrSist | null) : void{
-        throw 'not implemented';
+        
     }
     saveNewVal(value: any) : void{
         throw 'not implemented';
