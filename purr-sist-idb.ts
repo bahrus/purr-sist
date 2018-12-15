@@ -60,7 +60,11 @@ export class PurrSistIDB extends PurrSist{
                 console.log(val);
                 if(val === undefined){
                     this.storeId = storeId;
-                    set(this._storeId, newVal, this._store);
+                    set(this._storeId, newVal, this._store).then(() =>{
+                        this.de('new-store-id', {
+                            value: this.storeId
+                        }, true);
+                    })
                 }else{
                     throw 'not implemented';
                 }
