@@ -2,7 +2,25 @@
     "tags":[
         {
             "label":"purr-sist-myjson",
-            "description": "Persist objects to myjson.com web serice"
+            "description": "Persist objects to myjson.com web serice",
+            "attribs":[
+                {
+                    "label":"read",
+                    "description":"Tag is used only for reading from persistence storage."
+                },{
+                    "label":"write",
+                    "description":"Tag is used only for writing to persistence storage."
+                },{
+                    "label":"new",
+                    "description":"Create a new {} record in persistence storage."
+                },{
+                    "label":"guid",
+                    "description":"Globally unique identifier -- pointing to partion of persistence managed by master list element."
+                },{
+                    "label": "master-list-id",
+                    "description": "id of element outside any ShadowDOM that manages a partitioned master list from storage."
+                }
+            ]
         }
     ]
 }

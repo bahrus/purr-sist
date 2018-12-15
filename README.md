@@ -15,6 +15,21 @@ For example, purr-sist-myjson persists state to the [myjson.com](http://myjson.c
 
 purr-sist-idb persists state to the local indexed db for offline storage (and potentially cross window state management).
 
+## Syntax Reference
+
+<!--
+```
+<custom-element-demo>
+<template>
+    <div>
+        <wc-info package-name="npm install purr-sist" href="https://unpkg.com/purr-sist@0.0.33/web-components.json"></wc-info>
+        <script type="module" src="https://unpkg.com/wc-info@0.0.13/wc-info.js?module"></script>
+    </div>
+</template>
+</custom-element-demo>
+```
+-->
+
 ## Basic Syntax
 
 purr-sist has two modes:
