@@ -77,7 +77,13 @@ export class PurrSistIDB extends PurrSist {
         });
     }
     getStore() {
-        throw 'not implemented';
+        if (this._fip)
+            return;
+        this._fip = true;
+        get(this._storeId, this._store).then((val) => {
+            this.value = val;
+            this._fip = false;
+        });
     }
 }
 define(PurrSistIDB);

@@ -78,8 +78,15 @@ export class PurrSistIDB extends PurrSist{
         })
         
     }
+    _fip!: boolean; //fetch in progress
     getStore() : void{
-        throw 'not implemented';
+        if(this._fip) return;
+        this._fip = true;
+        get(this._storeId, this._store).then((val:any) =>{
+            this.value = val;
+            this._fip = false;
+        })
+        
     }
 }
 define(PurrSistIDB);
