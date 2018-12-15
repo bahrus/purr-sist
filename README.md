@@ -22,7 +22,7 @@ purr-sist-idb persists state to the local indexed db for offline storage (and po
 <custom-element-demo>
 <template>
     <div>
-        <wc-info package-name="npm install purr-sist" href="https://unpkg.com/purr-sist@0.0.34/web-components.json"></wc-info>
+        <wc-info package-name="npm install purr-sist" href="https://unpkg.com/purr-sist@0.0.35/web-components.json"></wc-info>
         <script type="module" src="https://unpkg.com/wc-info@0.0.13/wc-info.js?module"></script>
     </div>
 </template>

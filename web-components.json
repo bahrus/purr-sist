@@ -40,6 +40,12 @@
                 },{
                     "label": "master-list-id",
                     "description": "id of element outside any ShadowDOM that manages a partitioned master list from storage."
+                },{
+                    "label": "store-name",
+                    "description": "Name of store within IndexedDB storage area."
+                },{
+                    "label": "db-name",
+                    "description": "Name of Database within IndexedDB storage area."
                 }
             ]
         }
