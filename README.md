@@ -13,7 +13,7 @@ What follows purr-sist- indicates where the state is persisted.
 
 For example, purr-sist-myjson persists state to the [myjson.com](http://myjson.com/) api service.  The service allows anyone to save and update a JSON document, with zero setup steps.  See discussion below about the pro's and significant con's of this service.
 
-[TODO]:  purr-sist-idb persists state to the local indexed db for offline storage (and potentially cross window state management).
+purr-sist-idb persists state to the local indexed db for offline storage (and potentially cross window state management).
 
 ## Basic Syntax
 
@@ -230,6 +230,7 @@ Data flow is **almost** unidirectional (see tag p-u for bad code smell exception
 </html>
 ```
 
+<!--
 # history.state vs "local storage"
 
 In the discussion that follows, we are using the phrase "local storage" quite loosely.  For reasons I don't fully understand yet, the browser api's have evolved to support multiple ways of storing data. It's possible that some of them, like the LocalStorage Api, could be viewed as a debatably useless api at this point, like the human appendix.  Or maybe not. The point is there exists storage that doesn't change as you navigate history, and storage that does.  Despite the well-acknowledge weaknesses of the current history api, it is my view that its coordination with the address bar makes it useful enough to overlook the weaknesses.
@@ -243,3 +244,4 @@ As I see it, IndexedDB (or whatever) can serve a few primary roles:
     2.  A kind of "PRPL" pattern hack -- suppose some data isn't extremely time sensitive, but is relatively expensive to retrieve, and the site is frequently visited by the same user -- if the user has visited before, that data could be cached for an initial view, and then either updated as soon as the new data becomes available, or put into storage for the next visit.  This seems like a rather obscure reason to use the local storage (fraught with risks, like if the person uses different browsers, etc).  Again, this seems like a common mixin scenario, but the functionality shouldn't be lumped with the much more common scenario above.
     3.  Note that in some lines of business, caching business data may run aground with auditing.  So support for this kind of functionality should definitely be opt-in.  So maybe this means the mixin should be used to extend the base remote datastore component.
 2.  A way to maintain local application state / cache that we don't want to lose when the user clicks on the back button, but that needs to  transcend any particular generic component, even being able to leap across iframes or child windows.  Basically, something like redux (can redux be used with iframes?), but where the store is based on an api that could outlive the human appendix.  For this purpose, it would make sense to create a standalone custom element, particularly for boilerplate scenarios where repetitive, free form JavaScript could be turned into tag / attribute data.
+-->
