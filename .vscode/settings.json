@@ -5,5 +5,9 @@
         "**/*.js.map" : true
     },
     "workbench.settings.editor": "json",
-    "html.experimental.custom.tags": ["./web-components.json", "node_modules/p-d.p-u/web-components.json"]
+    "html.experimental.custom.tags": [
+        "./web-components.json", 
+        "node_modules/p-d.p-u/web-components.json",
+        "node_modules/xtal-state/web-components.json"
+    ]
 }
