@@ -69,7 +69,10 @@ export class PurrSistIDB extends PurrSist{
         
     }
     saveNewVal(value: any) : void{
-        throw 'not implemented';
+        set(this._storeId, value, this._store).then(() =>{
+            this.value = value;
+        })
+        
     }
     getStore() : void{
         throw 'not implemented';
