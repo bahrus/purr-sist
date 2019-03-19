@@ -1,6 +1,6 @@
-import { XtallatX, disabled } from 'xtal-latx/xtal-latx.js';
+import { XtallatX, disabled } from 'xtal-element/xtal-latx.js';
 
-import {BaseLinkId, baseLinkId} from 'xtal-latx/base-link-id.js';
+import {BaseLinkId, baseLinkId} from 'xtal-element/base-link-id.js';
 
 const store_id = 'store-id';
 

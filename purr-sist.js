@@ -1,5 +1,5 @@
-import { XtallatX, disabled } from 'xtal-latx/xtal-latx.js';
-import { BaseLinkId } from 'xtal-latx/base-link-id.js';
+import { XtallatX, disabled } from 'xtal-element/xtal-latx.js';
+import { BaseLinkId } from 'xtal-element/base-link-id.js';
 const store_id = 'store-id';
 const write = 'write';
 const read = 'read';
@@ -184,4 +184,3 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     }
 }
 // define(PurrSist);
-//# sourceMappingURL=purr-sist.js.map

@@ -4,17 +4,17 @@
   "description": "Pesist JSON",
   "main": "purr-sist.js",
   "dependencies": {
-    "xtal-latx": "0.0.85",
+    "xtal-element": "0.0.42",
     "idb-keyval": "3.1.0"
   },
   "devDependencies": {
-    "@webcomponents/webcomponentsjs": "2.2.1",
-    "jiife": "0.0.10",
-    "tape": "4.9.1",
-    "@types/tape": "4.2.32",
+    "@webcomponents/webcomponentsjs": "2.2.7",
+    "jiife": "0.0.12",
+    "tape": "4.10.1",
+    "@types/tape": "4.2.33",
     "xtal-test": "0.0.10",
-    "p-d.p-u": "0.0.96",
-    "xtal-state": "0.0.60"
+    "p-d.p-u": "0.0.110",
+    "xtal-state": "0.0.68"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,7 +23,7 @@
     "type": "git",
     "url": "git+https://github.com/bahrus/purr-sist.git"
   },
-  "author": "",
+  "author": "anderson.bruce.b@gmail.com",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/bahrus/purr-sist/issues"

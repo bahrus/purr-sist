@@ -1,6 +1,6 @@
 import {Store, set, get} from 'idb-keyval/dist/idb-keyval.mjs';
 import { PurrSist } from './purr-sist.js';
-import {define} from 'xtal-latx/define.js';
+import {define} from 'xtal-element/define.js';
 
 // set('hello', 'world').then(() =>{
 //     get('hello').then((val: any) =>{

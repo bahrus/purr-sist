@@ -1,5 +1,5 @@
 import {PurrSist} from './purr-sist.js';
-import { define } from 'xtal-latx/define.js';
+import { define } from 'xtal-element/define.js';
 
 const save_service_url = 'save-service-url';
 
