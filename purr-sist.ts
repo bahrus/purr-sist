@@ -1,6 +1,6 @@
 import { XtallatX, disabled } from 'xtal-element/xtal-latx.js';
-
 import {BaseLinkId, baseLinkId} from 'xtal-element/base-link-id.js';
+import {getHost} from 'xtal-element/getHost.js';
 
 const store_id = 'store-id';
 
@@ -181,8 +181,16 @@ export abstract class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
     
     _initInProgress = false;
     getMaster(){
-        if(!this._masterListId.startsWith('/')) throw 'Must start with "/"';
-        return (<any>self)[this._masterListId.substr(1)] as PurrSist;
+        const mlid = this._masterListId;
+        if(mlid.startsWith('/')){
+            return (<any>self)[mlid.substr(1)] as PurrSist;
+        }
+        if(mlid.startsWith('./')){
+            const id = mlid.substr(2);
+            const host = getHost(this) as HTMLElement;
+            const host2 = host.shadowRoot ? host.shadowRoot : host;
+            return host2.querySelector('#' + id);
+        }
     }
     
     onPropsChange(n?: string) {

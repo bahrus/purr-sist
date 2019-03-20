@@ -1,5 +1,6 @@
 import { XtallatX, disabled } from 'xtal-element/xtal-latx.js';
 import { BaseLinkId } from 'xtal-element/base-link-id.js';
+import { getHost } from 'xtal-element/getHost.js';
 const store_id = 'store-id';
 const write = 'write';
 const read = 'read';
@@ -152,9 +153,16 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         });
     }
     getMaster() {
-        if (!this._masterListId.startsWith('/'))
-            throw 'Must start with "/"';
-        return self[this._masterListId.substr(1)];
+        const mlid = this._masterListId;
+        if (mlid.startsWith('/')) {
+            return self[mlid.substr(1)];
+        }
+        if (mlid.startsWith('./')) {
+            const id = mlid.substr(2);
+            const host = getHost(this);
+            const host2 = host.shadowRoot ? host.shadowRoot : host;
+            return host2.querySelector('#' + id);
+        }
     }
     onPropsChange(n) {
         if (!this._conn || this._disabled)
