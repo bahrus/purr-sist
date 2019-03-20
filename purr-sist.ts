@@ -189,7 +189,7 @@ export abstract class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
             const id = mlid.substr(2);
             const host = getHost(this) as HTMLElement;
             const host2 = host.shadowRoot ? host.shadowRoot : host;
-            return host2.querySelector('#' + id);
+            return host2.querySelector('#' + id) as PurrSist;
         }
     }
     
