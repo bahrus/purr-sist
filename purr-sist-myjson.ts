@@ -102,7 +102,7 @@ export class PurrSistMyJson extends PurrSist{
         this._fip = true;
         fetch(this._saveServiceUrl + '/' + this._storeId).then(resp => {
             resp.json().then(json => {
-                json.__purrSistInit = true;
+                //json.__purrSistInit = true;
                 this.value = json;
                 this._fip = false;
             })

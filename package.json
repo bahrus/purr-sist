@@ -4,8 +4,8 @@
   "description": "Pesist JSON",
   "main": "purr-sist.js",
   "dependencies": {
-    "xtal-element": "0.0.42",
-    "idb-keyval": "3.1.0"
+    "xtal-element": "0.0.45",
+    "idb-keyval": "3.2.0"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "2.2.7",
@@ -14,7 +14,7 @@
     "@types/tape": "4.2.33",
     "xtal-test": "0.0.10",
     "p-d.p-u": "0.0.110",
-    "xtal-state": "0.0.68"
+    "xtal-state": "0.0.69"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
