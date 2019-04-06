@@ -1,6 +1,7 @@
 import {Store, set, get} from 'idb-keyval/dist/idb-keyval.mjs';
 import { PurrSist } from './purr-sist.js';
-import {define} from 'xtal-element/define.js';
+import {disabled, up} from 'trans-render/hydrate.js';
+import {define} from 'trans-render/define.js';
 
 // set('hello', 'world').then(() =>{
 //     get('hello').then((val: any) =>{
@@ -41,7 +42,7 @@ export class PurrSistIDB extends PurrSist{
         super.attributeChangedCallback(n, ov, nv);
     }
     connectedCallback(){
-        this._upgradeProperties(['dbName', 'storeName']);
+        this[up](['dbName', 'storeName']);
         super.connectedCallback();
     }
     _store: Store;

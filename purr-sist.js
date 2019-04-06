@@ -1,4 +1,5 @@
-import { XtallatX, disabled } from 'xtal-element/xtal-latx.js';
+import { XtallatX } from 'xtal-element/xtal-latx.js';
+import { disabled, up, hydrate } from 'trans-render/hydrate.js';
 import { BaseLinkId } from 'xtal-element/base-link-id.js';
 import { getHost } from 'xtal-element/getHost.js';
 const store_id = 'store-id';
@@ -15,14 +16,14 @@ const master_list_id = 'master-list-id';
  * @polymer
  * @demo demo/index.html
  */
-export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
+export class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))) {
     constructor() {
         //static get is() { return 'purr-sist'; }
         super(...arguments);
         this._initInProgress = false;
     }
     static get observedAttributes() {
-        return super.observedAttributes.concat([store_id, write, read, new$, guid, master_list_id]);
+        return ([disabled, store_id, write, read, new$, guid, master_list_id]);
     }
     attributeChangedCallback(n, ov, nv) {
         super.attributeChangedCallback(n, ov, nv);
@@ -138,7 +139,7 @@ export class PurrSist extends BaseLinkId(XtallatX(HTMLElement)) {
         this.saveNewVal(val);
     }
     connectedCallback() {
-        this._upgradeProperties(['storeId', write, read, new$, disabled, guid, 'masterListId', 'historyEvent', 'value', 'syncVal', 'newVal']);
+        this[up](['storeId', write, read, new$, disabled, guid, 'masterListId', 'historyEvent', 'value', 'syncVal', 'newVal']);
         this.style.display = 'none';
         this._conn = true;
         this.onPropsChange();
