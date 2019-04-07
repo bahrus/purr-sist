@@ -41,9 +41,9 @@ export class PurrSistMyJson extends PurrSist {
                     delete this._pendingNewVals;
                 }
                 if (master !== null)
-                    master.newVal = {
+                    master.newVal = Object.assign(master.value, {
                         [this._guid]: this._storeId,
-                    };
+                    });
             });
         });
         this.value = val;
