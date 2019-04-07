@@ -67,9 +67,14 @@ export class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))) {
             return;
         }
         if (master.value[this._guid] === undefined) {
-            master.newVal = Object.assign(master.value, {
+            const newVal = Object.assign(master.value, {
                 [this._guid]: this._storeId
             });
+            console.log(newVal);
+            master.newVal = newVal;
+            // master.newVal = Object.assign(master.value, {
+            //     [this._guid]: this._storeId
+            // })
         }
     }
     pullRecFromMaster(master) {
