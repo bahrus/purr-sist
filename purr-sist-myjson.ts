@@ -1,6 +1,6 @@
 import {PurrSist} from './purr-sist.js';
-import { define } from 'xtal-element/define.js';
-
+import { define } from 'trans-render/define.js';
+import {up} from 'trans-render/hydrate.js';
 const save_service_url = 'save-service-url';
 
 export class PurrSistMyJson extends PurrSist{
@@ -79,7 +79,7 @@ export class PurrSistMyJson extends PurrSist{
     }
 
     connectedCallback() {
-        this._upgradeProperties(['saveServiceUrl' ]);
+        this[up](['saveServiceUrl' ]);
         if(!this._saveServiceUrl){
             if(this._baseLinkId){
                 this._saveServiceUrl = this.getFullURL('');
