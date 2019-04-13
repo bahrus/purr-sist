@@ -1,16 +1,16 @@
 import {Store, set, get} from 'idb-keyval/dist/idb-keyval.mjs';
-import { PurrSist } from './purr-sist.js';
+import { PurrSist, PurrSistAttribs } from './purr-sist.js';
 import {disabled, up} from 'trans-render/hydrate.js';
 import {define} from 'trans-render/define.js';
 
-// set('hello', 'world').then(() =>{
-//     get('hello').then((val: any) =>{
-//         console.log(val);
-//     })
-// })
-
 const store_name = 'store-name';
 const db_name = 'db-name';
+export interface PurrSistIDBAttribs extends PurrSistAttribs {
+    [store_name]: string;
+    [db_name]: string;
+}
+
+
 export class PurrSistIDB extends PurrSist{
     static get is(){return 'purr-sist-idb';}
     static get observedAttributes(){
@@ -30,7 +30,7 @@ export class PurrSistIDB extends PurrSist{
     set dbName(nv){
         this.attr(db_name, nv);
     }
-    attributeChangedCallback(n: string, ov: string, nv: string){
+    attributeChangedCallback(n: keyof PurrSistIDBAttribs, ov: string, nv: string){
         switch(n){
             case store_name:
                 this._storeName = nv;
@@ -39,7 +39,7 @@ export class PurrSistIDB extends PurrSist{
                 this._dbName = nv;
                 break;
         }
-        super.attributeChangedCallback(n, ov, nv);
+        super.attributeChangedCallback(n as keyof PurrSistAttribs, ov, nv);
     }
     connectedCallback(){
         this[up](['dbName', 'storeName']);

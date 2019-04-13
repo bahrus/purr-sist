@@ -1,8 +1,10 @@
-import {PurrSist} from './purr-sist.js';
+import {PurrSist, PurrSistAttribs} from './purr-sist.js';
 import { define } from 'trans-render/define.js';
 import {up} from 'trans-render/hydrate.js';
 const save_service_url = 'save-service-url';
-
+export interface PurSistMyJsonAttribs extends PurrSistAttribs{
+    [save_service_url]: string
+}
 export class PurrSistMyJson extends PurrSist{
     static get is(){return 'purr-sist-myjson';}
 
@@ -16,7 +18,7 @@ export class PurrSistMyJson extends PurrSist{
                 this._saveServiceUrl = nv;
                 break;
         }
-        super.attributeChangedCallback(n, ov, nv);
+        super.attributeChangedCallback(n as keyof PurrSistAttribs, ov, nv);
     }
 
     createNew(master: PurrSist | null){

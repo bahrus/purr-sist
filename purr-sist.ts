@@ -11,6 +11,15 @@ const new$ = 'new';
 const guid = 'guid';
 const master_list_id = 'master-list-id';
 
+export interface PurrSistAttribs {
+    [write]: boolean,
+    [read]: boolean,
+    [new$]: boolean,
+    [guid]: string,
+    [master_list_id]: string,
+    [store_id]: string,
+}
+
 /**
  * `purr-sist`
  *  Custom element wrapper around http://myjson.com api.
@@ -25,7 +34,7 @@ export abstract class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))
     static get observedAttributes() {
         return ([disabled, store_id, write, read, new$, guid, master_list_id]);
     }
-    attributeChangedCallback(n: string, ov: string, nv: string) {
+    attributeChangedCallback(n: keyof PurrSistAttribs, ov: string, nv: string) {
         super.attributeChangedCallback(n, ov, nv);
         switch (n) {
             case store_id:
