@@ -2,6 +2,7 @@ import { XtallatX } from 'xtal-element/xtal-latx.js';
 import {disabled, up, hydrate} from 'trans-render/hydrate.js';
 import {BaseLinkId, baseLinkId} from 'xtal-element/base-link-id.js';
 import {getHost} from 'xtal-element/getHost.js';
+import {AttribsSettings} from 'trans-render/init.d.js';
 
 const store_id = 'store-id';
 
@@ -11,7 +12,7 @@ const new$ = 'new';
 const guid = 'guid';
 const master_list_id = 'master-list-id';
 
-export interface PurrSistAttribs {
+export interface PurrSistAttribs extends AttribsSettings {
     [write]: boolean,
     [read]: boolean,
     [new$]: boolean,
@@ -35,7 +36,7 @@ export abstract class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))
         return ([disabled, store_id, write, read, new$, guid, master_list_id]);
     }
     attributeChangedCallback(n: keyof PurrSistAttribs, ov: string, nv: string) {
-        super.attributeChangedCallback(n, ov, nv);
+        super.attributeChangedCallback(n as string, ov, nv);
         switch (n) {
             case store_id:
                 this._storeId = nv;
@@ -56,7 +57,7 @@ export abstract class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))
                 (<any>this)['_' + n] = (nv !== null);
                 break;
         }
-        this.onPropsChange(n);
+        this.onPropsChange(n as string);
     }
     _storeId!: string;
     get storeId() {

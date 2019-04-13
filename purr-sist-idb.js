@@ -2,11 +2,6 @@ import { Store, set, get } from 'idb-keyval/dist/idb-keyval.mjs';
 import { PurrSist } from './purr-sist.js';
 import { up } from 'trans-render/hydrate.js';
 import { define } from 'trans-render/define.js';
-// set('hello', 'world').then(() =>{
-//     get('hello').then((val: any) =>{
-//         console.log(val);
-//     })
-// })
 const store_name = 'store-name';
 const db_name = 'db-name';
 export class PurrSistIDB extends PurrSist {
