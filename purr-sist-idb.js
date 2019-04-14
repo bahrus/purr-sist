@@ -38,6 +38,9 @@ export class PurrSistIDB extends PurrSist {
         }
         super.attributeChangedCallback(n, ov, nv);
     }
+    handleAnyChange() {
+        this.getStore();
+    }
     connectedCallback() {
         this[up](['dbName', 'storeName']);
         super.connectedCallback();
@@ -47,6 +50,9 @@ export class PurrSistIDB extends PurrSist {
             return;
         this._store = new Store(this._dbName, this._storeName);
         super.onPropsChange();
+        window.addEventListener(idb_item_set, e => {
+            this.handleAnyChange();
+        });
     }
     createNew(master) {
         const newVal = {};
