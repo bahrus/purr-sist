@@ -2,6 +2,7 @@ import { Store, set, get } from 'idb-keyval/dist/idb-keyval.mjs';
 import { PurrSist } from './purr-sist.js';
 import { up } from 'trans-render/hydrate.js';
 import { define } from 'trans-render/define.js';
+export const idb_item_set = 'idb-item-set';
 const store_name = 'store-name';
 const db_name = 'db-name';
 export class PurrSistIDB extends PurrSist {
@@ -70,6 +71,14 @@ export class PurrSistIDB extends PurrSist {
     saveNewVal(value) {
         set(this._storeId, value, this._store).then(() => {
             this.value = value;
+            const ce = new CustomEvent(idb_item_set, {
+                bubbles: true,
+                detail: {
+                    value: value,
+                    src: this
+                }
+            });
+            window.dispatchEvent(ce);
         });
     }
     getStore() {
