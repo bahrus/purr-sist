@@ -6,8 +6,8 @@ export const idb_item_set = 'idb-item-set';
 const store_name = 'store-name';
 const db_name = 'db-name';
 export interface PurrSistIDBAttribs extends PurrSistAttribs {
-    [store_name]: string;
-    [db_name]: string;
+    [store_name]?: string;
+    [db_name]?: string;
 }
 
 

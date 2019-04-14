@@ -13,12 +13,12 @@ const guid = 'guid';
 const master_list_id = 'master-list-id';
 
 export interface PurrSistAttribs extends AttribsSettings {
-    [write]: boolean,
-    [read]: boolean,
-    [new$]: boolean,
-    [guid]: string,
-    [master_list_id]: string,
-    [store_id]: string,
+    [write]?: boolean,
+    [read]?: boolean,
+    [new$]?: boolean,
+    [guid]?: string,
+    [master_list_id]?: string,
+    [store_id]?: string,
 }
 
 /**
