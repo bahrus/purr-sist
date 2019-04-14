@@ -2,7 +2,7 @@ import {PurrSist, PurrSistAttribs} from './purr-sist.js';
 import { define } from 'trans-render/define.js';
 import {up} from 'trans-render/hydrate.js';
 const save_service_url = 'save-service-url';
-export interface PurSistMyJsonAttribs extends PurrSistAttribs{
+export interface PurrSistMyJsonAttribs extends PurrSistAttribs{
     [save_service_url]: string
 }
 export class PurrSistMyJson extends PurrSist{
