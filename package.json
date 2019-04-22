@@ -4,18 +4,18 @@
   "description": "Pesist JSON",
   "main": "purr-sist.js",
   "dependencies": {
-    "xtal-element": "0.0.54",
+    "xtal-element": "0.0.56",
+    "trans-render": "0.0.106",
     "idb-keyval": "3.2.0"
   },
   "devDependencies": {
-    "@webcomponents/webcomponentsjs": "2.2.7",
+    "@webcomponents/webcomponentsjs": "2.2.10",
     "jiife": "0.0.12",
     "tape": "4.10.1",
     "@types/tape": "4.2.33",
-    "xtal-test": "0.0.10",
-    "p-d.p-u": "0.0.115",
-    "xtal-state": "0.0.71",
-    "trans-render": "0.0.102"
+    "xtal-test": "0.0.13",
+    "p-d.p-u": "0.0.117",
+    "xtal-state": "0.0.75"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
