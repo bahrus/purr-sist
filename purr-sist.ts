@@ -160,12 +160,13 @@ export abstract class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))
     }
     set newVal(val: any) {
         if(val === null) return;
+        this._newVal = val;
         if(!this._storeId){
             if(!this._pendingNewVals) this._pendingNewVals = [];
             this._pendingNewVals.push(val);
             return;
         }
-        this._newVal = val;
+        
         //const value = val; //this._value === undefined ? val : Object.assign(this._value, val);
         this.saveNewVal(val);
 
