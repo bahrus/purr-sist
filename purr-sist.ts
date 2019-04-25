@@ -66,6 +66,9 @@ export abstract class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))
     set storeId(val) {
         this._storeId = val;
         this.attr(store_id, val);
+        if(this._newVal){
+            this.newVal = this._newVal;
+        }
         this.syncMasterList();
     }
 
@@ -141,7 +144,7 @@ export abstract class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))
     set masterListId(nv: string){
         this.attr(master_list_id, nv);
     }
-    _pendingNewVals!: any[];
+    //_pendingNewVals!: any[];
 
 
 
@@ -162,8 +165,8 @@ export abstract class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))
         if(val === null) return;
         this._newVal = val;
         if(!this._storeId){
-            if(!this._pendingNewVals) this._pendingNewVals = [];
-            this._pendingNewVals.push(val);
+            // if(!this._pendingNewVals) this._pendingNewVals = [];
+            // this._pendingNewVals.push(val);
             return;
         }
         

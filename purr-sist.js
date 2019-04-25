@@ -54,6 +54,9 @@ export class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))) {
     set storeId(val) {
         this._storeId = val;
         this.attr(store_id, val);
+        if (this._newVal) {
+            this.newVal = this._newVal;
+        }
         this.syncMasterList();
     }
     syncMasterList() {
@@ -135,9 +138,8 @@ export class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))) {
             return;
         this._newVal = val;
         if (!this._storeId) {
-            if (!this._pendingNewVals)
-                this._pendingNewVals = [];
-            this._pendingNewVals.push(val);
+            // if(!this._pendingNewVals) this._pendingNewVals = [];
+            // this._pendingNewVals.push(val);
             return;
         }
         //const value = val; //this._value === undefined ? val : Object.assign(this._value, val);
