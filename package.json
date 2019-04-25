@@ -15,7 +15,7 @@
     "@types/tape": "4.2.33",
     "xtal-test": "0.0.13",
     "p-d.p-u": "0.0.119",
-    "xtal-state": "0.0.77"
+    "xtal-state": "0.0.79"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
