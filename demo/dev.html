@@ -8,29 +8,36 @@
 </head>
 <body>
     <div style="display:flex;flex-direction: column">
+        <xtal-sip><script nomodule>["xtal-state-parse", "p-d", "p-d-x", "p-u", "purr-sist-myjson", "aggregator-fn", "xtal-state-update", "xtal-json-editor"]</script></xtal-sip>
         <!-- Parse the address bar -->
         <xtal-state-parse disabled parse="location.href" level="global" 
             with-url-pattern="id=(?<storeId>[a-z0-9-]*)">
         </xtal-state-parse>
         <!-- If no id found in address bar, create a new record ("session") -->
-        <p-d on="no-match-found" to="purr-sist[write]" prop="new" val="target.noMatch"  m="1"></p-d>
+        <p-d on="no-match-found" to="purr-sist-myjson[write]" prop="new" val="target.noMatch"  m="1"></p-d>
         <!-- If id found in address bar, pass it to the persistence reader -->
-        <p-d on="match-found" to="purr-sist" prop="storeId" val="target.value.storeId" m="2"></p-d>
+        <p-d on="match-found" to="purr-sist-myjson" prop="storeId" val="target.value.storeId" m="2"></p-d>
         <!-- Read stored history.state from remote database if saved -->
         <purr-sist-myjson read></purr-sist-myjson>
         <!-- If persisted history.state found, repopulate history.state -->
         <p-d on="value-changed" to="xtal-state-update" prop="history" val="target.value"></p-d>
+
+        <!-- ==========================  UI Input Fields ===================================-->
         <!-- Add a new key (or replace existing one) -->
         <input type="text" placeholder="key">
+        <!-- Save key to history.draft.key -->
+        <p-d-x on="input" to="xtal-state-update" prop="history.draft.key" val="target.value" m="1" skip-init></p-d-x>
         <!-- Pass key to aggregator that creates key / value object -->
         <p-d on="input" to="aggregator-fn" prop="key" val="target.value" m="1"></p-d>
         <!-- Edit (JSON) value -->
-        <textarea placeholder="value (JSON optional)"></textarea>
+        <textarea disabled="2" placeholder="value (JSON optional)"></textarea>
+        <!-- Pass value to history.draft.value -->
+        <p-d-x on="input" to="xtal-state-update" prop="history.draft.value" val="target.value" m="1" skip-init></p-d-x>
         <!-- Pass (JSON) value to key / value aggregator -->
         <p-d on="input" prop="val" val="target.value"></p-d>
         <!-- Combine key / value fields into one object -->
         <aggregator-fn><script nomodule>
-            ({ key, val }) => {
+            fn = ({ key, val }) => {
                 if (key === undefined || val === undefined) return null;
                 try {
                     return { [key]: JSON.parse(val) };
@@ -39,17 +46,25 @@
                 }
             }
         </script></aggregator-fn>
-        <!-- Pass Aggregated Object to Button's "obj" property -->
-        <p-d on="value-changed" prop="obj" val="target.value"></p-d>
+        <!-- Pass Aggregated Object to button's "__obj" property -->
+        <p-d on="value-changed" to="button" prop="__obj" val="target.value" m="1"></p-d>
         <button>Insert Key/Value pair</button>
-        <!-- Pass button's "obj" property to history via history-state-update-->
-        <p-d on="click" prop="history" val="target.obj" skip-init></p-d>
+        <!-- Pass button's "__obj" property to history via 
+            history-state-update
+        -->
+        <p-d-x on="click" to="xtal-state-update" prop="history.submitted" val="target.__obj" skip-init m="1"></p-d-x>
+
+        <!-- ============================  End UI Input fields =============================== -->
         <!-- Update global history.state object -->
-        <xtal-state-update rewrite level="global" url-search="(?<store>(.*?))" replace-url-value="?id=$<store>"></xtal-state-update>
+        <xtal-state-update id=historyUpdater rewrite level=global url-search="(?<store>(.*?))" replace-url-value="?id=$<store>"></xtal-state-update>
         <!-- Send new history.state object to object persister -->
         <p-d on="history-changed" prop="historyEvent" val="target" skip-init></p-d>
         <!-- Persist history.state to remote store-->   
-        <purr-sist-myjson write new></purr-sist-myjson>
+        <purr-sist-myjson write new disabled="2"></purr-sist-myjson>
+
+        <!-- Pass store ID up one element so xtal-state-update knows how to update the address bar -->
+        <p-u on="new-store-id" to="/historyUpdater" prop="url"></p-u>
+
         <!-- Pass persisted object to JSON viewer -->
         <p-d on="value-changed" prop="input"></p-d>
         <xtal-json-editor options="{}" height="300px"></xtal-json-editor>
@@ -57,13 +72,29 @@
         <button onclick="window.location.reload()">Reload Window</button>
 
 
-        <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.11/purr-sist.iife.js"></script> -->
-        <script type="module" src="../purr-sist-myjson.js"></script>
-        <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/pass-down@0.0.10/pass-down.iife.js"></script> -->
-        <script type="module" src="https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.92/dist/p-all.iife.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.11/aggregator-fn.iife.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-state@0.0.37/xtal-state.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/es-module-shims@0.2.4/dist/es-module-shims.js"></script>
+        <script type="importmap-shim">
+        {
+            "imports": {
+                "xtal-element/": "../node_modules/xtal-element/",
+                "trans-render/": "../node_modules/trans-render/",
+                "aggregator-fn": "https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.17/aggregator-fn.js",
+                "xtal-state-parse": "https://cdn.jsdelivr.net/npm/xtal-state@0.0.85/xtal-state-parse.js",
+                "purr-sist-myjson": "../purr-sist-myjson.js",
+                "xtal-state-commit": "https://cdn.jsdelivr.net/npm/xtal-state@0.0.85/xtal-state-commit.js",
+                "xtal-state-update": "https://cdn.jsdelivr.net/npm/xtal-state@0.0.85/xtal-state-update.js",
+                "xtal-state-watch": "https://cdn.jsdelivr.net/npm/xtal-state@0.0.85/xtal-state-watch.js",
+                "xtal-sip": "https://cdn.jsdelivr.net/npm/xtal-sip@0.0.80/xtal-sip.js",
+                "xtal-json-editor": "https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.35/xtal-json-editor.js",
+                "p-d": "https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.123/p-d.js",
+                "p-u": "https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.123/p-u.js",
+                "p-d-x": "https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.123/p-d-x.js"
+            }
+        }
+        </script>
+        <script  type="module-shim">
+            import 'xtal-sip';
+        </script>
     </div>
 </body>
 </html>

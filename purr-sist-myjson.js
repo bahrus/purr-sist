@@ -1,12 +1,12 @@
 import { PurrSist } from './purr-sist.js';
 import { define } from 'trans-render/define.js';
-import { up } from 'trans-render/hydrate.js';
 const save_service_url = 'save-service-url';
 export class PurrSistMyJson extends PurrSist {
     static get is() { return 'purr-sist-myjson'; }
     static get observedAttributes() {
         return super.observedAttributes.concat([save_service_url]);
     }
+    //_pendingNewVals!: any[];
     attributeChangedCallback(n, ov, nv) {
         switch (n) {
             case save_service_url:
@@ -34,12 +34,12 @@ export class PurrSistMyJson extends PurrSist {
                 this.de('new-store-id', {
                     value: this.storeId
                 }, true);
-                if (this._pendingNewVals) {
-                    this._pendingNewVals.forEach(kvp => {
-                        this.newVal = kvp;
-                    });
-                    delete this._pendingNewVals;
-                }
+                // if(this._pendingNewVals){
+                //     this._pendingNewVals.forEach(kvp =>{
+                //         this.newVal = kvp;
+                //     })
+                //     delete this._pendingNewVals;
+                // }
                 if (master !== null)
                     master.newVal = Object.assign(master.value, {
                         [this._guid]: this._storeId,
@@ -70,7 +70,7 @@ export class PurrSistMyJson extends PurrSist {
         });
     }
     connectedCallback() {
-        this[up](['saveServiceUrl']);
+        this.propUp(['saveServiceUrl']);
         if (!this._saveServiceUrl) {
             if (this._baseLinkId) {
                 this._saveServiceUrl = this.getFullURL('');

@@ -1,0 +1,12 @@
+{
+    "imports": {
+        "xtal-element/": "../node_modules/xtal-element/",
+        "trans-render/": "../node_modules/trans-render/",
+        "xtal-state-parse": "https://cdn.jsdelivr.net/npm/xtal-state@0.0.85/xtal-state-parse.js"
+        "xtal-state-commit": "https://cdn.jsdelivr.net/npm/xtal-state@0.0.85/xtal-state-commit.js",
+        "xtal-state-watch": "https://cdn.jsdelivr.net/npm/xtal-state@0.0.85/xtal-state-watch.js",
+        "xtal-sip": "https://cdn.jsdelivr.net/npm/xtal-sip@0.0.80/xtal-sip.js",
+        "xtal-json-editor": "https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.35/xtal-json-editor.js",
+        "p-d": "https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.122/p-d.js"
+    }
+}

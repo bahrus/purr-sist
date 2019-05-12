@@ -1,5 +1,5 @@
 import { XtallatX } from 'xtal-element/xtal-latx.js';
-import { disabled, up, hydrate } from 'trans-render/hydrate.js';
+import { disabled, hydrate } from 'trans-render/hydrate.js';
 import { BaseLinkId } from 'xtal-element/base-link-id.js';
 import { getHost } from 'xtal-element/getHost.js';
 const store_id = 'store-id';
@@ -146,7 +146,7 @@ export class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))) {
         this.saveNewVal(val);
     }
     connectedCallback() {
-        this[up](['storeId', write, read, new$, disabled, guid, 'masterListId', 'historyEvent', 'value', 'syncVal', 'newVal']);
+        this.propUp(['storeId', write, read, new$, disabled, guid, 'masterListId', 'historyEvent', 'value', 'syncVal', 'newVal']);
         this.style.display = 'none';
         this._conn = true;
         this.onPropsChange();

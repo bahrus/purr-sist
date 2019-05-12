@@ -1,6 +1,6 @@
 import {Store, set, get} from 'idb-keyval/dist/idb-keyval.mjs';
 import { PurrSist, PurrSistAttribs } from './purr-sist.js';
-import {disabled, up} from 'trans-render/hydrate.js';
+import {disabled} from 'trans-render/hydrate.js';
 import {define} from 'trans-render/define.js';
 export const idb_item_set = 'idb-item-set';
 const store_name = 'store-name';
@@ -45,7 +45,7 @@ export class PurrSistIDB extends PurrSist{
         this.getStore();
     }
     connectedCallback(){
-        this[up](['dbName', 'storeName']);
+        this.propUp(['dbName', 'storeName']);
         super.connectedCallback();
     }
     _store: Store;
