@@ -58,7 +58,7 @@
         <!-- Update global history.state object -->
         <xtal-state-update id=historyUpdater rewrite level=global url-search="(?<store>(.*?))" replace-url-value="?id=$<store>"></xtal-state-update>
         <!-- Send new history.state object to object persister -->
-        <p-d on="history-changed" prop="historyEvent" val="target" skip-init></p-d>
+        <p-d on="history-changed" prop="newVal"  skip-init></p-d>
         <!-- Persist history.state to remote store-->   
         <purr-sist-myjson write new disabled="2"></purr-sist-myjson>
 
@@ -66,7 +66,7 @@
         <p-u on="new-store-id" to="/historyUpdater" prop="url"></p-u>
 
         <!-- Pass persisted object to JSON viewer -->
-        <p-d on="value-changed" prop="input"></p-d>
+        <p-d on="value-changed" prop="input" ></p-d>
         <xtal-json-editor options="{}" height="300px"></xtal-json-editor>
         <!-- Reload window to see if changes persist -->
         <button onclick="window.location.reload()">Reload Window</button>
