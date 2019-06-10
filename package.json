@@ -14,7 +14,7 @@
     "tape": "4.10.1",
     "@types/tape": "4.2.33",
     "xtal-test": "0.0.18",
-    "p-d.p-u": "0.0.122",
+    "p-et-alia": "0.0.5",
     "xtal-state": "0.0.85"
   },
   "scripts": {
