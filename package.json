@@ -3,18 +3,20 @@
   "version": "0.0.58",
   "description": "Pesist JSON",
   "main": "purr-sist.js",
-  "dependencies": {
+  "peerDependencies": {
     "xtal-element": "0.0.59",
-    "trans-render": "0.0.111",
+    "trans-render": "0.0.112"
+  },
+  "dependencies": {
     "idb-keyval": "3.2.0"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "2.2.10",
     "jiife": "0.0.12",
-    "tape": "4.10.1",
+    "tape": "4.10.2",
     "@types/tape": "4.2.33",
-    "xtal-test": "0.0.18",
-    "p-et-alia": "0.0.5",
+    "xtal-test": "0.0.19",
+    "p-et-alia": "0.0.8",
     "xtal-state": "0.0.85"
   },
   "scripts": {
