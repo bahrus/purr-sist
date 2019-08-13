@@ -17,13 +17,14 @@
         <!-- If id found in address bar, pass it to the persistence reader -->
         <p-d on=match-found to=[-store-id] val=target.value.storeId m=2></p-d>
         <!-- Read stored history.state from remote database if saved -->
-        <purr-sist-myjson read -store-id></purr-sist-myjson>
+        <purr-sist-myjson disabled=2 read -store-id></purr-sist-myjson>
         <!-- If persisted history.state found, repopulate history.state -->
         <p-d on=value-changed to=xtal-state-update[-history] val=target.value></p-d>
-
+        <!-- If persisted history.state found, repopulate inputs -->
+        <p-d on=value-changed to=input[data-key][-value] val=target.value.draft.key></p-d>
         <!-- ==========================  UI Input Fields ===================================-->
         <!-- Add a new key (or replace existing one) -->
-        <input placeholder=key>
+        <input data-key -value placeholder=key>
         <!-- Save key to history.draft.key -->
         <p-d-x on=input to=xtal-state-update prop=history.draft.key val=target.value m=1 skip-init></p-d-x>
         <!-- Pass key to aggregator that creates key / value object -->
