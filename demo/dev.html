@@ -19,7 +19,7 @@
         <!-- Read stored history.state from remote database if saved -->
         <purr-sist-myjson disabled=2 read -store-id></purr-sist-myjson>
         <!-- If persisted history.state found, repopulate history.state -->
-        <p-d on=value-changed to=xtal-state-update[-history] val=target.value></p-d>
+        <p-d on=value-changed to=[-history] val=target.value m=1></p-d>
         <!-- If persisted history.state found, repopulate inputs -->
         <p-d on=value-changed to=input[-value] val=target.value.draft.key m=1></p-d>
         <p-d on=value-changed to=textarea[-value] val=target.value.draft.value m=1></p-d>
@@ -34,6 +34,9 @@
         <textarea disabled=2 -value placeholder="value (JSON optional)"></textarea>
         <!-- Pass value to history.draft.value -->
         <p-d-x on=input to=xtal-state-update prop=history.draft.value val=target.value m=1 skip-init></p-d-x>
+        <!-- Proposed
+        <p-d-x on=input to=[-history.draft.value] val=target.value m=1 skip-init></p-d-x> 
+        -->
         <!-- Pass (JSON) value to key / value aggregator -->
         <p-d on=input to=[-val] val=target.value m=1></p-d>
         <!-- Combine key / value fields into one object -->
@@ -52,6 +55,10 @@
         <button>Insert Key/Value pair</button>
         <!-- Pass button's "__obj" property to history via 
             history-state-update
+
+            Proposed:  Committed history should go to IndexedDB, allow for some back - history.
+            This might help:  https://developer.mozilla.org/en-US/docs/Web/API/History/length
+
         -->
         <p-d-x on=click to=xtal-state-update prop=history.submitted val=target.__obj skip-init m=1></p-d-x>
 
