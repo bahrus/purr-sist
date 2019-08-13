@@ -33,10 +33,9 @@
         <!-- Edit (JSON) value -->
         <textarea disabled=2 -value placeholder="value (JSON optional)"></textarea>
         <!-- Pass value to history.draft.value -->
-        <p-d-x on=input to=xtal-state-update prop=history.draft.value val=target.value m=1 skip-init></p-d-x>
-        <!-- Proposed
-        <p-d-x on=input to=[-history.draft.value] val=target.value m=1 skip-init></p-d-x> 
-        -->
+        <!-- <p-d-x on=input to=xtal-state-update prop=history.draft.value val=target.value m=1 skip-init></p-d-x> -->
+        <p-d-x on=input to="[-history='...draft.value']" val=target.value m=1 skip-init></p-d-x> 
+       
         <!-- Pass (JSON) value to key / value aggregator -->
         <p-d on=input to=[-val] val=target.value m=1></p-d>
         <!-- Combine key / value fields into one object -->
@@ -64,7 +63,7 @@
 
         <!-- ============================  End UI Input fields =============================== -->
         <!-- Update global history.state object -->
-        <xtal-state-update rewrite -history level=global url-search="(?<store>(.*?))" replace-url-value="?id=$<store>" id=historyUpdater></xtal-state-update>
+        <xtal-state-update -history=...draft.value rewrite -history level=global url-search="(?<store>(.*?))" replace-url-value="?id=$<store>" id=historyUpdater></xtal-state-update>
         <!-- Send new history.state object to object persister -->
         <p-d on=history-changed prop=newVal  skip-init></p-d>
         <!-- Persist history.state to remote store-->   
@@ -96,7 +95,6 @@
             import '../node_modules/p-et-alia/p-d-x.js';
             import '../node_modules/xtal-state/xtal-state-parse.js';
             import '../node_modules/xtal-state/xtal-state-update.js';
-            import '../node_modules/xtal-state/xtal-state-commit.js';
             import '../node_modules/xtal-state/xtal-state-watch.js';
             import '../node_modules/aggregator-fn/aggregator-fn.js';
             import '../node_modules/xtal-json-editor/xtal-json-editor.js';
