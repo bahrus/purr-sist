@@ -60,34 +60,28 @@
         <!-- Pass store ID up one element so xtal-state-update knows how to update the address bar -->
         <p-u on=new-store-id to="/historyUpdater" prop=url></p-u>
 
-        <!-- Pass persisted object to JSON viewer -->
+        <!-- Pass history.state object to JSON viewer -->
         <p-d-state to=[-input] ></p-d-state>
         <xtal-json-editor -input options={} height=300px></xtal-json-editor>
         <!-- Reload window to see if changes persist -->
         <button onclick="window.location.reload()">Reload Window</button>
 
+        <script type="module" src="https://unpkg.com/p-et-alia@0.0.34/p-et-alia.js?module"></script>
+        <script type="module" src="https://unpkg.com/xtal-state@0.0.96/xtal-state.js?module"></script>
+        <script type="module" src="https://unpkg.com/aggregator-fn@0.0.17/aggregator-fn.js?module"></script>
+        <script type="module" src="https://unpkg.com/xtal-json-editor@0.0.39/xtal-json-editor.js?module"></script>
 
         <script defer src="../node_modules/es-module-shims/dist/es-module-shims.js"></script>
         <script type="importmap-shim">
         {
             "imports": {
                 "xtal-element/": "../node_modules/xtal-element/",
-                "trans-render/": "../node_modules/trans-render/",
-                "xtal-state/": "../node_modules/xtal-state/"
+                "trans-render/": "../node_modules/trans-render/"
             }
         }
         </script>
         <script  type="module-shim">
             import '../purr-sist-myjson.js';
-            import '../node_modules/p-et-alia/p-d.js';
-            import '../node_modules/p-et-alia/p-d-and-cc-state.js';
-            import '../node_modules/p-et-alia/p-d-state.js';
-            import '../node_modules/p-et-alia/p-u.js';
-            import '../node_modules/xtal-state/xtal-state-parse.js';
-            import '../node_modules/xtal-state/xtal-state-update.js';
-            import '../node_modules/xtal-state/xtal-state-watch.js';
-            import '../node_modules/aggregator-fn/aggregator-fn.js';
-            import '../node_modules/xtal-json-editor/xtal-json-editor.js';
         </script>
     </div>
 </body>
