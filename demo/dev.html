@@ -9,9 +9,7 @@
 <body>
     <div style="display:flex;flex-direction: column">
         <!-- Parse the address bar -->
-        <xtal-state-parse disabled parse=location.href level=global 
-            with-url-pattern="id=(?<storeId>[a-z0-9-]*)">
-        </xtal-state-parse>
+        <xtal-state-parse disabled parse=location.href with-url-pattern="id=(?<storeId>[a-z0-9-]*)"></xtal-state-parse>
         <!-- If no id found in address bar, create a new record ("session") -->
         <p-d on=no-match-found to=[write][-new] val=target.noMatch  m=1></p-d>
         <!-- If id found in address bar, pass it to the persistence reader -->
@@ -21,23 +19,19 @@
         <!-- If persisted history.state found, repopulate history.state -->
         <p-d on=value-changed to=[-history] val=target.value m=1></p-d>
         <!-- If persisted history.state found, repopulate inputs -->
-        <p-d on=value-changed to=input[-value] val=target.value.draft.key m=1></p-d>
-        <p-d on=value-changed to=textarea[-value] val=target.value.draft.value m=1></p-d>
+        <p-d on=value-changed to=input[-value] fire-event=input val=target.value.draft.key m=1></p-d>
+        <p-d on=value-changed to=textarea[-value] fire-event=input val=target.value.draft.value m=1></p-d>
         <!-- ==========================  UI Input Fields ===================================-->
         <!-- Add a new key (or replace existing one) -->
-        <input -value placeholder=key>
+        <input -value placeholder=key disabled>
         <!-- Save key to history.draft.key -->
-        <p-d-x on=input to=xtal-state-update prop=history.draft.key val=target.value m=1 skip-init></p-d-x>
+        <p-d-and-cc-state on=input to=[-key] push with-state-path=draft.key val=target.value m=1 skip-init></p-d-and-cc-state>
         <!-- Pass key to aggregator that creates key / value object -->
-        <p-d on=input to=[-key] val=target.value m=1></p-d>
         <!-- Edit (JSON) value -->
-        <textarea disabled=2 -value placeholder="value (JSON optional)"></textarea>
-        <!-- Pass value to history.draft.value -->
-        <!-- <p-d-x on=input to=xtal-state-update prop=history.draft.value val=target.value m=1 skip-init></p-d-x> -->
-        <p-d-x on=input to="[-history='...draft.value']" val=target.value m=1 skip-init></p-d-x> 
+        <textarea disabled -value placeholder="value (JSON optional)"></textarea>
+        <!-- Pass value to history.draft.value and into (JSON) value to key / value aggregator -->
+        <p-d-and-cc-state on=input to=[-val] push with-state-path=draft.value val=target.value m=1 skip-init></p-d-and-cc-state> 
        
-        <!-- Pass (JSON) value to key / value aggregator -->
-        <p-d on=input to=[-val] val=target.value m=1></p-d>
         <!-- Combine key / value fields into one object -->
         <aggregator-fn -key -val><script nomodule>
             fn = ({ key, val }) => {
@@ -52,29 +46,23 @@
         <!-- Pass Aggregated Object to button's "__obj" property -->
         <p-d on=value-changed to=button prop=__obj val=target.value m=1></p-d>
         <button>Insert Key/Value pair</button>
-        <!-- Pass button's "__obj" property to history via 
-            history-state-update
 
-            Proposed:  Committed history should go to IndexedDB, allow for some back - history.
-            This might help:  https://developer.mozilla.org/en-US/docs/Web/API/History/length
-
-        -->
-        <p-d-x on=click to=xtal-state-update prop=history.submitted val=target.__obj skip-init m=1></p-d-x>
+        <p-d on=click to=xtal-state-update[-history] with-path=submitted val=target.__obj skip-init m=1></p-d>
 
         <!-- ============================  End UI Input fields =============================== -->
         <!-- Update global history.state object -->
-        <xtal-state-update -history=...draft.value rewrite -history level=global url-search="(?<store>(.*?))" replace-url-value="?id=$<store>" id=historyUpdater></xtal-state-update>
+        <xtal-state-update rewrite -history url-search="(?<store>(.*?))" replace-url-value="?id=$<store>" id=historyUpdater></xtal-state-update>
         <!-- Send new history.state object to object persister -->
-        <p-d on=history-changed prop=newVal  skip-init></p-d>
+        <p-d on=history-changed to=[-new-val]  skip-init m=1></p-d>
         <!-- Persist history.state to remote store-->   
-        <purr-sist-myjson write -new -store-id disabled=2></purr-sist-myjson>
+        <purr-sist-myjson write -new -new-val -store-id disabled=2></purr-sist-myjson>
 
         <!-- Pass store ID up one element so xtal-state-update knows how to update the address bar -->
         <p-u on=new-store-id to="/historyUpdater" prop=url></p-u>
 
         <!-- Pass persisted object to JSON viewer -->
-        <p-d on=value-changed prop=input ></p-d>
-        <xtal-json-editor options={} height=300px></xtal-json-editor>
+        <p-d-state to=[-input] ></p-d-state>
+        <xtal-json-editor -input options={} height=300px></xtal-json-editor>
         <!-- Reload window to see if changes persist -->
         <button onclick="window.location.reload()">Reload Window</button>
 
@@ -84,15 +72,17 @@
         {
             "imports": {
                 "xtal-element/": "../node_modules/xtal-element/",
-                "trans-render/": "../node_modules/trans-render/"
+                "trans-render/": "../node_modules/trans-render/",
+                "xtal-state/": "../node_modules/xtal-state/"
             }
         }
         </script>
         <script  type="module-shim">
             import '../purr-sist-myjson.js';
             import '../node_modules/p-et-alia/p-d.js';
+            import '../node_modules/p-et-alia/p-d-and-cc-state.js';
+            import '../node_modules/p-et-alia/p-d-state.js';
             import '../node_modules/p-et-alia/p-u.js';
-            import '../node_modules/p-et-alia/p-d-x.js';
             import '../node_modules/xtal-state/xtal-state-parse.js';
             import '../node_modules/xtal-state/xtal-state-update.js';
             import '../node_modules/xtal-state/xtal-state-watch.js';
