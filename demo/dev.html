@@ -18,21 +18,26 @@
         <purr-sist-myjson disabled=2 read -store-id></purr-sist-myjson>
         <!-- If persisted history.state found, repopulate history.state -->
         <p-d on=value-changed to=[-history] val=target.value m=1></p-d>
-        <!-- If persisted history.state found, repopulate inputs -->
-        <p-d on=value-changed to=input[-value] fire-event=input val=target.value.draft.key m=1></p-d>
-        <p-d on=value-changed to=textarea[-value] fire-event=input val=target.value.draft.value m=1></p-d>
+
+        
         <!-- ==========================  UI Input Fields ===================================-->
         <!-- Add a new key (or replace existing one) -->
+        <!-- If history.state initializes or popstates, repopulate input -->
+        <p-d-state init-and-popstate-only to=[-value] m=1 from-path=draft.key></p-d-state>
         <input -value placeholder=key disabled>
-        <!-- Save key to history.draft.key -->
+        <!-- Pass key to aggregator that creates key / value object and cc history.state (draft.key) -->
         <p-d-and-cc-state on=input to=[-key] push with-state-path=draft.key val=target.value m=1 skip-init></p-d-and-cc-state>
-        <!-- Pass key to aggregator that creates key / value object -->
+        
         <!-- Edit (JSON) value -->
+        <!-- If history.state initializes or popstates, repopulate textarea -->
+        <p-d-state init-and-popstate-only to=[-value] m=1 from-path=draft.value></p-d-state>
         <textarea disabled -value placeholder="value (JSON optional)"></textarea>
-        <!-- Pass value to history.draft.value and into (JSON) value to key / value aggregator -->
-        <p-d-and-cc-state on=input to=[-val] push with-state-path=draft.value val=target.value m=1 skip-init></p-d-and-cc-state> 
+        <!-- Pass value  into (JSON) value to key / value aggregator and cc history.state (draft.value) -->
+        <p-d-and-cc-state on=input to=[-val] val=target.value push with-state-path=draft.value  m=1 skip-init></p-d-and-cc-state> 
        
         <!-- Combine key / value fields into one object -->
+        <p-d-state init-and-popstate-only to=[-key] m=1 from-path=draft.key></p-d-state>
+        <p-d-state init-and-popstate-only to=[-val] m=1 from-path=draft.value></p-d-state>
         <aggregator-fn -key -val><script nomodule>
             fn = ({ key, val }) => {
                 if (key === undefined || val === undefined) return null;
@@ -43,11 +48,11 @@
                 }
             }
         </script></aggregator-fn>
-        <!-- Pass Aggregated Object to button's "__obj" property -->
-        <p-d on=value-changed to=button prop=__obj val=target.value m=1></p-d>
+        <!-- Pass Aggregated Object to button's "_obj" ad-hoc field -->
+        <p-d on=value-changed to=button prop=_obj val=target.value m=1></p-d>
         <button>Insert Key/Value pair</button>
 
-        <p-d on=click to=xtal-state-update[-history] with-path=submitted val=target.__obj skip-init m=1></p-d>
+        <p-d on=click to=xtal-state-update[-history] with-path=submitted val=target._obj skip-init m=1></p-d>
 
         <!-- ============================  End UI Input fields =============================== -->
         <!-- Update global history.state object -->
@@ -61,13 +66,13 @@
         <p-u on=new-store-id to="/historyUpdater" prop=url></p-u>
 
         <!-- Pass history.state object to JSON viewer -->
-        <p-d-state to=[-input] ></p-d-state>
+        <p-d-state to=[-input]></p-d-state>
         <xtal-json-editor -input options={} height=300px></xtal-json-editor>
         <!-- Reload window to see if changes persist -->
         <button onclick="window.location.reload()">Reload Window</button>
 
-        <script type="module" src="https://unpkg.com/p-et-alia@0.0.34/p-et-alia.js?module"></script>
-        <script type="module" src="https://unpkg.com/xtal-state@0.0.96/xtal-state.js?module"></script>
+        <script type="module" src="https://unpkg.com/p-et-alia@0.0.39/p-et-alia.js?module"></script>
+        <script type="module" src="https://unpkg.com/xtal-state@0.0.97/xtal-state-parse.js?module"></script>
         <script type="module" src="https://unpkg.com/aggregator-fn@0.0.17/aggregator-fn.js?module"></script>
         <script type="module" src="https://unpkg.com/xtal-json-editor@0.0.39/xtal-json-editor.js?module"></script>
 
