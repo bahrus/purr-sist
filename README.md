@@ -20,14 +20,14 @@ purr-sist-idb persists state to the local indexed db for offline storage (and po
 
 <!--
 ```
-<custom-element-demo>
+<custom-element-demox>
 <template>
     <div>
         <wc-info package-name="npm install purr-sist" href="https://unpkg.com/purr-sist@0.0.35/web-components.json"></wc-info>
         <script type="module" src="https://unpkg.com/wc-info@0.0.13/wc-info.js?module"></script>
     </div>
 </template>
-</custom-element-demo>
+</custom-element-demox>
 ```
 -->
 
@@ -110,137 +110,103 @@ document.querySelector('purr-sist-foo').newVal = {'kitty': myValue}
 
 ## Example A.1 -- Time travel support (aka back button)
 
+<!--
 [See it in action](https://bahrus.github.io/purr-sist-demos/Example3.html)
+-->
 
 Data flow is **almost** unidirectional (see tag p-u for bad code smell exception).  Markup shown below.  
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Example 3</title>
+    <title>Document</title>
 </head>
-
 <body>
     <div style="display:flex;flex-direction: column">
-
         <!-- Parse the address bar -->
-        <xtal-state-parse disabled="3" parse="location.href" level="global" 
-            with-url-pattern="id=(?<storeId>[a-z0-9-]*)">
-        </xtal-state-parse>
+        <xtal-state-parse disabled parse=location.href with-url-pattern="id=(?<storeId>[a-z0-9-]*)"></xtal-state-parse>
+        <!-- If no id found in address bar, pass down ("p-d") message to session writer to create a new record ("session") -->
+        <p-d on=no-match-found to=[write][-new] val=target.noMatch  m=1></p-d>
+        <!-- If id found in address bar, pass it to the persistence reader -->
+        <p-d on=match-found to=[-store-id] val=target.value.storeId m=2></p-d>
+        <!-- Read stored history.state from remote database if saved -->
+        <purr-sist-myjson disabled=2 read -store-id></purr-sist-myjson>
+        <!-- If persisted history.state found, repopulate history.state -->
+        <p-d on=value-changed to=[-history] val=target.value m=1></p-d>
 
-        <!-- If no id found in address bar, "pass-down (p-d)" message to 
-            purr-sist-myjson writer and 
-            xtal-state-update history initializer  
-            to create a new record ("session") in 
-            both history and remote store -->
-        <p-d on="no-match-found" to="purr-sist-myjson[write],xtal-state-update[init]" 
-            prop="new" val="target.noMatch"  m="2" skip-init></p-d>
-
-        <!-- If id found in address bar, pass it to 
-            the persistence reader if history is null -->
-        <p-d on="match-found" if="[data-history-was-null]" to="purr-sist-myjson[read]" 
-            prop="storeId" val="target.value.storeId" m="1" skip-init></p-d>
-
-        <!-- If id found in address bar, pass it to the 
-            persistence writer whether or not history is null -->
-        <p-d on="match-found" to="purr-sist-myjson[write]" prop="storeId" 
-        val="target.value.storeId" m="1" skip-init></p-d>
-
-        <!-- Read stored history.state from remote database if 
-            id found in address bar and history starts out null -->
-        <purr-sist-myjson read disabled></purr-sist-myjson>
-
-        <!-- If persisted history.state found, 
-            repopulate history.state from remote store -->
-        <p-d on="value-changed" prop="history" val="target.value"></p-d>
-        <xtal-state-update init rewrite level="global"></xtal-state-update>
-
-        <!-- Watch for initial history state or popstate events, 
-            populate UI components
-             that need to initialize when these events occur.
-         -->
-        <xtal-state-watch disabled="3" watch="popstate" level="global"></xtal-state-watch>
-
-        <!-- ====== initialize key input field ===== -->
-        <p-d on="history-changed" to="input" prop="value" val="target.history.draft.key" m="1" skip-init></p-d>
-        <!-- ====== initialize textarea (JSON) field ====== -->
-        <p-d on="history-changed" to="textarea" prop="value" val="target.history.draft.value" m="1" skip-init></p-d>
-
-        <!--  ====== Sync up purr-sist[write] with history. 
-            This doesn't update history or the remote data store, 
-            but downstream elements to the persistence writer 
-            are notified as if it is  -->
-        <p-d on="history-changed"  to="purr-sist-myjson[write]" prop="syncVal" val="target.history" m="1" skip-init></p-d>
-
-        <!-- ==========================  UI Input Fields ===================================-->
-        <!-- Add a new key (or replace existing one) -->
-        <input type="text" disabled="2" placeholder="key">
-        <!-- Save key to history.draft.key -->
-        <p-d-x on="input" to="xtal-state-update" prop="history.draft.key" val="target.value" m="1" skip-init></p-d-x>
-        <!-- Pass key to aggregator that creates key / value object -->
-        <p-d on="input" to="aggregator-fn" prop="key" val="target.value" m="1"></p-d>
-
-        <!-- Edit (JSON) value -->
-        <textarea disabled="2" placeholder="value (JSON optional)"></textarea>
-        <!-- Pass value to history.draft.value -->
-        <p-d-x on="input" to="xtal-state-update" prop="history.draft.value" val="target.value" m="1" skip-init></p-d-x>
-        <!-- Pass (JSON) value to key / value aggregator -->
-        <p-d on="input" prop="val" val="target.value"></p-d>
-        <!-- ============================  End UI Input fields =============================== -->
-    
-        <!-- Combine key / value fields into one object -->
-        <aggregator-fn disabled><script nomodule>
-        ({ key, val }) => {
-            if (key === undefined || val === undefined) return null;
-            try {
-                return { [key]: JSON.parse(val) };
-            } catch (e) {
-                return { [key]: val };
-            }
-        }
-        </script></aggregator-fn>
-        <!-- Pass Aggregated Object to button's "obj" property -->
-        <p-d on="value-changed" to="button" prop="obj" val="target.value" m="1"></p-d>
-         
-        <button disabled>Insert Key/Value pair</button>
-        <!-- Pass button's "obj" property to history via 
-            history-state-update
-        -->
-        <p-d-x on="click" to="xtal-state-update" prop="history.submitted" val="target.obj" skip-init m="1"></p-d-x>
-
-        <!-- Update (merge) into global history.state 
-            object the new submitted object -->
-        <xtal-state-update id="historyUpdater" disabled make level="global" 
-            url-search="(?<store>(.*?))" replace-url-value="?id=$<store>">
-        </xtal-state-update>
-
-        <!-- Send new history.state object to object persister -->
-        <p-d on="history-changed" prop="newVal"  skip-init></p-d>
-
-        <!-- Persist history.state to remote store-->   
-        <purr-sist-myjson write disabled></purr-sist-myjson>
-
-        <!-- Pass store ID up one element so history.state knows how to update the address bar.  -->
-        <p-u on="new-store-id" to="historyUpdater" prop="url"></p-u>
-
-        <!-- Pass persisted object to JSON viewer -->
-        <p-d on="value-changed" prop="input" ></p-d>
-        <xtal-json-editor options="{}" height="300px"></xtal-json-editor>
         
+        <!-- ==========================  UI Input Fields ===================================-->
+        <!-- If history.state initializes or popstates, repopulate input and artificially raise input event
+        "p-d-state" stands for "pass down history.state"
+        -->
+        <p-d-state init-and-popstate-only to=[-value] m=1 from-path=draft.key fire-event=input></p-d-state>
+        <input -value placeholder=key disabled>
+        <!-- Pass key to aggregator that creates key / value object and cc history.state (draft.key) -->
+        <!-- "p-d-and-cc-state" stands for "pass down and carbon copy history.state -->
+        <p-d-and-cc-state on=input to=[-key] push with-state-path=draft.key val=target.value m=1></p-d-and-cc-state>
+        
+        <!-- Edit (JSON) value -->
+        <!-- If history.state initializes or popstates, repopulate textarea and artificially raise input event-->
+        <p-d-state init-and-popstate-only to=[-value] m=1 from-path=draft.value fire-event=input></p-d-state>
+        <textarea disabled -value placeholder="value (JSON optional)"></textarea>
+        <!-- Pass value  into (JSON) value to key / value aggregator and cc history.state (draft.value) -->
+        <p-d-and-cc-state on=input to=[-val] val=target.value push with-state-path=draft.value  m=1></p-d-and-cc-state> 
+       
+        <!-- Combine key / value fields into one object -->
+        <aggregator-fn -key -val><script nomodule>
+            fn = ({ key, val }) => {
+                if (key === undefined || val === undefined) return null;
+                try {
+                    return { [key]: JSON.parse(val) };
+                } catch (e) {
+                    return { [key]: val };
+                }
+            }
+        </script></aggregator-fn>
+        <!-- Pass Aggregated Object to button's "_obj" ad-hoc field -->
+        <p-d on=value-changed to=button prop=_obj val=target.value m=1></p-d>
+        <button>Insert Key/Value pair</button>
+
+        <p-d on=click to=xtal-state-update[-history] with-path=submitted val=target._obj skip-init m=1></p-d>
+
+        <!-- ============================  End UI Input fields =============================== -->
+        <!-- Update global history.state object -->
+        <xtal-state-update rewrite -history url-search="(?<store>(.*?))" replace-url-value="?id=$<store>" id=historyUpdater></xtal-state-update>
+        <!-- Send new history.state object to object persister -->
+        <p-d on=history-changed to=[-new-val]  skip-init m=1></p-d>
+        <!-- Persist history.state to remote store-->   
+        <purr-sist-myjson write -new -new-val -store-id disabled=2></purr-sist-myjson>
+
+        <!-- Pass store ID up one element so xtal-state-update knows how to update the address bar -->
+        <p-u on=new-store-id to="/historyUpdater" prop=url></p-u>
+
+        <!-- Pass history.state object to JSON viewer -->
+        <p-d-state to=[-input]></p-d-state>
+        <xtal-json-editor -input options={} height=300px></xtal-json-editor>
         <!-- Reload window to see if changes persist -->
         <button onclick="window.location.reload()">Reload Window</button>
 
-        <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/purr-sist@0.0.32/dist/purr-sist-myjson.iife.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.92/dist/p-all.iife.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-json-editor@0.0.29/xtal-json-editor.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/aggregator-fn@0.0.11/aggregator-fn.iife.js"></script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/xtal-state@0.0.59/dist/xtal-state.iife.js"></script>
+        <script type="module" src="https://unpkg.com/p-et-alia@0.0.41/p-et-alia.js?module"></script>
+        <script type="module" src="https://unpkg.com/xtal-state@0.0.97/xtal-state-parse.js?module"></script>
+        <script type="module" src="https://unpkg.com/aggregator-fn@0.0.18/aggregator-fn.js?module"></script>
+        <script type="module" src="https://unpkg.com/xtal-json-editor@0.0.39/xtal-json-editor.js?module"></script>
+
+        <script defer src="../node_modules/es-module-shims/dist/es-module-shims.js"></script>
+        <script type="importmap-shim">
+        {
+            "imports": {
+                "xtal-element/": "../node_modules/xtal-element/",
+                "trans-render/": "../node_modules/trans-render/"
+            }
+        }
+        </script>
+        <script  type="module-shim">
+            import '../purr-sist-myjson.js';
+        </script>
     </div>
 </body>
 </html>

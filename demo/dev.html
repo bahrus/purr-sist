@@ -10,7 +10,7 @@
     <div style="display:flex;flex-direction: column">
         <!-- Parse the address bar -->
         <xtal-state-parse disabled parse=location.href with-url-pattern="id=(?<storeId>[a-z0-9-]*)"></xtal-state-parse>
-        <!-- If no id found in address bar, create a new record ("session") -->
+        <!-- If no id found in address bar, pass down ("p-d") message to session writer to create a new record ("session") -->
         <p-d on=no-match-found to=[write][-new] val=target.noMatch  m=1></p-d>
         <!-- If id found in address bar, pass it to the persistence reader -->
         <p-d on=match-found to=[-store-id] val=target.value.storeId m=2></p-d>
@@ -21,10 +21,13 @@
 
         
         <!-- ==========================  UI Input Fields ===================================-->
-        <!-- If history.state initializes or popstates, repopulate input and artificially raise input event-->
+        <!-- If history.state initializes or popstates, repopulate input and artificially raise input event
+        "p-d-state" stands for "pass down history.state"
+        -->
         <p-d-state init-and-popstate-only to=[-value] m=1 from-path=draft.key fire-event=input></p-d-state>
         <input -value placeholder=key disabled>
         <!-- Pass key to aggregator that creates key / value object and cc history.state (draft.key) -->
+        <!-- "p-d-and-cc-state" stands for "pass down and carbon copy history.state -->
         <p-d-and-cc-state on=input to=[-key] push with-state-path=draft.key val=target.value m=1></p-d-and-cc-state>
         
         <!-- Edit (JSON) value -->
