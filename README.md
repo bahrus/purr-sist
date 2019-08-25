@@ -16,7 +16,7 @@ purr-sist-idb persists state to the local indexed db for offline storage (and po
 
 **NB**:  Quite a bit of the functionality described here overlaps significantly with the slightly better known [Polymer data elements](https://www.webcomponents.org/element/@polymer/app-storage), which I remembered about recently.  At this point, there's no doubt those components support useful features not found here for now (like orchestrating data moving as the user's status switches between offline and online mode).   
 
-## Syntax Reference
+<!--## Syntax Reference -->
 
 <!--
 ```
@@ -111,7 +111,7 @@ document.querySelector('purr-sist-foo').newVal = {'kitty': myValue}
 ## Example A.1 -- Time travel support (aka back button)
 
 <!--
-[See it in action](https://bahrus.github.io/purr-sist-demos/Example3.html)
+[See it in action](https://bahrus.github.io/purr-sist-demos/cdn.html)
 -->
 
 Data flow is **almost** unidirectional (see tag p-u for bad code smell exception).  Markup shown below.  
@@ -141,20 +141,20 @@ Data flow is **almost** unidirectional (see tag p-u for bad code smell exception
         
         <!-- ==========================  UI Input Fields ===================================-->
         <!-- If history.state initializes or popstates, repopulate input and artificially raise input event
-        "p-d-state" stands for "pass down history.state"
+        "p-h-d" stands for "pass history.state down"
         -->
-        <p-d-state init-and-popstate-only to=[-value] m=1 from-path=draft.key fire-event=input></p-d-state>
+        <p-h-d init-and-popstate-only to=[-value] m=1 from-path=draft.key fire-event=input></p-h-d>
         <input -value placeholder=key disabled>
         <!-- Pass key to aggregator that creates key / value object and cc history.state (draft.key) -->
-        <!-- "p-d-and-cc-state" stands for "pass down and carbon copy history.state -->
-        <p-d-and-cc-state on=input to=[-key] push with-state-path=draft.key val=target.value m=1></p-d-and-cc-state>
+        <!-- "p-d-f" stands for "pass down and file with history.state -->
+        <p-d-f on=input to=[-key] push with-state-path=draft.key val=target.value m=1></p-d-f>
         
         <!-- Edit (JSON) value -->
         <!-- If history.state initializes or popstates, repopulate textarea and artificially raise input event-->
-        <p-d-state init-and-popstate-only to=[-value] m=1 from-path=draft.value fire-event=input></p-d-state>
+        <p-h-d init-and-popstate-only to=[-value] m=1 from-path=draft.value fire-event=input></p-h-d>
         <textarea disabled -value placeholder="value (JSON optional)"></textarea>
         <!-- Pass value  into (JSON) value to key / value aggregator and cc history.state (draft.value) -->
-        <p-d-and-cc-state on=input to=[-val] val=target.value push with-state-path=draft.value  m=1></p-d-and-cc-state> 
+        <p-d-f on=input to=[-val] val=target.value push with-state-path=draft.value  m=1></p-d-f> 
        
         <!-- Combine key / value fields into one object -->
         <aggregator-fn -key -val><script nomodule>
@@ -185,28 +185,17 @@ Data flow is **almost** unidirectional (see tag p-u for bad code smell exception
         <p-u on=new-store-id to="/historyUpdater" prop=url></p-u>
 
         <!-- Pass history.state object to JSON viewer -->
-        <p-d-state to=[-input]></p-d-state>
+        <p-h-d to=[-input]></p-h-d>
         <xtal-json-editor -input options={} height=300px></xtal-json-editor>
         <!-- Reload window to see if changes persist -->
         <button onclick="window.location.reload()">Reload Window</button>
 
-        <script type="module" src="https://unpkg.com/p-et-alia@0.0.41/p-et-alia.js?module"></script>
+        <script type="module" src="https://unpkg.com/p-et-alia@0.0.42/p-et-alia.js?module"></script>
         <script type="module" src="https://unpkg.com/xtal-state@0.0.97/xtal-state-parse.js?module"></script>
         <script type="module" src="https://unpkg.com/aggregator-fn@0.0.18/aggregator-fn.js?module"></script>
         <script type="module" src="https://unpkg.com/xtal-json-editor@0.0.39/xtal-json-editor.js?module"></script>
-
-        <script defer src="../node_modules/es-module-shims/dist/es-module-shims.js"></script>
-        <script type="importmap-shim">
-        {
-            "imports": {
-                "xtal-element/": "../node_modules/xtal-element/",
-                "trans-render/": "../node_modules/trans-render/"
-            }
-        }
-        </script>
-        <script  type="module-shim">
-            import '../purr-sist-myjson.js';
-        </script>
+        <script type="module" src="https://unpkg.com/purr-sist@0.0.59/purr-sist-myjson.js?module"></script>
+        
     </div>
 </body>
 </html>
