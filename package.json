@@ -13,12 +13,12 @@
     "jiife": "0.0.12",
     "tape": "4.11.0",
     "@types/tape": "4.2.33",
-    "xtal-test": "0.0.19",
-    "p-et-alia": "0.0.42",
+    "xtal-test": "0.0.20",
+    "p-et-alia": "0.0.43",
     "xtal-state": "0.0.98",
     "xtal-json-editor": "0.0.39",
-    "es-module-shims": "0.2.15",
-    "aggregator-fn": "0.0.17"
+    "es-module-shims": "0.3.0",
+    "aggregator-fn": "0.0.18"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
