@@ -64,7 +64,7 @@
         <purr-sist-myjson write -new -new-val -store-id disabled></purr-sist-myjson>
 
         <!-- Pass store ID up one element so xtal-state-update knows how to update the address bar -->
-        <p-u on=new-store-id to="/historyUpdater" prop=url></p-u>
+        <p-u on=new-store-id to="/historyUpdater" prop=url val=target.storeId></p-u>
 
         <!-- Pass history.state object to JSON viewer -->
         <p-h-d to=[-input]></p-h-d>
