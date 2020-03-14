@@ -9,10 +9,10 @@
 <body>
     <div style="display:flex;flex-direction: column">
         <!-- Parse the address bar -->
-        <xtal-state-parse disabled parse=location.href with-url-pattern="id=(?<storeId>[a-z0-9-]*)"></xtal-state-parse>
+        <xtal-state-parse disabled=2 parse=location.href with-url-pattern="id=(?<storeId>[a-z0-9-]*)"></xtal-state-parse>
         <!-- If no id found in address bar, pass down ("p-d") message to session writer to create a new record ("session") -->
         <p-d on=no-match-found to=[write][-new] val=target.noMatch  m=1></p-d>
-        <!-- If id found in address bar, pass it to the persistence reader -->
+        <!-- If id found in address bar, pass it to the persistence reader (and writer for when it's needed) -->
         <p-d on=match-found to=[-store-id] val=target.value.storeId m=2></p-d>
         <!-- Read stored history.state from remote database if saved -->
         <purr-sist-myjson disabled=2 read -store-id></purr-sist-myjson>
@@ -28,18 +28,19 @@
         <input -value placeholder=key disabled>
         <!-- Pass key to aggregator that creates key / value object and cc history.state (draft.key) -->
         <!-- "p-w" stands for "planted weirwood" -->
-        <p-w on=input to=[-key] push cc state-path=draft.key val=target.value m=1></p-w>
+        <!-- Pass value into (JSON) key and also history.state (draft.key) -->
+        <p-w on=input to=[-key] push state-path=draft.key val=target.value m=1></p-w>
         
         <!-- Edit (JSON) value -->
         <!-- If history.state initializes or popstates, repopulate textarea and artificially raise input event-->
         <p-h-d init-and-popstate-only to=[-value] m=1 from-path=draft.value fire-event=input></p-h-d>
         <textarea disabled -value placeholder="value (JSON optional)"></textarea>
         <!-- Pass value  into (JSON) value to key / value aggregator and cc history.state (draft.value) -->
-        <p-w on=input to=[-val] val=target.value push cc state-path=draft.value  m=1></p-w> 
+        <p-w on=input to=[-val] val=target.value push state-path=draft.value  m=1></p-w> 
        
         <!-- Combine key / value fields into one object -->
         <aggregator-fn -key -val><script nomodule>
-            fn = ({ key, val }) => {
+            ({ key, val }) => {
                 if (key === undefined || val === undefined) return null;
                 try {
                     return { [key]: JSON.parse(val) };
@@ -60,7 +61,7 @@
         <!-- Send new history.state object to object persister -->
         <p-d on=history-changed to=[-new-val]  skip-init m=1></p-d>
         <!-- Persist history.state to remote store-->   
-        <purr-sist-myjson write -new -new-val -store-id disabled=2></purr-sist-myjson>
+        <purr-sist-myjson write -new -new-val -store-id disabled></purr-sist-myjson>
 
         <!-- Pass store ID up one element so xtal-state-update knows how to update the address bar -->
         <p-u on=new-store-id to="/historyUpdater" prop=url></p-u>
@@ -71,9 +72,9 @@
         <!-- Reload window to see if changes persist -->
         <button onclick="window.location.reload()">Reload Window</button>
 
-        <script type="module" src="https://unpkg.com/p-et-alia@0.0.43/p-et-alia.js?module"></script>
-        <script type="module" src="https://unpkg.com/xtal-state@0.0.97/xtal-state-parse.js?module"></script>
-        <script type="module" src="https://unpkg.com/aggregator-fn@0.0.18/aggregator-fn.js?module"></script>
+        <script type="module" src="https://unpkg.com/p-et-alia@0.0.73/p-et-alia.js?module"></script>
+        <script type="module" src="https://unpkg.com/xtal-state@0.0.100/xtal-state-parse.js?module"></script>
+        <script type="module" src="https://unpkg.com/aggregator-fn@0.0.21/aggregator-fn.js?module"></script>
         <script type="module" src="https://unpkg.com/xtal-json-editor@0.0.39/xtal-json-editor.js?module"></script>
 
         <script defer src="../node_modules/es-module-shims/dist/es-module-shims.js"></script>
