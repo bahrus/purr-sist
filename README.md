@@ -14,7 +14,7 @@ For example, purr-sist-myjson persists state to the [myjson.com](http://myjson.c
 
 purr-sist-idb persists state to the local indexed db for offline storage (and potentially cross window state management).
 
-**NB**:  Quite a bit of the functionality described here overlaps significantly with the slightly better known [Polymer data elements](https://www.webcomponents.org/element/@polymer/app-storage), which I remembered about recently.  At this point, there's no doubt those components support useful features not found here for now (like orchestrating data moving as the user's status switches between offline and online mode).   
+**NB**:  Quite a bit of the functionality described here overlaps significantly with the slightly better known [Polymer data elements](https://www.webcomponents.org/element/@polymer/app-storage), which I remembered about recently.  At this point, there's no doubt those components support useful features not found here (like orchestrating data moving as the user's status switches between offline and online mode).   
 
 <!--## Syntax Reference -->
 
@@ -52,7 +52,7 @@ If you place write mode tag on the page with the new attribute:
 
 since no "store-id" is specified, a new "{}" record will be created on initial load.  If you inspect the element, you will see the id of that new record reflected to the element with attribute "store-id".
 
-Once you have the id, you *could* set it / hardcode it in your markup (after removing the create attribute). 
+Once you have the id, you *could* set it / hardcode it in your markup (after removing the "new" attribute). 
 
 ```html
 <purr-sist-foo read store-id="catnip"></purr-sist-foo>
@@ -146,7 +146,7 @@ Data flow is **almost** unidirectional (see tag p-u for bad code smell exception
         <p-h-d init-and-popstate-only to=[-value] m=1 from-path=draft.key fire-event=input></p-h-d>
         <input -value placeholder=key disabled>
         <!-- Pass key to aggregator that creates key / value object and cc history.state (draft.key) -->
-        <!-- "p-w" stands for "pass down and file with history.state -->
+        <!-- "p-w" stands for "planted weirwood" -->
         <p-w on=input to=[-key] push with-state-path=draft.key val=target.value m=1></p-w>
         
         <!-- Edit (JSON) value -->

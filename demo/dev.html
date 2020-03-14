@@ -27,15 +27,15 @@
         <p-h-d init-and-popstate-only to=[-value] m=1 from-path=draft.key fire-event=input></p-h-d>
         <input -value placeholder=key disabled>
         <!-- Pass key to aggregator that creates key / value object and cc history.state (draft.key) -->
-        <!-- "p-d-and-cc-state" stands for "pass down and carbon copy history.state -->
-        <p-w on=input to=[-key] push with-state-path=draft.key val=target.value m=1></p-w>
+        <!-- "p-w" stands for "planted weirwood" -->
+        <p-w on=input to=[-key] push cc state-path=draft.key val=target.value m=1></p-w>
         
         <!-- Edit (JSON) value -->
         <!-- If history.state initializes or popstates, repopulate textarea and artificially raise input event-->
         <p-h-d init-and-popstate-only to=[-value] m=1 from-path=draft.value fire-event=input></p-h-d>
         <textarea disabled -value placeholder="value (JSON optional)"></textarea>
         <!-- Pass value  into (JSON) value to key / value aggregator and cc history.state (draft.value) -->
-        <p-w on=input to=[-val] val=target.value push with-state-path=draft.value  m=1></p-w> 
+        <p-w on=input to=[-val] val=target.value push cc state-path=draft.value  m=1></p-w> 
        
         <!-- Combine key / value fields into one object -->
         <aggregator-fn -key -val><script nomodule>
