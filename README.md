@@ -10,7 +10,7 @@ purr-sist-* are web component wrappers around various services used to persist (
 
 What follows purr-sist- indicates where the state is persisted.
 
-For example, purr-sist-myjson persists state to the [myjson.com](http://myjson.com/) api service.  The service allows anyone to save and update a JSON document, with zero setup steps.  See discussion below about the pro's and significant con's of this service.
+For example, purr-sist-jsonblob persists state to the [jsonblob.com](http://jsonblob.com/) api service.  The service allows anyone to save and update a JSON document, with zero setup steps.  See discussion below about the pro's and significant con's of this service.
 
 purr-sist-idb persists state to the local indexed db for offline storage (and potentially cross window state management).
 
@@ -82,19 +82,19 @@ So the markup can look like:
 
 Note the value of the master-list-id attribute starts with a /.  This is to explicitly state that the id is expected to be found outside any Shadow DOM.  The ability to reference a master list sitting inside some Shadow DOM realm is not currently supported. 
 
-# Examples Part A -- persisting to myjson.com
+# Examples Part A -- persisting to jsonblob.com
 
-## Why myjson.com?
+## Why jsonblob.com?
 
-myjson.com is easy as pie to use.  It is so simple, in fact, that it kind of mirrors the (overly?) simple api we get with the browser's history api.  One of the objectives of this component is to provide persistence of the history.state object, so myjson.com would appear to have no "impedence mismatch" with the window.history.[push|replace]State calls, which probably is not a very flattering thing to say about the window.history api.
+jsonblob.com is easy as pie to use.  It is so simple, in fact, that it kind of mirrors the (overly?) simple api we get with the browser's history api.  One of the objectives of this component is to provide persistence of the history.state object, so myjson.com would appear to have no "impedance mismatch" with the window.history.[push|replace]State calls, which probably is not a very flattering thing to say about the window.history api.
 
-In addition, myjson.com requires no account set up, so it just works, with zero fuss.  
+In addition, jsonblob.com requires no account set up, so it just works, with zero fuss.  
 
-## What's the problem with myjson.com?
+## What's the problem with jsonblob.com?
 
-Due to the extremely trusting nature of myjson.com, it would be quite dangerous to use in a production setting, so use of this service should be restricted to storing and retrieving harmless data, such as URL paths or public data, or for academic / prototyping purposes.
+Due to the extremely trusting nature of jsonblob.com, it would be quite dangerous to use in a production setting, so use of this service should be restricted to storing and retrieving harmless data, such as URL paths or public data, or for academic / prototyping purposes, precisely as the web site suggests.
 
-myjson.com is similar, but not nearly as powerful, as other, far more robust solutions like [Firebase](https://firebase.google.com/docs/database/rest/save-data) (or mongoDB, or countless other solutions).   Firebase's ability to save to a path, and not overwrite the entire record, is certainly quite appealing. 
+jsonblob.com is similar, but not nearly as powerful, as other, far more robust solutions like [Firebase](https://firebase.google.com/docs/database/rest/save-data) (or mongoDB, or countless other solutions).   Firebase's ability to save to a path, and not overwrite the entire record, is certainly quite appealing. 
 
 I'm 99% certain that using Firebase instead of myjson.com would reduce the packet size in a fairly significant way. But I would argue that the approach of creating a master list, detailed below, helps whether you are using Firebase or myjson.com.
 
