@@ -2,7 +2,8 @@
 
 <a href="https://nodei.co/npm/purr-sist/"><img src="https://nodei.co/npm/purr-sist.png"></a>
 
-<img src="http://img.badgesize.io/https://cdn.jsdelivr.net/npm/purr-sist@0.0.32/dist/purr-sist-myjson.iife.min.js?compression=gzip">
+<img src="https://badgen.net/bundlephobia/minzip/purr-sist">
+
 # purr-sist
 
 
@@ -64,7 +65,7 @@ As we will see, this can be useful in some cases, particularly for "master lists
 
 purr-sist adds some fundamental support for scaling large saves, so they can be broken down somewhat.  First, there is a property, guid, which stands for "globally unique identifier."  There are [many](https://duckduckgo.com/?q=online+guid+generator&t=h_&ia=web) [tools](https://marketplace.visualstudio.com/search?term=guid&target=VSCode&category=All%20categories&sortBy=Relevance) that can generate these for you. 
 
-Second, there's a property "master-list-id" which specifies the id of a DOM element outside any Shadow DOM.  That DOM element should also be a purr-sist element, which serves as the master list indexer.  It contains a lookup between the guid, hardcoded in the markup (or initialization code), and the id defined by the remote datastore (myjson.com in this case).
+Second, there's a property "master-list-id" which specifies the id of a DOM element outside any Shadow DOM.  That DOM element should also be a purr-sist element, which serves as the master list indexer.  It contains a lookup between the guid, hardcoded in the markup (or initialization code), and the id defined by the remote datastore (jsonblob.com in this case).
 
 So the markup can look like:
 
@@ -86,7 +87,7 @@ Note the value of the master-list-id attribute starts with a /.  This is to expl
 
 ## Why jsonblob.com?
 
-jsonblob.com is easy as pie to use.  It is so simple, in fact, that it kind of mirrors the (overly?) simple api we get with the browser's history api.  One of the objectives of this component is to provide persistence of the history.state object, so myjson.com would appear to have no "impedance mismatch" with the window.history.[push|replace]State calls, which probably is not a very flattering thing to say about the window.history api.
+jsonblob.com is easy as pie to use.  It is so simple, in fact, that it kind of mirrors the (overly?) simple api we get with the browser's history api.  One of the objectives of this component is to provide persistence of the history.state object, so jsonblob.com would appear to have no "impedance mismatch" with the window.history.[push|replace]State calls, which probably is not a very flattering thing to say about the window.history api.
 
 In addition, jsonblob.com requires no account set up, so it just works, with zero fuss.  
 
@@ -96,7 +97,7 @@ Due to the extremely trusting nature of jsonblob.com, it would be quite dangerou
 
 jsonblob.com is similar, but not nearly as powerful, as other, far more robust solutions like [Firebase](https://firebase.google.com/docs/database/rest/save-data) (or mongoDB, or countless other solutions).   Firebase's ability to save to a path, and not overwrite the entire record, is certainly quite appealing. 
 
-I'm 99% certain that using Firebase instead of myjson.com would reduce the packet size in a fairly significant way. But I would argue that the approach of creating a master list, detailed below, helps whether you are using Firebase or myjson.com.
+I'm 99% certain that using Firebase instead of jsonblob.com would reduce the packet size in a fairly significant way. But I would argue that the approach of creating a master list, detailed below, helps whether you are using Firebase or jsonblob.com.
 
 ## Update pieces of the remote store
 
@@ -134,7 +135,7 @@ Data flow is **almost** unidirectional (see tag p-u for bad code smell exception
         <!-- If id found in address bar, pass it to the persistence reader -->
         <p-d on=match-found to=[-store-id] val=target.value.storeId m=2></p-d>
         <!-- Read stored history.state from remote database if saved -->
-        <purr-sist-myjson disabled=2 read -store-id></purr-sist-myjson>
+        <purr-sist-jsonblob disabled=2 read -store-id></purr-sist-jsonblob>
         <!-- If persisted history.state found, repopulate history.state -->
         <p-d on=value-changed to=[-history] val=target.value m=1></p-d>
 
@@ -179,7 +180,7 @@ Data flow is **almost** unidirectional (see tag p-u for bad code smell exception
         <!-- Send new history.state object to object persister -->
         <p-d on=history-changed to=[-new-val]  skip-init m=1></p-d>
         <!-- Persist history.state to remote store-->   
-        <purr-sist-myjson write -new -new-val -store-id disabled=2></purr-sist-myjson>
+        <purr-sist-jsonblob write -new -new-val -store-id disabled=2></purr-sist-jsonblob>
 
         <!-- Pass store ID up one element so xtal-state-update knows how to update the address bar -->
         <p-u on=new-store-id to="/historyUpdater" prop=url></p-u>
@@ -194,7 +195,7 @@ Data flow is **almost** unidirectional (see tag p-u for bad code smell exception
         <script type="module" src="https://unpkg.com/xtal-state@0.0.97/xtal-state-parse.js?module"></script>
         <script type="module" src="https://unpkg.com/aggregator-fn@0.0.18/aggregator-fn.js?module"></script>
         <script type="module" src="https://unpkg.com/xtal-json-editor@0.0.39/xtal-json-editor.js?module"></script>
-        <script type="module" src="https://unpkg.com/purr-sist@0.0.59/purr-sist-myjson.js?module"></script>
+        <script type="module" src="https://unpkg.com/purr-sist@0.0.59/purr-sist-jsonblob.js?module"></script>
         
     </div>
 </body>
