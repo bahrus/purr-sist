@@ -15,7 +15,7 @@
         <!-- If id found in address bar, pass it to the persistence reader (and writer for when it's needed) -->
         <p-d on=match-found to=[-store-id] val=target.value.storeId m=2></p-d>
         <!-- Read stored history.state from remote database if saved -->
-        <purr-sist-myjson disabled=2 read -store-id></purr-sist-myjson>
+        <purr-sist-jsonblob disabled=2 read -store-id></purr-sist-jsonblob>
         <!-- If persisted history.state found, repopulate history.state -->
         <p-d on=value-changed to=[-history] val=target.value m=1></p-d>
 
@@ -61,7 +61,7 @@
         <!-- Send new history.state object to object persister -->
         <p-d on=history-changed to=[-new-val]  skip-init m=1></p-d>
         <!-- Persist history.state to remote store-->   
-        <purr-sist-myjson write -new -new-val -store-id disabled></purr-sist-myjson>
+        <purr-sist-jsonblob write -new -new-val -store-id disabled></purr-sist-jsonblob>
 
         <!-- Pass store ID up one element so xtal-state-update knows how to update the address bar -->
         <p-u on=new-store-id to="/historyUpdater" prop=url val=target.storeId></p-u>
@@ -87,7 +87,7 @@
         }
         </script>
         <script  type="module-shim">
-            import '../purr-sist-myjson.js';
+            import '../purr-sist-jsonblob.js';
         </script>
     </div>
 </body>
