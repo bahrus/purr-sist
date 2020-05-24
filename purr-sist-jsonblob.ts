@@ -50,7 +50,6 @@ export class PurrSistJsonBlob extends PurrSist implements IBaseLinkContainer{
 
     saveNewVal(value: any){
         if(this.saveServiceUrl === undefined || this.storeId === undefined) return;
-        debugger;
         fetch(this.saveServiceUrl + '/' + this.storeId, {
             headers: {
                 'Accept': 'application/json',
@@ -82,7 +81,6 @@ export class PurrSistJsonBlob extends PurrSist implements IBaseLinkContainer{
         if(this._fip) return;
         if(this.saveServiceUrl === undefined || this.storeId === undefined) return;
         this._fip = true;
-        debugger;
         fetch(this.saveServiceUrl + '/' + this.storeId).then(resp => {
             resp.json().then(json => {
                 this.value = json;
