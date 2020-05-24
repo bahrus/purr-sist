@@ -1,25 +1,13 @@
-import { PurrSist } from './purr-sist.js';
-import { define } from 'trans-render/define.js';
-const save_service_url = 'save-service-url';
+import { PurrSist, bool, notify, obj, str } from './purr-sist.js';
+import { define } from 'xtal-element/xtal-latx.js';
+import { getFullURL } from 'xtal-element/base-link-id.js';
 export class PurrSistJsonBlob extends PurrSist {
-    static get is() { return 'purr-sist-jsonblob'; }
-    static get observedAttributes() {
-        return super.observedAttributes.concat([save_service_url]);
-    }
-    //_pendingNewVals!: any[];
-    attributeChangedCallback(n, ov, nv) {
-        switch (n) {
-            case save_service_url:
-                this._saveServiceUrl = nv;
-                break;
-        }
-        super.attributeChangedCallback(n, ov, nv);
-    }
     createNew(master) {
-        if (this._initInProgress)
+        if (this._initInProgress || this.saveServiceUrl === undefined)
             return;
+        this._initInProgress = true;
         const val = {};
-        fetch(this._saveServiceUrl, {
+        fetch(this.saveServiceUrl, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -30,27 +18,23 @@ export class PurrSistJsonBlob extends PurrSist {
             this.storeId = resp.headers.get('x-jsonblob');
             resp.json().then(json => {
                 this._initInProgress = false;
-                //this.storeId = json.uri.split('/').pop();
-                this.dataset.newStoreId = this._storeId;
+                this.dataset.newStoreId = this.storeId;
                 this.de('new-store-id', {
                     value: this.storeId
                 }, true);
                 if (master !== null)
                     master.newVal = Object.assign(master.value, {
-                        [this._guid]: this._storeId,
+                        [this.guid]: this.storeId,
                     });
             });
         });
         this.value = val;
     }
-    get saveServiceUrl() {
-        return this._saveServiceUrl;
-    }
-    set saveServiceUrl(val) {
-        this.attr(save_service_url, val);
-    }
     saveNewVal(value) {
-        fetch(this._saveServiceUrl + '/' + this._storeId, {
+        if (this.saveServiceUrl === undefined || this.storeId === undefined)
+            return;
+        debugger;
+        fetch(this.saveServiceUrl + '/' + this.storeId, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -58,40 +42,41 @@ export class PurrSistJsonBlob extends PurrSist {
             method: 'PUT',
             body: JSON.stringify(value),
         }).then(resp => {
-            // this.de('newVal', {
-            //     value: val,
-            // })
             this.value = value;
         });
     }
     connectedCallback() {
-        this.propUp(['saveServiceUrl']);
-        if (!this._saveServiceUrl) {
-            if (this._baseLinkId) {
-                this._saveServiceUrl = this.getFullURL('');
+        if (!this.saveServiceUrl) {
+            if (this.baseLinkId !== undefined) {
+                this.saveServiceUrl = getFullURL(this, '');
             }
             else {
-                this._saveServiceUrl = 'https://jsonblob.com/api/jsonBlob';
+                this.saveServiceUrl = 'https://jsonblob.com/api/jsonBlob';
             }
         }
         super.connectedCallback();
     }
-    onPropsChange(n) {
-        if (!this._saveServiceUrl)
-            return;
-        super.onPropsChange();
-    }
     getStore() {
         if (this._fip)
             return;
+        if (this.saveServiceUrl === undefined || this.storeId === undefined)
+            return;
         this._fip = true;
-        fetch(this._saveServiceUrl + '/' + this._storeId).then(resp => {
+        debugger;
+        fetch(this.saveServiceUrl + '/' + this.storeId).then(resp => {
             resp.json().then(json => {
-                //json.__purrSistInit = true;
                 this.value = json;
                 this._fip = false;
             });
         });
     }
 }
+PurrSistJsonBlob.is = 'purr-sist-jsonblob';
+PurrSistJsonBlob.attributeProps = ({ saveServiceUrl, baseLinkId }) => ({
+    str: [saveServiceUrl, baseLinkId, ...str],
+    bool: bool,
+    notify: notify,
+    obj: obj,
+    reflect: [saveServiceUrl, baseLinkId, ...str, ...bool]
+});
 define(PurrSistJsonBlob);

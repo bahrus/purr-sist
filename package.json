@@ -5,8 +5,8 @@
   "main": "purr-sist.js",
   "dependencies": {
     "idb-keyval": "3.2.0",
-    "xtal-element": "0.0.123",
-    "trans-render": "0.0.168"
+    "xtal-element": "0.0.159",
+    "trans-render": "0.0.182"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "2.4.3",

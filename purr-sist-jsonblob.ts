@@ -1,29 +1,29 @@
-import {PurrSist, PurrSistAttribs} from './purr-sist.js';
-import { define } from 'trans-render/define.js';
-const save_service_url = 'save-service-url';
-export interface PurrSistJSONBlobAttribs extends PurrSistAttribs{
-    [save_service_url]?: string
-}
-export class PurrSistJsonBlob extends PurrSist{
-    static get is(){return 'purr-sist-jsonblob';}
+import { PurrSist, bool, notify, obj, str} from './purr-sist.js';
+import { define } from 'xtal-element/xtal-latx.js';
+import { IBaseLinkContainer, getFullURL } from 'xtal-element/base-link-id.js';
+import { AttributeProps } from 'xtal-element/types.d.js';
 
-    static get observedAttributes() {
-        return super.observedAttributes.concat([save_service_url]);
-    }
-    //_pendingNewVals!: any[];
-    attributeChangedCallback(n: string, ov: string, nv: string) {
-        switch (n) {
-            case save_service_url:
-                this._saveServiceUrl = nv;
-                break;
-        }
-        super.attributeChangedCallback(n as keyof PurrSistAttribs, ov, nv);
-    }
+
+export class PurrSistJsonBlob extends PurrSist implements IBaseLinkContainer{
+    static is = 'purr-sist-jsonblob';
+
+    static attributeProps = ({saveServiceUrl, baseLinkId}: PurrSistJsonBlob) => ({
+        str: [saveServiceUrl, baseLinkId, ...str],
+        bool: bool,
+        notify: notify,
+        obj: obj,
+        reflect: [saveServiceUrl, baseLinkId, ...str, ...bool]
+    }) as AttributeProps;
+
+    saveServiceUrl!: string;
+
+    baseLinkId: string | undefined;
 
     createNew(master: PurrSist | null){
-        if (this._initInProgress) return;
+        if (this._initInProgress || this.saveServiceUrl === undefined) return;
+        this._initInProgress = true;
         const val = {};
-        fetch(this._saveServiceUrl, {
+        fetch(this.saveServiceUrl, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -35,13 +35,12 @@ export class PurrSistJsonBlob extends PurrSist{
             this.storeId = resp.headers.get('x-jsonblob')!;
             resp.json().then(json => {
                 this._initInProgress = false;
-                //this.storeId = json.uri.split('/').pop();
-                this.dataset.newStoreId = this._storeId;
+                this.dataset.newStoreId = this.storeId;
                 this.de('new-store-id', {
                     value: this.storeId
                 }, true);
                 if(master !== null) master.newVal =Object.assign(master.value, {
-                    [this._guid]: this._storeId,
+                    [this.guid]: this.storeId,
                 });
             })
 
@@ -49,16 +48,10 @@ export class PurrSistJsonBlob extends PurrSist{
         this.value = val;
     }
 
-    _saveServiceUrl!: string;
-    get saveServiceUrl() {
-        return this._saveServiceUrl;
-    }
-    set saveServiceUrl(val) {
-        this.attr(save_service_url, val);
-    }
-
     saveNewVal(value: any){
-        fetch(this._saveServiceUrl + '/' + this._storeId, {
+        if(this.saveServiceUrl === undefined || this.storeId === undefined) return;
+        debugger;
+        fetch(this.saveServiceUrl + '/' + this.storeId, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -67,20 +60,16 @@ export class PurrSistJsonBlob extends PurrSist{
             body: JSON.stringify(value),
 
         }).then(resp => {
-            // this.de('newVal', {
-            //     value: val,
-            // })
-            this.value = value
+            this.value = value;
         })
     }
 
     connectedCallback() {
-        this.propUp(['saveServiceUrl' ]);
-        if(!this._saveServiceUrl){
-            if(this._baseLinkId){
-                this._saveServiceUrl = this.getFullURL('');
+        if(!this.saveServiceUrl){
+            if(this.baseLinkId !== undefined){
+                this.saveServiceUrl = getFullURL(this, '');
             }else{
-                this._saveServiceUrl = 'https://jsonblob.com/api/jsonBlob';
+                this.saveServiceUrl = 'https://jsonblob.com/api/jsonBlob';
             }
         }
         super.connectedCallback();
@@ -88,17 +77,14 @@ export class PurrSistJsonBlob extends PurrSist{
 
     _fip!: boolean; //fetch in progress
 
-    onPropsChange(n?: string) {
-        if(!this._saveServiceUrl) return;
-        super.onPropsChange();
-    }
 
     getStore(){
         if(this._fip) return;
+        if(this.saveServiceUrl === undefined || this.storeId === undefined) return;
         this._fip = true;
-        fetch(this._saveServiceUrl + '/' + this._storeId).then(resp => {
+        debugger;
+        fetch(this.saveServiceUrl + '/' + this.storeId).then(resp => {
             resp.json().then(json => {
-                //json.__purrSistInit = true;
                 this.value = json;
                 this._fip = false;
             })

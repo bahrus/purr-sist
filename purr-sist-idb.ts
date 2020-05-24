@@ -32,7 +32,9 @@ export class PurrSistIDB extends PurrSist{
         switch(name){
             case storeName:
             case dbName:
-                this._store = new Store(this.dbName, this.storeName);
+                if(this.dbName !== undefined && this.storeName !== undefined){
+                    this._store = new Store(this.dbName, this.storeName);
+                }
                 break;
         }
         
@@ -49,13 +51,15 @@ export class PurrSistIDB extends PurrSist{
     }
 
     createNew(master: PurrSist | null) : void{
+        if(this._initInProgress) return;
         const newVal = {};
-        if(!this.storeId){
+        if(this.storeId === undefined){
             const storeId = Math.random().toString().replace('.','');
+            this._initInProgress = true;
             const test = get(storeId, this._store).then((val:any) =>{
-                console.log(val);
                 if(val === undefined){
                     this.storeId = storeId;
+                    this._initInProgress = false;
                     set(this.storeId, newVal, this._store).then(() =>{
                         this.de('new-store-id', {
                             value: this.storeId

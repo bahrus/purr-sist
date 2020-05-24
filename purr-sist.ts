@@ -1,6 +1,5 @@
 import { XtallatX } from 'xtal-element/xtal-latx.js';
 import { disabled, hydrate } from 'trans-render/hydrate.js';
-import {BaseLinkId, baseLinkId} from 'xtal-element/base-link-id.js';
 import {getHost} from 'xtal-element/getHost.js';
 
 export const bool = ['write', 'read', 'new'];
@@ -16,9 +15,8 @@ export const obj = ['value'];
  * @polymer
  * @demo demo/index.html
  */
-export abstract class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))) {
-    //notes - when store-id changes, need to notify and syncmasterlist
-    // value -- notify
+export abstract class PurrSist extends XtallatX(hydrate(HTMLElement)) {
+
     storeId: string | undefined;
 
     write!: boolean;
@@ -57,7 +55,7 @@ export abstract class PurrSist extends XtallatX(hydrate(BaseLinkId(HTMLElement))
             }
            
         }else{
-            this.storeId = master.value[this._guid];
+            this.storeId = master.value[this.guid];
         }              
     }
 

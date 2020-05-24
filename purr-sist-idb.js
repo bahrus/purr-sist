@@ -1,67 +1,51 @@
 import { Store, set, get } from 'idb-keyval/dist/idb-keyval.mjs';
-import { PurrSist } from './purr-sist.js';
-import { define } from 'trans-render/define.js';
+import { PurrSist, bool, notify, obj, str } from './purr-sist.js';
+import { define } from 'xtal-element/xtal-latx.js';
 export const idb_item_set = 'idb-item-set';
-const store_name = 'store-name';
-const db_name = 'db-name';
+const storeName = 'storeName';
+const dbName = 'dbName';
 export class PurrSistIDB extends PurrSist {
     constructor() {
         super(...arguments);
-        this._storeName = 'idb';
-        this._dbName = 'purr-sist';
-    }
-    static get is() { return 'purr-sist-idb'; }
-    static get observedAttributes() {
-        return super.observedAttributes.concat([store_name, db_name]);
-    }
-    get storeName() {
-        return this._storeName;
-    }
-    set storeName(nv) {
-        this.attr(store_name, nv);
-    }
-    get dbName() {
-        return this._dbName;
-    }
-    set dbName(nv) {
-        this.attr(db_name, nv);
-    }
-    attributeChangedCallback(n, ov, nv) {
-        switch (n) {
-            case store_name:
-                this._storeName = nv;
-                break;
-            case db_name:
-                this._dbName = nv;
-                break;
-        }
-        super.attributeChangedCallback(n, ov, nv);
+        this.storeName = 'idb';
+        this.dbName = 'purr-sist';
     }
     handleAnyChange() {
         this.getStore();
     }
-    connectedCallback() {
-        this.propUp(['dbName', 'storeName']);
-        super.connectedCallback();
-    }
-    onPropsChange() {
-        if (!this._conn || this._disabled)
+    onPropsChange(name) {
+        super.onPropsChange(name);
+        if (this._disabled)
             return;
-        this._store = new Store(this._dbName, this._storeName);
-        super.onPropsChange();
-        window.addEventListener(idb_item_set, e => {
-            this.handleAnyChange();
-        });
+        switch (name) {
+            case storeName:
+            case dbName:
+                if (this.dbName !== undefined && this.storeName !== undefined) {
+                    this._store = new Store(this.dbName, this.storeName);
+                }
+                break;
+        }
+    }
+    connectedCallback() {
+        super.connectedCallback();
+        this._boundHandleAnyChange = this.handleAnyChange.bind(this);
+        window.addEventListener(idb_item_set, this._boundHandleAnyChange);
+    }
+    disconnectedCallback() {
+        window.removeEventListener(idb_item_set, this._boundHandleAnyChange);
     }
     createNew(master) {
+        if (this._initInProgress)
+            return;
         const newVal = {};
-        if (!this._storeId) {
+        if (this.storeId === undefined) {
             const storeId = Math.random().toString().replace('.', '');
+            this._initInProgress = true;
             const test = get(storeId, this._store).then((val) => {
-                console.log(val);
                 if (val === undefined) {
                     this.storeId = storeId;
-                    set(this._storeId, newVal, this._store).then(() => {
+                    this._initInProgress = false;
+                    set(this.storeId, newVal, this._store).then(() => {
                         this.de('new-store-id', {
                             value: this.storeId
                         }, true);
@@ -74,7 +58,7 @@ export class PurrSistIDB extends PurrSist {
         }
     }
     saveNewVal(value) {
-        set(this._storeId, value, this._store).then(() => {
+        set(this.storeId, value, this._store).then(() => {
             this.value = value;
             const ce = new CustomEvent(idb_item_set, {
                 bubbles: true,
@@ -90,10 +74,17 @@ export class PurrSistIDB extends PurrSist {
         if (this._fip)
             return;
         this._fip = true;
-        get(this._storeId, this._store).then((val) => {
+        get(this.storeId, this._store).then((val) => {
             this.value = val;
             this._fip = false;
         });
     }
 }
+PurrSistIDB.is = 'purr-sist-idb';
+PurrSistIDB.attributeProps = ({ storeName }) => ({
+    str: [storeName, dbName, ...str],
+    bool: bool,
+    notify: notify,
+    obj: obj,
+});
 define(PurrSistIDB);
