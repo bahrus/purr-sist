@@ -71,7 +71,7 @@ export class PurrSistIDB extends PurrSist {
         });
     }
     getStore() {
-        if (this._fip)
+        if (this._fip || this._store === undefined || this.storeId === undefined)
             return;
         this._fip = true;
         get(this.storeId, this._store).then((val) => {
@@ -86,5 +86,6 @@ PurrSistIDB.attributeProps = ({ storeName }) => ({
     bool: bool,
     notify: notify,
     obj: obj,
+    reflect: [...str, ...bool, storeName]
 });
 define(PurrSistIDB);

@@ -14,6 +14,7 @@ export class PurrSistIDB extends PurrSist{
         bool: bool,
         notify: notify,
         obj: obj,
+        reflect: [...str,...bool, storeName]
     }) as AttributeProps;
 
     storeName = 'idb';
@@ -88,7 +89,7 @@ export class PurrSistIDB extends PurrSist{
     }
     _fip!: boolean; //fetch in progress
     getStore() : void{
-        if(this._fip) return;
+        if(this._fip || this._store === undefined || this.storeId === undefined) return;
         this._fip = true;
         get(this.storeId, this._store).then((val:any) =>{
             this.value = val;
