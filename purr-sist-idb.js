@@ -5,11 +5,6 @@ export const idb_item_set = 'idb-item-set';
 const storeName = 'storeName';
 const dbName = 'dbName';
 export class PurrSistIDB extends PurrSist {
-    constructor() {
-        super(...arguments);
-        this.storeName = 'idb';
-        this.dbName = 'purr-sist';
-    }
     handleAnyChange() {
         this.getStore();
     }

@@ -17,9 +17,9 @@ export class PurrSistIDB extends PurrSist{
         reflect: [...str,...bool, storeName]
     }) as AttributeProps;
 
-    storeName = 'idb';
+    storeName: string | undefined;
 
-    dbName = 'purr-sist';
+    dbName: string | undefined;
 
     _boundHandleAnyChange: any;
     handleAnyChange(){
