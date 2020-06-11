@@ -1,5 +1,5 @@
 import { PurrSist, bool, notify, obj, str} from './purr-sist.js';
-import { define } from 'xtal-element/xtal-latx.js';
+import { define, de } from 'xtal-element/xtal-latx.js';
 import { IBaseLinkContainer, getFullURL } from 'xtal-element/base-link-id.js';
 import { AttributeProps } from 'xtal-element/types.d.js';
 
@@ -36,7 +36,7 @@ export class PurrSistJsonBlob extends PurrSist implements IBaseLinkContainer{
             resp.json().then(json => {
                 this._initInProgress = false;
                 this.dataset.newStoreId = this.storeId;
-                this.de('new-store-id', {
+                this[de]('new-store-id', {
                     value: this.storeId
                 }, true);
                 if(master !== null) master.newVal =Object.assign(master.value, {

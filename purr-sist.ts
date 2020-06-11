@@ -1,11 +1,12 @@
 import { XtallatX } from 'xtal-element/xtal-latx.js';
-import { disabled, hydrate } from 'trans-render/hydrate.js';
-import {getHost} from 'xtal-element/getHost.js';
+import { hydrate } from 'trans-render/hydrate.js';
+import { getHost } from 'xtal-element/getHost.js';
 
-export const bool = ['write', 'read', 'new'];
-export const str = ['guid', 'masterListId', 'storeId'];
-export const notify = ['value', 'storeId'];
-export const obj = ['value'];
+type PurrSistKey = keyof PurrSist;
+export const bool : PurrSistKey[] = ['write', 'read', 'new'];
+export const str: PurrSistKey[] = ['guid', 'storeRegistryId', 'storeId'];
+export const notify: PurrSistKey[] = ['value', 'storeId'];
+export const obj: PurrSistKey[] = ['value'];
 
 /**
  * `purr-sist`
@@ -27,39 +28,39 @@ export abstract class PurrSist extends XtallatX(hydrate(HTMLElement)) {
  
     guid!: string;
 
-    masterListId!: string;
+    storeRegistryId!: string;
 
     value: any;
 
-    syncMasterList(){
-        if(!this.masterListId || !this.guid) return;
-        const master = this.getMaster();
-        if(!master || !master.value){
+    syncListRegistry(){
+        if(!this.storeRegistryId || !this.guid) return;
+        const registry = this.getRegistry();
+        if(!registry || !registry.value){
             setTimeout(() => {
-                this.syncMasterList();
+                this.syncListRegistry();
             }, 50);
             return;
         }
-        if(master.value[this.guid] === undefined){
-            const newVal = Object.assign(master.value, {
+        if(registry.value[this.guid] === undefined){
+            const newVal = Object.assign(registry.value, {
                 [this.guid]: this.storeId
             });
-            master.newVal = newVal;
+            registry.newVal = newVal;
         }
     }
 
-    pullRecFromMaster(master: PurrSist){
-        if(master.value[this.guid] === undefined){
+    pullRecFromRegistry(registry: PurrSist){
+        if(registry.value[this.guid] === undefined){
             if(this.write){
-                this.createNew(master);
+                this.createNew(registry);
             }
            
         }else{
-            this.storeId = master.value[this.guid];
+            this.storeId = registry.value[this.guid];
         }              
     }
 
-    abstract createNew(master: PurrSist | null) : void;
+    abstract createNew(registry: PurrSist | null) : void;
 
     set refresh(val: any){
         this.storeId = this.storeId;
@@ -99,8 +100,8 @@ export abstract class PurrSist extends XtallatX(hydrate(HTMLElement)) {
 
     
     _initInProgress = false;
-    getMaster(){
-        const mlid = this.masterListId;
+    getRegistry(){
+        const mlid = this.storeRegistryId;
         if(mlid.startsWith('/')){
             return (<any>self)[mlid.substr(1)] as PurrSist;
         }
@@ -114,18 +115,18 @@ export abstract class PurrSist extends XtallatX(hydrate(HTMLElement)) {
     
     onPropsChange(n: string) {
         super.onPropsChange(n);
-        if (this._disabled) return;
+        if (this.disabled) return;
         //if(this._retrieve && !this._storeId) return;
         if (!this.storeId) {
-            if(this.masterListId){
-                const mst = this.getMaster();
+            if(this.storeRegistryId){
+                const mst = this.getRegistry();
                 if(!mst || !mst.value){
                     setTimeout(() =>{
                         this.onPropsChange(n)
                     }, 50);
                     return;
                 }
-                this.pullRecFromMaster(mst);
+                this.pullRecFromRegistry(mst);
             }else if(this.new && this.write){
                 this.createNew(null);
             }

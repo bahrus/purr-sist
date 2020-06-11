@@ -1,6 +1,6 @@
 import {Store, set, get} from 'idb-keyval/dist/idb-keyval.mjs';
 import { PurrSist, bool, notify, obj, str} from './purr-sist.js';
-import {define} from 'xtal-element/xtal-latx.js';
+import {define, de} from 'xtal-element/xtal-latx.js';
 import {AttributeProps} from 'xtal-element/types.d.js';
 export const idb_item_set = 'idb-item-set';
 
@@ -29,7 +29,7 @@ export class PurrSistIDB extends PurrSist{
     _store: Store;
     onPropsChange(name: string){
         super.onPropsChange(name);
-        if (this._disabled) return;
+        if (this.disabled) return;
         switch(name){
             case storeName:
             case dbName:
@@ -51,7 +51,7 @@ export class PurrSistIDB extends PurrSist{
         window.removeEventListener(idb_item_set, this._boundHandleAnyChange);
     }
 
-    createNew(master: PurrSist | null) : void{
+    createNew(registry: PurrSist | null) : void{
         if(this._initInProgress) return;
         const newVal = {};
         if(this.storeId === undefined){
@@ -62,7 +62,7 @@ export class PurrSistIDB extends PurrSist{
                     this.storeId = storeId;
                     this._initInProgress = false;
                     set(this.storeId, newVal, this._store).then(() =>{
-                        this.de('new-store-id', {
+                        this[de]('new-store-id', {
                             value: this.storeId
                         }, true);
                     })

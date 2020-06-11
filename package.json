@@ -5,18 +5,18 @@
   "main": "purr-sist.js",
   "dependencies": {
     "idb-keyval": "3.2.0",
-    "xtal-element": "0.0.164",
-    "trans-render": "0.0.182"
+    "xtal-element": "0.0.200",
+    "trans-render": "0.0.193"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "2.4.3",
-    "xtal-test": "0.0.44",
-    "p-et-alia": "0.0.86",
-    "xtal-state": "0.0.107",
+    "xtal-test": "0.0.46",
+    "p-et-alia": "0.0.99",
+    "xtal-state": "0.00.110",
     "xtal-json-editor": "0.0.41",
     "es-module-shims": "0.4.6",
     "aggregator-fn": "0.0.24",
-    "es-dev-server": "1.53.0"
+    "es-dev-server": "1.55.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
