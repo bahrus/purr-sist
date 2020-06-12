@@ -19,7 +19,7 @@ export class PurrSistJsonBlob extends PurrSist implements IBaseLinkContainer{
 
     baseLinkId: string | undefined;
 
-    createNew(master: PurrSist | null){
+    createNew(registrar: PurrSist | null){
         if (this._initInProgress || this.saveServiceUrl === undefined) return;
         this._initInProgress = true;
         const val = {};
@@ -39,7 +39,7 @@ export class PurrSistJsonBlob extends PurrSist implements IBaseLinkContainer{
                 this[de]('new-store-id', {
                     value: this.storeId
                 }, true);
-                if(master !== null) master.newVal =Object.assign(master.value, {
+                if(registrar !== null) registrar.newVal =Object.assign(registrar.value, {
                     [this.guid]: this.storeId,
                 });
             })

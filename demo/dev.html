@@ -11,11 +11,11 @@
         <!-- Parse the address bar -->
         <xtal-state-parse disabled=2 parse=location.href with-url-pattern="id=(?<storeId>[a-z0-9-]*)"></xtal-state-parse>
         <!-- If no id found in address bar, pass down ("p-d") message to session writer to create a new record ("session") -->
-        <p-d on=no-match-found to=[write][-new] val=target.noMatch  m=1></p-d>
+        <p-d on=no-match-found to=[write][-anew] val=target.noMatch  m=1></p-d>
         <!-- If id found in address bar, pass it to the persistence reader (and writer for when it's needed) -->
         <p-d on=match-found to=[-store-id] val=target.value.storeId m=2></p-d>
         <!-- Read stored history.state from remote database if saved -->
-        <purr-sist-jsonblob disabled=2 read -store-id></purr-sist-jsonblob>
+        <purr-sist-jsonblob disabled read -store-id></purr-sist-jsonblob>
         <!-- If persisted history.state found, repopulate history.state -->
         <p-d on=value-changed to=[-history] val=target.value m=1></p-d>
 
@@ -61,7 +61,7 @@
         <!-- Send new history.state object to object persister -->
         <p-d on=history-changed to=[-new-val]  skip-init m=1></p-d>
         <!-- Persist history.state to remote store-->   
-        <purr-sist-jsonblob write -new -new-val -store-id disabled></purr-sist-jsonblob>
+        <purr-sist-jsonblob write -anew -new-val -store-id disabled></purr-sist-jsonblob>
 
         <!-- Pass store ID up one element so xtal-state-update knows how to update the address bar -->
         <p-u on=new-store-id to="/historyUpdater" prop=url val=target.storeId></p-u>

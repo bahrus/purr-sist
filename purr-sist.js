@@ -1,30 +1,60 @@
 import { XtallatX } from 'xtal-element/xtal-latx.js';
 import { hydrate } from 'trans-render/hydrate.js';
 import { getHost } from 'xtal-element/getHost.js';
-export const bool = ['write', 'read', 'new'];
+export const bool = ['write', 'read', 'anew'];
 export const str = ['guid', 'storeRegistryId', 'storeId'];
 export const notify = ['value', 'storeId'];
 export const obj = ['value'];
-/**
- * `purr-sist`
- *  Custom element wrapper around persistence services.
- *
- * @customElement
- * @polymer
- * @demo demo/index.html
- */
+export const PropActions = {
+    setNewVal: ({ newVal, saveNewVal, disabled }) => {
+        if (newVal === null || disabled)
+            return;
+        saveNewVal(newVal);
+    },
+    setSyncVal: ({ syncVal, self, disabled }) => {
+        if (disabled)
+            return;
+        self.value = syncVal;
+    },
+    setMiscProps: ({ disabled, storeRegistryId, storeId, self, write, anew }) => {
+        if (disabled)
+            return;
+        if (!storeId) {
+            if (storeRegistryId) {
+                const mst = self.getStoreRegistry();
+                if (!mst || !mst.value) {
+                    setTimeout(() => {
+                        self.storeRegistryId = storeRegistryId;
+                    }, 50);
+                    return;
+                }
+                self.pullRecFromRegistry(mst);
+            }
+            else if (anew && write) {
+                self.createNew(null);
+            }
+            //create new object
+        }
+        else {
+            if (write)
+                return;
+            self.getStore();
+        }
+    }
+};
 export class PurrSist extends XtallatX(hydrate(HTMLElement)) {
     constructor() {
         super(...arguments);
+        this.propActions = [PropActions.setNewVal, PropActions.setSyncVal, PropActions.setMiscProps];
         this._initInProgress = false;
     }
-    syncListRegistry() {
+    syncStoreRegistry() {
         if (!this.storeRegistryId || !this.guid)
             return;
-        const registry = this.getRegistry();
+        const registry = this.getStoreRegistry();
         if (!registry || !registry.value) {
             setTimeout(() => {
-                this.syncListRegistry();
+                this.syncStoreRegistry();
             }, 50);
             return;
         }
@@ -48,36 +78,17 @@ export class PurrSist extends XtallatX(hydrate(HTMLElement)) {
     set refresh(val) {
         this.storeId = this.storeId;
     }
-    get syncVal() {
-        return this._syncVal;
-    }
-    set syncVal(val) {
-        this._syncVal = val;
-        this.value = val;
-    }
-    get newVal() {
-        return this._newVal;
-    }
-    set newVal(val) {
-        if (val === null)
-            return;
-        this._newVal = val;
-        if (!this.storeId) {
-            return;
-        }
-        this.saveNewVal(val);
-    }
     connectedCallback() {
         this.style.display = 'none';
         super.connectedCallback();
     }
-    getRegistry() {
-        const mlid = this.storeRegistryId;
-        if (mlid.startsWith('/')) {
-            return self[mlid.substr(1)];
+    getStoreRegistry() {
+        const stoRegId = this.storeRegistryId;
+        if (stoRegId.startsWith('/')) {
+            return self[stoRegId.substr(1)];
         }
-        if (mlid.startsWith('./')) {
-            const id = mlid.substr(2);
+        if (stoRegId.startsWith('./')) {
+            const id = stoRegId.substr(2);
             const host = getHost(this);
             const host2 = host.shadowRoot ? host.shadowRoot : host;
             return host2.querySelector('#' + id);
@@ -85,29 +96,5 @@ export class PurrSist extends XtallatX(hydrate(HTMLElement)) {
     }
     onPropsChange(n) {
         super.onPropsChange(n);
-        if (this.disabled)
-            return;
-        //if(this._retrieve && !this._storeId) return;
-        if (!this.storeId) {
-            if (this.storeRegistryId) {
-                const mst = this.getRegistry();
-                if (!mst || !mst.value) {
-                    setTimeout(() => {
-                        this.onPropsChange(n);
-                    }, 50);
-                    return;
-                }
-                this.pullRecFromRegistry(mst);
-            }
-            else if (this.new && this.write) {
-                this.createNew(null);
-            }
-            //create new object
-        }
-        else {
-            if (this.write)
-                return;
-            this.getStore();
-        }
     }
 }

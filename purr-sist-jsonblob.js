@@ -3,7 +3,7 @@ import { define, de } from 'xtal-element/xtal-latx.js';
 import { getFullURL } from 'xtal-element/base-link-id.js';
 let PurrSistJsonBlob = /** @class */ (() => {
     class PurrSistJsonBlob extends PurrSist {
-        createNew(master) {
+        createNew(registrar) {
             if (this._initInProgress || this.saveServiceUrl === undefined)
                 return;
             this._initInProgress = true;
@@ -23,8 +23,8 @@ let PurrSistJsonBlob = /** @class */ (() => {
                     this[de]('new-store-id', {
                         value: this.storeId
                     }, true);
-                    if (master !== null)
-                        master.newVal = Object.assign(master.value, {
+                    if (registrar !== null)
+                        registrar.newVal = Object.assign(registrar.value, {
                             [this.guid]: this.storeId,
                         });
                 });
