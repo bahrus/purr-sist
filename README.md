@@ -48,12 +48,12 @@ The write mode tag cannot retrieve existing data on its own.  It must be passed 
 If you place write mode tag on the page with the new attribute:
 
 ```html
-<purr-sist-foo write new></purr-sist-foo>
+<purr-sist-foo write anew></purr-sist-foo>
 ```
 
 since no "store-id" is specified, a new "{}" record will be created on initial load.  If you inspect the element, you will see the id of that new record reflected to the element with attribute "store-id".
 
-Once you have the id, you *could* set it / hardcode it in your markup (after removing the "new" attribute). 
+Once you have the id, you *could* set it / hardcode it in your markup (after removing the "anew" attribute). 
 
 ```html
 <purr-sist-foo read store-id="JCPenny"></purr-sist-foo>
@@ -136,7 +136,7 @@ Data flow is **almost** unidirectional (see tag p-u for bad code smell exception
         <!-- Parse the address bar -->
         <xtal-state-parse disabled parse=location.href with-url-pattern="id=(?<storeId>[a-z0-9-]*)"></xtal-state-parse>
         <!-- If no id found in address bar, pass down ("p-d") message to session writer to create a new record ("session") -->
-        <p-d on=no-match-found to=[write][-new] val=target.noMatch  m=1></p-d>
+        <p-d on=no-match-found to=[write][-anew] val=target.noMatch  m=1></p-d>
         <!-- If id found in address bar, pass it to the persistence reader -->
         <p-d on=match-found to=[-store-id] val=target.value.storeId m=2></p-d>
         <!-- Read stored history.state from remote database if saved -->
@@ -185,7 +185,7 @@ Data flow is **almost** unidirectional (see tag p-u for bad code smell exception
         <!-- Send new history.state object to object persister -->
         <p-d on=history-changed to=[-new-val]  skip-init m=1></p-d>
         <!-- Persist history.state to remote store-->   
-        <purr-sist-jsonblob write -new -new-val -store-id disabled=2></purr-sist-jsonblob>
+        <purr-sist-jsonblob write -anew -new-val -store-id disabled=2></purr-sist-jsonblob>
 
         <!-- Pass store ID up one element so xtal-state-update knows how to update the address bar -->
         <p-u on=new-store-id to="/historyUpdater" prop=url></p-u>
