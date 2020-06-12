@@ -19,33 +19,26 @@ export class PurrSistJsonBlob extends PurrSist implements IBaseLinkContainer{
 
     baseLinkId: string | undefined;
 
+
     createNew(registrar: PurrSist | null){
-        if (this._initInProgress || this.saveServiceUrl === undefined) return;
-        this._initInProgress = true;
-        const val = {};
-        fetch(this.saveServiceUrl, {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            method: 'POST',
-            body: JSON.stringify(val),
-
-        }).then(resp => {
-            this.storeId = resp.headers.get('x-jsonblob')!;
-            resp.json().then(json => {
-                this._initInProgress = false;
-                this.dataset.newStoreId = this.storeId;
-                this[de]('new-store-id', {
-                    value: this.storeId
-                }, true);
-                if(registrar !== null) registrar.newVal =Object.assign(registrar.value, {
-                    [this.guid]: this.storeId,
-                });
+        return new Promise<string>((resolve, reject) =>{
+            const val = {};
+            fetch(this.saveServiceUrl, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST',
+                body: JSON.stringify(val),
+    
+            }).then(resp => {
+                const storeId = resp.headers.get('x-jsonblob')!;
+                resolve(storeId);
+    
             })
+            this.value = val;
+        });
 
-        })
-        this.value = val;
     }
 
     saveNewVal(value: any){
@@ -78,15 +71,16 @@ export class PurrSistJsonBlob extends PurrSist implements IBaseLinkContainer{
 
 
     getStore(){
-        if(this._fip) return;
-        if(this.saveServiceUrl === undefined || this.storeId === undefined) return;
-        this._fip = true;
-        fetch(this.saveServiceUrl + '/' + this.storeId).then(resp => {
-            resp.json().then(json => {
-                this.value = json;
-                this._fip = false;
+        return new Promise((resolve, reject) =>{
+            if(this.saveServiceUrl === undefined || this.storeId === undefined) return undefined;
+            fetch(this.saveServiceUrl + '/' + this.storeId).then(resp => {
+                resp.json().then(json => {
+                    this.value = json;
+                    resolve(json);
+                })
             })
-        })
+        });
+
     }
 }
 define(PurrSistJsonBlob);

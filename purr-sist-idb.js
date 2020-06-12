@@ -1,6 +1,6 @@
 import { Store, set, get } from 'idb-keyval/dist/idb-keyval.mjs';
 import { PurrSist, bool, notify, obj, str } from './purr-sist.js';
-import { define, de } from 'xtal-element/xtal-latx.js';
+import { define } from 'xtal-element/xtal-latx.js';
 export const idb_item_set = 'idb-item-set';
 const storeName = 'storeName';
 const dbName = 'dbName';
@@ -31,27 +31,20 @@ let PurrSistIDB = /** @class */ (() => {
             window.removeEventListener(idb_item_set, this._boundHandleAnyChange);
         }
         createNew(registry) {
-            if (this._initInProgress)
-                return;
-            const newVal = {};
-            if (this.storeId === undefined) {
-                const storeId = Math.random().toString().replace('.', '');
-                this._initInProgress = true;
-                const test = get(storeId, this._store).then((val) => {
-                    if (val === undefined) {
-                        this.storeId = storeId;
-                        this._initInProgress = false;
-                        set(this.storeId, newVal, this._store).then(() => {
-                            this[de]('new-store-id', {
-                                value: this.storeId
-                            }, true);
-                        });
-                    }
-                    else {
-                        throw 'not implemented';
-                    }
-                });
-            }
+            return new Promise((resolve, reject) => {
+                const newVal = {};
+                if (this.storeId === undefined) {
+                    const storeId = Math.random().toString().replace('.', '');
+                    const test = get(storeId, this._store).then((val) => {
+                        if (val === undefined) {
+                            resolve(storeId);
+                        }
+                        else {
+                            throw 'not implemented';
+                        }
+                    });
+                }
+            });
         }
         saveNewVal(value) {
             set(this.storeId, value, this._store).then(() => {
@@ -67,12 +60,11 @@ let PurrSistIDB = /** @class */ (() => {
             });
         }
         getStore() {
-            if (this._fip || this._store === undefined || this.storeId === undefined)
-                return;
-            this._fip = true;
-            get(this.storeId, this._store).then((val) => {
-                this.value = val;
-                this._fip = false;
+            return new Promise((resolve, reject) => {
+                get(this.storeId, this._store).then((val) => {
+                    this.value = val;
+                    resolve(val);
+                });
             });
         }
     }

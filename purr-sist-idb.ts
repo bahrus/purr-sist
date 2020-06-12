@@ -51,26 +51,21 @@ export class PurrSistIDB extends PurrSist{
         window.removeEventListener(idb_item_set, this._boundHandleAnyChange);
     }
 
-    createNew(registry: PurrSist | null) : void{
-        if(this._initInProgress) return;
-        const newVal = {};
-        if(this.storeId === undefined){
-            const storeId = Math.random().toString().replace('.','');
-            this._initInProgress = true;
-            const test = get(storeId, this._store).then((val:any) =>{
-                if(val === undefined){
-                    this.storeId = storeId;
-                    this._initInProgress = false;
-                    set(this.storeId, newVal, this._store).then(() =>{
-                        this[de]('new-store-id', {
-                            value: this.storeId
-                        }, true);
-                    })
-                }else{
-                    throw 'not implemented';
-                }
-            })
-        }
+    createNew(registry: PurrSist | null) {
+        return new Promise<string>((resolve, reject) =>{
+            const newVal = {};
+            if(this.storeId === undefined){
+                const storeId = Math.random().toString().replace('.','');
+                const test = get(storeId, this._store).then((val:any) =>{
+                    if(val === undefined){
+                        resolve(storeId)
+                    }else{
+                        throw 'not implemented';
+                    }
+                })
+            }
+        })
+
         
     }
     saveNewVal(value: any) : void{
@@ -88,13 +83,14 @@ export class PurrSistIDB extends PurrSist{
         
     }
     _fip!: boolean; //fetch in progress
-    getStore() : void{
-        if(this._fip || this._store === undefined || this.storeId === undefined) return;
-        this._fip = true;
-        get(this.storeId, this._store).then((val:any) =>{
-            this.value = val;
-            this._fip = false;
+    getStore(){
+        return new Promise<any>((resolve, reject) =>{
+            get(this.storeId, this._store).then((val:any) =>{
+                this.value = val;
+                resolve(val);
+            })
         })
+
         
     }
 }
