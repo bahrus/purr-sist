@@ -64,7 +64,7 @@ export const PropActions = {
         if(disabled) return;
         if(storeRegistryId !== undefined && registry === undefined) return;
         if(write && anew && storeId === undefined){
-            self.createNew(registry).then(id =>{
+            self.createNew().then(id =>{
                 self.newStoreId = id;
             });
         }else if(read){
@@ -99,7 +99,7 @@ export abstract class PurrSist extends XtallatX(hydrate(HTMLElement)) {
  
     guid!: string;
 
-    storeRegistryId!: string;
+    storeRegistryId: string | undefined;
 
     value: any;
 
@@ -107,7 +107,7 @@ export abstract class PurrSist extends XtallatX(hydrate(HTMLElement)) {
 
     newVal: any;
 
-    registry!: PurrSist;
+    registry: PurrSist | undefined;
 
     propActions = [
         PropActions.onNewVal, 
@@ -119,7 +119,7 @@ export abstract class PurrSist extends XtallatX(hydrate(HTMLElement)) {
     ]
 
 
-    abstract createNew(registry: PurrSist | null) : Promise<string>;
+    abstract createNew() : Promise<string>;
 
     set refresh(val: any){
         this.storeId = this.storeId;

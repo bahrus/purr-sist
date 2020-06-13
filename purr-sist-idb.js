@@ -30,7 +30,7 @@ let PurrSistIDB = /** @class */ (() => {
         disconnectedCallback() {
             window.removeEventListener(idb_item_set, this._boundHandleAnyChange);
         }
-        createNew(registry) {
+        createNew() {
             return new Promise((resolve, reject) => {
                 const newVal = {};
                 if (this.storeId === undefined) {

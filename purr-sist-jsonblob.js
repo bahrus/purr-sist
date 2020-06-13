@@ -3,7 +3,7 @@ import { define } from 'xtal-element/xtal-latx.js';
 import { getFullURL } from 'xtal-element/base-link-id.js';
 let PurrSistJsonBlob = /** @class */ (() => {
     class PurrSistJsonBlob extends PurrSist {
-        createNew(registrar) {
+        createNew() {
             return new Promise((resolve, reject) => {
                 const val = {};
                 fetch(this.saveServiceUrl, {

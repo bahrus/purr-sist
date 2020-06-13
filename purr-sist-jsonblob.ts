@@ -20,7 +20,7 @@ export class PurrSistJsonBlob extends PurrSist implements IBaseLinkContainer{
     baseLinkId: string | undefined;
 
 
-    createNew(registrar: PurrSist | null){
+    createNew(){
         return new Promise<string>((resolve, reject) =>{
             const val = {};
             fetch(this.saveServiceUrl, {

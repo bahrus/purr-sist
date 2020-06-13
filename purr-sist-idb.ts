@@ -51,7 +51,7 @@ export class PurrSistIDB extends PurrSist{
         window.removeEventListener(idb_item_set, this._boundHandleAnyChange);
     }
 
-    createNew(registry: PurrSist | null) {
+    createNew() {
         return new Promise<string>((resolve, reject) =>{
             const newVal = {};
             if(this.storeId === undefined){

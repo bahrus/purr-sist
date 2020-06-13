@@ -70,7 +70,7 @@ export const PropActions = {
         if (storeRegistryId !== undefined && registry === undefined)
             return;
         if (write && anew && storeId === undefined) {
-            self.createNew(registry).then(id => {
+            self.createNew().then(id => {
                 self.newStoreId = id;
             });
         }
