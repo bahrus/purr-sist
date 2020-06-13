@@ -127,7 +127,6 @@ export abstract class PurrSist extends XtallatX(hydrate(HTMLElement)) {
 
     abstract saveNewVal(value: any) : void;
 
-    _conn!: boolean;
 
     connectedCallback() {
         this.style.display = 'none';
