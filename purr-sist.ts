@@ -5,7 +5,7 @@ import { getHost } from 'xtal-element/getHost.js';
 type PurrSistKey = keyof PurrSist;
 export const bool : PurrSistKey[] = ['write', 'read', 'anew'];
 export const str: PurrSistKey[] = ['guid', 'storeRegistryId', 'storeId'];
-export const notify: PurrSistKey[] = ['value', 'storeId'];
+export const notify: PurrSistKey[] = ['value', 'storeId', 'newStoreId'];
 export const obj: PurrSistKey[] = ['value', 'registry', 'newStoreId', 'newVal'];
 
 export const PropActions = {
@@ -74,10 +74,6 @@ export const PropActions = {
     onNewStoreId: ({newStoreId, self, registry, guid, disabled}: PurrSist) =>{
         if(disabled || newStoreId === undefined) return;
         self.storeId = newStoreId;
-        self.dataset.newStoreId = newStoreId;
-        self[de]('new-store-id', {
-            value: newStoreId
-        }, true);
         if(registry  !== undefined) registry.newVal = Object.assign(registry.value, {
             [guid]: newStoreId,
         });

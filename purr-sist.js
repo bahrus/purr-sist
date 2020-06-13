@@ -1,9 +1,9 @@
-import { XtallatX, de } from 'xtal-element/xtal-latx.js';
+import { XtallatX } from 'xtal-element/xtal-latx.js';
 import { hydrate } from 'trans-render/hydrate.js';
 import { getHost } from 'xtal-element/getHost.js';
 export const bool = ['write', 'read', 'anew'];
 export const str = ['guid', 'storeRegistryId', 'storeId'];
-export const notify = ['value', 'storeId'];
+export const notify = ['value', 'storeId', 'newStoreId'];
 export const obj = ['value', 'registry', 'newStoreId', 'newVal'];
 export const PropActions = {
     onNewVal: ({ newVal, disabled, self }) => {
@@ -82,10 +82,6 @@ export const PropActions = {
         if (disabled || newStoreId === undefined)
             return;
         self.storeId = newStoreId;
-        self.dataset.newStoreId = newStoreId;
-        self[de]('new-store-id', {
-            value: newStoreId
-        }, true);
         if (registry !== undefined)
             registry.newVal = Object.assign(registry.value, {
                 [guid]: newStoreId,
