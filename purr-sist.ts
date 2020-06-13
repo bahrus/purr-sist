@@ -49,7 +49,7 @@ export const PropActions = {
         if(disabled || registry === undefined || guid === undefined) return;
         if(registry.value[guid] === undefined){
             if(write){
-                self.createNew(registry).then(storeId =>{
+                self.createNew().then(storeId =>{
                     self.newStoreId = storeId;
                 })
             }else{
