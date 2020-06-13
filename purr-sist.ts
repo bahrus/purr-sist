@@ -6,20 +6,29 @@ type PurrSistKey = keyof PurrSist;
 export const bool : PurrSistKey[] = ['write', 'read', 'anew'];
 export const str: PurrSistKey[] = ['guid', 'storeRegistryId', 'storeId'];
 export const notify: PurrSistKey[] = ['value', 'storeId'];
-export const obj: PurrSistKey[] = ['value', 'registry', 'newStoreId'];
+export const obj: PurrSistKey[] = ['value', 'registry', 'newStoreId', 'newVal'];
 
 export const PropActions = {
-    onNewVal: ({newVal, saveNewVal, disabled}: PurrSist) => {
+    onNewVal: ({newVal, disabled, self}: PurrSist) => {
         if(newVal === null || disabled) return;
-        saveNewVal(newVal);
+        self.saveNewVal(newVal);
     },
-    onSyncVal: ({syncVal, self, disabled}: PurrSist) =>{
+    onSyncVal: ({syncVal, self, disabled}: PurrSist) => {
         if(disabled) return;
         self.value = syncVal;
     },
-    onStoreRegistryId: ({disabled, storeRegistryId, self}: PurrSist) =>{
+    onStoreRegistryId: ({disabled, storeRegistryId, self}: PurrSist) => {
         if(disabled || storeRegistryId === undefined) return;
-        const registry = self.getStoreRegistry();
+        let registry: PurrSist | undefined = undefined;
+        if(storeRegistryId.startsWith('/')){
+            registry = (<any>window)[storeRegistryId.substr(1)] as PurrSist;
+        }
+        if(storeRegistryId.startsWith('./')){
+            const id = storeRegistryId.substr(2);
+            const host = getHost(self) as HTMLElement;
+            const host2 = host.shadowRoot ? host.shadowRoot : host;
+            registry = host2.querySelector('#' + id) as PurrSist;
+        }
         if(!registry){
             setTimeout(() =>{
                 self.storeRegistryId = storeRegistryId;
@@ -28,8 +37,8 @@ export const PropActions = {
         }
         if(!registry.value){
             setTimeout(() =>{
-                if(!registry.value) registry.getStore().then(store =>{
-                    self.registry = registry;
+                if(!registry!.value) registry!.getStore().then(store =>{
+                    self.registry = registry!;
                 });
             }, 50);
         }else{
@@ -62,7 +71,7 @@ export const PropActions = {
             self.getStore();
         }
     },
-    newStoreId: ({newStoreId, self, registry, guid, disabled}: PurrSist) =>{
+    onNewStoreId: ({newStoreId, self, registry, guid, disabled}: PurrSist) =>{
         if(disabled || newStoreId === undefined) return;
         self.storeId = newStoreId;
         self.dataset.newStoreId = newStoreId;
@@ -106,7 +115,7 @@ export abstract class PurrSist extends XtallatX(hydrate(HTMLElement)) {
         PropActions.onRegistry, 
         PropActions.onStoreId, 
         PropActions.onStoreRegistryId,
-        PropActions.newStoreId,
+        PropActions.onNewStoreId,
     ]
 
 
@@ -123,21 +132,6 @@ export abstract class PurrSist extends XtallatX(hydrate(HTMLElement)) {
     connectedCallback() {
         this.style.display = 'none';
         super.connectedCallback();
-    }
-    
-    
-    _initInProgress = false;
-    getStoreRegistry(){
-        const stoRegId = this.storeRegistryId;
-        if(stoRegId.startsWith('/')){
-            return (<any>self)[stoRegId.substr(1)] as PurrSist;
-        }
-        if(stoRegId.startsWith('./')){
-            const id = stoRegId.substr(2);
-            const host = getHost(this) as HTMLElement;
-            const host2 = host.shadowRoot ? host.shadowRoot : host;
-            return host2.querySelector('#' + id) as PurrSist;
-        }
     }
     
 

@@ -4,12 +4,12 @@ import { getHost } from 'xtal-element/getHost.js';
 export const bool = ['write', 'read', 'anew'];
 export const str = ['guid', 'storeRegistryId', 'storeId'];
 export const notify = ['value', 'storeId'];
-export const obj = ['value', 'registry', 'newStoreId'];
+export const obj = ['value', 'registry', 'newStoreId', 'newVal'];
 export const PropActions = {
-    onNewVal: ({ newVal, saveNewVal, disabled }) => {
+    onNewVal: ({ newVal, disabled, self }) => {
         if (newVal === null || disabled)
             return;
-        saveNewVal(newVal);
+        self.saveNewVal(newVal);
     },
     onSyncVal: ({ syncVal, self, disabled }) => {
         if (disabled)
@@ -19,7 +19,16 @@ export const PropActions = {
     onStoreRegistryId: ({ disabled, storeRegistryId, self }) => {
         if (disabled || storeRegistryId === undefined)
             return;
-        const registry = self.getStoreRegistry();
+        let registry = undefined;
+        if (storeRegistryId.startsWith('/')) {
+            registry = window[storeRegistryId.substr(1)];
+        }
+        if (storeRegistryId.startsWith('./')) {
+            const id = storeRegistryId.substr(2);
+            const host = getHost(self);
+            const host2 = host.shadowRoot ? host.shadowRoot : host;
+            registry = host2.querySelector('#' + id);
+        }
         if (!registry) {
             setTimeout(() => {
                 self.storeRegistryId = storeRegistryId;
@@ -69,7 +78,7 @@ export const PropActions = {
             self.getStore();
         }
     },
-    newStoreId: ({ newStoreId, self, registry, guid, disabled }) => {
+    onNewStoreId: ({ newStoreId, self, registry, guid, disabled }) => {
         if (disabled || newStoreId === undefined)
             return;
         self.storeId = newStoreId;
@@ -92,9 +101,8 @@ export class PurrSist extends XtallatX(hydrate(HTMLElement)) {
             PropActions.onRegistry,
             PropActions.onStoreId,
             PropActions.onStoreRegistryId,
-            PropActions.newStoreId,
+            PropActions.onNewStoreId,
         ];
-        this._initInProgress = false;
     }
     set refresh(val) {
         this.storeId = this.storeId;
@@ -102,17 +110,5 @@ export class PurrSist extends XtallatX(hydrate(HTMLElement)) {
     connectedCallback() {
         this.style.display = 'none';
         super.connectedCallback();
-    }
-    getStoreRegistry() {
-        const stoRegId = this.storeRegistryId;
-        if (stoRegId.startsWith('/')) {
-            return self[stoRegId.substr(1)];
-        }
-        if (stoRegId.startsWith('./')) {
-            const id = stoRegId.substr(2);
-            const host = getHost(this);
-            const host2 = host.shadowRoot ? host.shadowRoot : host;
-            return host2.querySelector('#' + id);
-        }
     }
 }
