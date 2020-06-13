@@ -82,7 +82,6 @@ export class PurrSistIDB extends PurrSist{
         })
         
     }
-    _fip!: boolean; //fetch in progress
     getStore(){
         return new Promise<any>((resolve, reject) =>{
             get(this.storeId, this._store).then((val:any) =>{
