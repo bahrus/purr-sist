@@ -64,7 +64,7 @@
         <purr-sist-jsonblob write -anew -new-val -store-id disabled></purr-sist-jsonblob>
 
         <!-- Pass store ID up one element so xtal-state-update knows how to update the address bar -->
-        <p-u on=new-store-id to="/historyUpdater" prop=url val=target.storeId></p-u>
+        <p-u on=new-store-id-changed to="/historyUpdater" prop=url val=target.storeId></p-u>
 
         <!-- Pass history.state object to JSON viewer -->
         <p-h-d to=[-input]></p-h-d>
@@ -72,23 +72,15 @@
         <!-- Reload window to see if changes persist -->
         <button onclick="window.location.reload()">Reload Window</button>
 
-        <script type="module" src="https://unpkg.com/p-et-alia@0.0.73/p-et-alia.js?module"></script>
-        <script type="module" src="https://unpkg.com/xtal-state@0.0.100/xtal-state-parse.js?module"></script>
-        <script type="module" src="https://unpkg.com/aggregator-fn@0.0.21/aggregator-fn.js?module"></script>
-        <script type="module" src="https://unpkg.com/xtal-json-editor@0.0.39/xtal-json-editor.js?module"></script>
-
-        <script defer src="../node_modules/es-module-shims/dist/es-module-shims.js"></script>
-        <script type="importmap-shim">
-        {
-            "imports": {
-                "xtal-element/": "../node_modules/xtal-element/",
-                "trans-render/": "../node_modules/trans-render/"
-            }
-        }
-        </script>
-        <script  type="module-shim">
+        <script type=module>
+            import 'p-et-alia/p-et-alia.js';
+            import 'xtal-state/xtal-state-parse.js';
+            import 'xtal-state/xtal-state-update.js'
+            import 'aggregator-fn/aggregator-fn.js';
+            import 'xtal-json-editor/xtal-json-editor.js';
             import '../purr-sist-jsonblob.js';
         </script>
+        
     </div>
 </body>
 </html>

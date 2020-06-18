@@ -12,7 +12,7 @@
     "@webcomponents/webcomponentsjs": "2.4.3",
     "xtal-test": "0.0.46",
     "p-et-alia": "0.0.103",
-    "xtal-state": "0.00.111",
+    "xtal-state": "0.0.112",
     "xtal-json-editor": "0.0.41",
     "es-module-shims": "0.4.6",
     "aggregator-fn": "0.0.24",
@@ -21,7 +21,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "node node_modules/xtal-test/serve.js",
-    "start": "es-dev-server --app-index demo/dev-mwc.html --node-resolve --watch --open"
+    "start": "es-dev-server --app-index demo/dev.html --node-resolve --watch --open"
   },
   "repository": {
     "type": "git",
