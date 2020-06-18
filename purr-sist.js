@@ -74,7 +74,7 @@ export const PropActions = {
                 self.newStoreId = id;
             });
         }
-        else if (read) {
+        else if (read && storeId !== undefined) {
             self.getStore();
         }
     },

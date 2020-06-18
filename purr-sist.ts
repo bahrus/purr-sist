@@ -67,7 +67,7 @@ export const PropActions = {
             self.createNew().then(id =>{
                 self.newStoreId = id;
             });
-        }else if(read){
+        }else if(read && storeId !== undefined){
             self.getStore();
         }
     },
