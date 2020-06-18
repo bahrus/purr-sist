@@ -11,7 +11,7 @@
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "2.4.3",
     "xtal-test": "0.0.46",
-    "p-et-alia": "0.0.103",
+    "p-et-alia": "0.0.104",
     "xtal-state": "0.0.112",
     "xtal-json-editor": "0.0.41",
     "es-module-shims": "0.4.6",
