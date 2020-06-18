@@ -5,14 +5,14 @@
   "main": "purr-sist.js",
   "dependencies": {
     "idb-keyval": "3.2.0",
-    "xtal-element": "0.0.200",
-    "trans-render": "0.0.193"
+    "xtal-element": "0.0.203",
+    "trans-render": "0.0.199"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "2.4.3",
     "xtal-test": "0.0.46",
-    "p-et-alia": "0.0.99",
-    "xtal-state": "0.00.110",
+    "p-et-alia": "0.0.103",
+    "xtal-state": "0.00.111",
     "xtal-json-editor": "0.0.41",
     "es-module-shims": "0.4.6",
     "aggregator-fn": "0.0.24",
